@@ -1,0 +1,14 @@
+name: Sync template
+
+on:
+  workflow_dispatch:
+jobs:
+  repo-sync:
+    runs-on: ubuntu-latest
+    if: github.repository != 'quintenroets/python-package-template'
+    permissions:
+      contents: write  # Repository will be modified
+      pull-requests: write  # Create PR if update needed
+    steps:
+      - name: Sync template
+        uses: quintenroets/actions/template-sync@main

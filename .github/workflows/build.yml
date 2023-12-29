@@ -1,0 +1,25 @@
+name: Build
+
+on:
+  push:
+
+jobs:
+  validate:
+    name: Validate
+    runs-on: ubuntu-latest
+    environment: release
+    steps:
+    - name: Validate
+      uses: quintenroets/actions/validate@main
+
+  publish:
+    name: Publish package
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    environment: release
+    permissions:
+      id-token: write  # Needed for PyPi publishing
+      contents: write  # Needed for GitHub publishing
+    steps:
+      - name: Publish
+        uses: quintenroets/actions/publish@main

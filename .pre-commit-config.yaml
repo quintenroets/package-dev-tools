@@ -1,0 +1,56 @@
+fail_fast: true
+
+repos:
+  - repo: https://github.com/myint/docformatter
+    rev: v1.7.5
+    hooks:
+      - id: docformatter
+        args: [--in-place, --make-summary-multi-line, --close-quotes-on-newline, --wrap-summaries, "88"]
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.1.7
+    hooks:
+      - id: ruff
+      - id: ruff-format
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: end-of-file-fixer
+  - repo: https://github.com/psf/black
+    rev: 23.11.0
+    hooks:
+      - id: black
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.7.1
+    hooks:
+      - id: mypy
+        additional_dependencies: ["pytest-mypy-plugins"]
+  - repo: local
+    hooks:
+      - id: bump-version
+        name: bump-version
+        entry: scripts/pre-commit/bump_version_on_main.sh
+        language: system
+        pass_filenames: false
+        always_run: true
+  - repo: local
+    hooks:
+      - id: pytest-check
+        name: pytest-check
+        entry: coverage run -m pytest
+        language: system
+        pass_filenames: false
+        always_run: true
+  - repo: local
+    hooks:
+      - id: coverage-report
+        name: coverage-report
+        entry: scripts/pre-commit/report_coverage.sh
+        language: system
+        pass_filenames: false
+        always_run: true
+        verbose: true
+
+
+ci:
+    autofix_commit_msg: auto fixes from pre-commit.com hooks
+    autoupdate_commit_msg: 'pre-commit autoupdate'
