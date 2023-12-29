@@ -1,5 +1,5 @@
-# Python Package Template
-[![PyPI version](https://badge.fury.io/py/python-package-qtemplate.svg)](https://badge.fury.io/py/python-package-qtemplate)
+# Dev Tools
+[![PyPI version](https://badge.fury.io/py/dev-tools.svg)](https://badge.fury.io/py/dev-tools)
 ## Usage
 1) Choose repository name
 2) Instantiate new repository from the template repository
@@ -27,14 +27,14 @@
 
 Run
 ```shell
-python_package_template
+dev_tools
 ```
 ## Installation
 ```shell
-pip install python-package-qtemplate
+pip install dev-tools
 ```
 or
 ```shell
-pip install git+https://github.com/quintenroets/python-package-template.git
+pip install git+https://github.com/quintenroets/dev-tools.git
 ```
 make sure to use Python 3.10+

@@ -1,5 +1,5 @@
 [project]
-name = "python-package-qtemplate"
+name = "dev-tools"
 version = "0.1.0"
 description = "Python package"
 authors = [{name = "Quinten Roets", email = "qdr2104@columbia.edu"}]
@@ -22,17 +22,17 @@ dev = [
 ]
 
 [project.urls]
-"Source Code" = "https://github.com/quintenroets/python-package-template"
+"Source Code" = "https://github.com/quintenroets/dev-tools"
 
 [project.scripts]
-python_package_template = "python_package_template.cli:entry_point"
+dev_tools = "dev_tools.cli:entry_point"
 
 [build-system]
 requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools.package-data]
-python_package_template = ["py.typed"]
+dev_tools = ["py.typed"]
 
 [tool.ruff]
 select = [
