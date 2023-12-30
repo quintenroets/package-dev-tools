@@ -26,13 +26,14 @@ repos:
         additional_dependencies: [
             "hypothesis",
             "pytest-mypy-plugins",
+            "simple-classproperty",
             "types-python-slugify",
         ]
   - repo: local
     hooks:
       - id: bump-version
         name: bump-version
-        entry: bump_version_on_main
+        entry: bump-version-on-main
         language: system
         pass_filenames: false
         always_run: true
@@ -46,9 +47,9 @@ repos:
         always_run: true
   - repo: local
     hooks:
-      - id: coverage-report
-        name: coverage-report
-        entry: report_coverage
+      - id: report-coverage
+        name: report-coverage
+        entry: report-coverage
         language: system
         pass_filenames: false
         always_run: true

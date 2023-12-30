@@ -9,6 +9,7 @@ requires-python = ">=3.10"
 dependencies = [
     "pygithub>=2.1",
     "python-slugify>=8.0",
+    "simple-classproperty>=4.0",
     "superpathlib>=1.3",
     "typer>=0.9",
     "quinten-cli>=1.1",
@@ -23,16 +24,17 @@ dev = [
     "pre-commit",
     "pytest",
     "pytest-mypy-plugins",
-    "package-dev-tools"
+    "dev-tools"
 ]
 
 [project.urls]
 "Source Code" = "https://github.com/quintenroets/dev-tools"
 
 [project.scripts]
-substitute_template_name = "dev_tools.cli.substitute_template_name:entry_point"
-cleanup_readme = "dev_tools.cli.cleanup_readme:entry_point"
-trigger_template_sync = "dev_tools.cli.cleanup_readme:entry_point"
+cleanup-readme = "dev_tools.cli.cleanup_readme:entry_point"
+substitute-template-name = "dev_tools.cli.substitute_template_name:entry_point"
+trigger-template-sync = "dev_tools.cli.cleanup_readme:entry_point"
+update-coverage-badge = "dev_tools.cli.update_coverage_badge:entry_point"
 
 [build-system]
 requires = ["setuptools"]
@@ -42,7 +44,12 @@ build-backend = "setuptools.build_meta"
 dev_tools = ["py.typed"]
 
 [tool.setuptools]
-script-files = ["bin/cleanup_workflows"]
+script-files = [
+    "bin/actions/cleanup-workflows",
+    "bin/pre-commit/bump-version",
+    "bin/pre-commit/bump-version-on-main",
+    "bin/pre-commit/report-coverage",
+]
 
 [tool.ruff]
 select = [
