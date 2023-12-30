@@ -18,11 +18,13 @@ def check_coverage(verify_all_files_tested: bool = True) -> None:
     sys.exit(exit_code)
 
 
-def update_coverage_shield(coverage_percentage: int | str) -> bool:
+def update_coverage_shield(coverage_percentage: float | str) -> bool:
+    if isinstance(coverage_percentage, str):
+        coverage_percentage = float(coverage_percentage)
+    coverage_percentage_int = round(coverage_percentage)
     markdown_line_start = "![Coverage]("
-    badge_url = (
-        f"https://img.shields.io/badge/Coverage-{coverage_percentage}%25-brightgreen"
-    )
+    badge_url_root = "https://img.shields.io/badge"
+    badge_url = f"{badge_url_root}/Coverage-{coverage_percentage_int }%25-brightgreen"
     markdown_line = f"{markdown_line_start}{badge_url})"
     current_markdown_lines = Path.readme.lines
     no_badge = not any(markdown_line_start in line for line in current_markdown_lines)

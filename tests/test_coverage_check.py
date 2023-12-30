@@ -8,12 +8,13 @@ from dev_tools.pre_commit.check_coverage import check_coverage, update_coverage_
 suppressed_checks = (HealthCheck.function_scoped_fixture,)
 
 
-@given(value=strategies.integers(min_value=0, max_value=100))
+@given(value=strategies.floats(min_value=0, max_value=100))
 @settings(suppress_health_check=suppressed_checks)
-def test_update_coverage_badge(repository_path: Path, value: int) -> None:
+def test_update_coverage_badge(repository_path: Path, value: float) -> None:
     update_coverage_shield(value)
     readme_path = repository_path / Path.readme.name
-    assert str(value) in readme_path.text
+    value_str = str(round(value))
+    assert value_str in readme_path.text
 
 
 def test_not_covered_files_detected(repository_path: Path) -> None:
