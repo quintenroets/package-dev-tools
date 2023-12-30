@@ -1,0 +1,4 @@
+#! /bin/env bash
+
+rm workflows/instantiate-new-project.yml
+rm workflows/trigger-template-sync.yml

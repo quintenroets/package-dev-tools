@@ -1,6 +1,6 @@
 import typer
 
-from dev_tools import main
+from dev_tools.actions.trigger_template_sync import main
 
 
 def entry_point() -> None:

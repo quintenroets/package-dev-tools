@@ -23,12 +23,16 @@ repos:
     rev: v1.7.1
     hooks:
       - id: mypy
-        additional_dependencies: ["pytest-mypy-plugins"]
+        additional_dependencies: [
+            "hypothesis",
+            "pytest-mypy-plugins",
+            "types-python-slugify",
+        ]
   - repo: local
     hooks:
       - id: bump-version
         name: bump-version
-        entry: scripts/pre-commit/bump_version_on_main.sh
+        entry: bump_version_on_main
         language: system
         pass_filenames: false
         always_run: true
@@ -44,7 +48,7 @@ repos:
     hooks:
       - id: coverage-report
         name: coverage-report
-        entry: scripts/pre-commit/report_coverage.sh
+        entry: report_coverage
         language: system
         pass_filenames: false
         always_run: true
