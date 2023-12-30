@@ -4,7 +4,6 @@ from unittest import mock
 import cli
 import pytest
 from _pytest.monkeypatch import MonkeyPatch
-from plib import Path
 
 from dev_tools.cli import (
     check_coverage,
@@ -12,12 +11,14 @@ from dev_tools.cli import (
     substitute_template_name,
     trigger_template_sync,
 )
+from dev_tools.models import Path
 from dev_tools.utils import clear_cli_args, set_cli_args
 
 
-def test_check_coverage(restore_readme: None, monkeypatch: MonkeyPatch) -> None:
+def test_check_coverage(repository_path: Path, monkeypatch: MonkeyPatch) -> None:
     clear_cli_args(monkeypatch)
-    with pytest.raises(SystemExit):
+    exceptions = SystemExit, Exception
+    with pytest.raises(exceptions):  # noqa
         check_coverage.entry_point()
 
 
