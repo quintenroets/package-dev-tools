@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-
-coverage_percentage=$(coverage report --format total)
-echo "Test coverage: $coverage_percentage%"
-update-coverage-badge $coverage_percentage

@@ -1,6 +1,7 @@
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 
+import github.Auth
 from github import Github, Repository, UnknownObjectException
 from plib import Path
 
@@ -12,7 +13,8 @@ class TemplateSyncTriggerer:
     max_workers: int = 10
 
     def __post_init__(self) -> None:
-        self.client = Github(self.token)
+        auth = github.Auth.Token(self.token)
+        self.client = Github(auth=auth)
 
     def run(self) -> None:
         repos = self.client.get_user().get_repos(type="owner")
@@ -30,5 +32,5 @@ class TemplateSyncTriggerer:
             workflow.create_dispatch("main")
 
 
-def main(token: str) -> None:
+def trigger_template_sync(token: str) -> None:
     TemplateSyncTriggerer(token).run()

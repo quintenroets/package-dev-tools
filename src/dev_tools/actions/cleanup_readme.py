@@ -1,8 +1,8 @@
-from plib import Path
+from ..models import Path
 
 
-def main() -> None:
-    path = Path("README.md")
+def cleanup_readme() -> None:
+    path = Path.readme
     delimiter = "=" * 60 + "\n"
     keyword = "## Usage"
     text_parts = path.text.split(delimiter)

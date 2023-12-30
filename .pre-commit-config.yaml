@@ -41,19 +41,18 @@ repos:
     hooks:
       - id: pytest-check
         name: pytest-check
-        entry: coverage run -m pytest
+        entry: coverage run -m pytest -s
         language: system
         pass_filenames: false
         always_run: true
   - repo: local
     hooks:
-      - id: report-coverage
-        name: report-coverage
-        entry: report-coverage
+      - id: check-coverage
+        name: check-coverage
+        entry: check-coverage
         language: system
         pass_filenames: false
         always_run: true
-        verbose: true
 
 
 ci:

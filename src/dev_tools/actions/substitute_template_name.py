@@ -4,10 +4,8 @@ import tomllib
 import urllib.parse
 from collections.abc import Iterator
 from dataclasses import dataclass
-from typing import Annotated
 
 import cli
-import typer
 from plib import Path
 from slugify import slugify
 
@@ -40,15 +38,15 @@ class Project:
 class NameSubstitutor:
     project_name: str
     path: Path
-    current_project_name: str | None = None
+    current_project_name: str = ""
 
     def __post_init__(self) -> None:
         self.new_project = Project(self.project_name, self.path)
-        if self.current_project_name is None:
+        if not self.current_project_name:
             self.current_project_name = self.extract_current_project_name()
         self.template_project = Project(self.current_project_name, self.path)
         self.substitutions = {
-            "python-package-qtemplate": self.template_project.package_slug,
+            "dev-tools": self.template_project.package_slug,
             self.template_project.name: self.new_project.name,
             self.template_project.package_slug: self.new_project.package_slug,
             self.template_project.package_name: self.new_project.package_name,
@@ -108,8 +106,9 @@ class NameSubstitutor:
 
 def substitute_template_name(
     project_name: str = "",
-    current_project_name: str | None = None,
-    path: Annotated[Path, typer.Option(path_type=Path)] = Path.cwd,
+    path_str: str = "",
+    current_project_name: str = "",
 ) -> None:
-    path = Path(path)  # TODO: use create instance from cli args from package-utils
+    # TODO: use create instance from cli args from package-utils
+    path = Path(path_str) if path_str else Path.cwd()
     NameSubstitutor(project_name, path, current_project_name=current_project_name).run()
