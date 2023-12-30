@@ -1,9 +1,10 @@
 import string
 
 import pytest
-from dev_tools.actions.substitute_template_name import Project
 from hypothesis import given, strategies
 from hypothesis.strategies import SearchStrategy
+
+from dev_tools.actions.substitute_template_name import Project
 
 
 def create_valid_name_strategy() -> SearchStrategy[str]:
