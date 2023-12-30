@@ -5,7 +5,7 @@ description = "Python package"
 authors = [{name = "Quinten Roets", email = "qdr2104@columbia.edu"}]
 license = {text = "MIT"}
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 dependencies = [
     "pygithub>=2.1",
     "python-slugify>=8.0",
