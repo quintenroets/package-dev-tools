@@ -1,12 +1,12 @@
 from __future__ import annotations
 
+import tomllib
 import urllib.parse
 from collections.abc import Iterator
 from dataclasses import dataclass
 from typing import Annotated
 
 import cli
-import tomllib
 import typer
 from plib import Path
 from slugify import slugify
