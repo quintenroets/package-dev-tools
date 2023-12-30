@@ -12,6 +12,7 @@ from dev_tools.models import Path
 def repository_path(tmp_path: pathlib.Path) -> Iterator[Path]:
     shutil.copytree(Path.repository_root, tmp_path, dirs_exist_ok=True)
     path = Path(tmp_path)
+    print(list(path.iterdir()))
     yield path
     path.rmtree()
 
