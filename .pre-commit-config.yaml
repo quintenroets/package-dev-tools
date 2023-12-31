@@ -32,9 +32,9 @@ repos:
         ]
   - repo: local
     hooks:
-      - id: bump-version
-        name: bump-version
-        entry: bump-version-on-main
+      - id: check-version
+        name: check-version
+        entry: check-version
         language: system
         pass_filenames: false
         always_run: true

@@ -74,8 +74,7 @@ known-first-party = ["src"]
 [tool.setuptools]
 script-files = [
     "bin/actions/cleanup-workflows",
-    "bin/pre-commit/bump-version",
-    "bin/pre-commit/bump-version-on-main",
+    "bin/pre-commit/check-version",
 ]
 
 [tool.setuptools.package-data]

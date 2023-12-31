@@ -1,0 +1,13 @@
+- id: check-coverage
+  name: check-coverage
+  description: "Calculate percentage of source code covered by tests and use result to update the coverage badge in the README."
+  entry: check-coverage
+  language: python
+  types: [python]
+  additional_dependencies: ['.']
+- id: check-version
+  name: check-version
+  description: "Bump package version if needed."
+  entry: check-version
+  language: python
+  additional_dependencies: ['.']
