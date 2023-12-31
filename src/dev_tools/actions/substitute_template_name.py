@@ -1,13 +1,13 @@
 from __future__ import annotations
 
-import tomllib
-import urllib.parse
 from collections.abc import Iterator
 from dataclasses import dataclass
 
 import cli
 from plib import Path
 from slugify import slugify
+
+from dev_tools.utils.package import extract_package_slug
 
 
 @dataclass
@@ -53,12 +53,7 @@ class NameSubstitutor:
         }
 
     def extract_current_project_name(self) -> str:
-        path = self.path / "pyproject.toml"
-        info = tomllib.loads(path.text)
-        project_urls = info["project"]["urls"].values()
-        project_url: str = next(iter(project_urls))
-        parsed_url = urllib.parse.urlparse(project_url)
-        return parsed_url.path.split("/")[-1]
+        return extract_package_slug(self.path)
 
     def run(self) -> None:
         for path in self.generate_paths_to_substitute():

@@ -1,9 +1,8 @@
 import cli
 import pytest
-from hypothesis import HealthCheck, given, settings, strategies
-
 from dev_tools.models import Path
 from dev_tools.pre_commit.check_coverage import check_coverage, update_coverage_shield
+from hypothesis import HealthCheck, given, settings, strategies
 
 suppressed_checks = (HealthCheck.function_scoped_fixture,)
 
@@ -25,7 +24,7 @@ def test_not_covered_files_detected(repository_path: Path) -> None:
         ("git commit --no-verify -m", "add not covered file"),
     )
     for command in commands:
-        cli.run(*command)
+        cli.get(*command)
 
     with pytest.raises(Exception):
         check_coverage()

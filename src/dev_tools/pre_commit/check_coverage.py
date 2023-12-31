@@ -3,12 +3,16 @@ from collections.abc import Iterator
 
 import cli
 
+from dev_tools.utils.package import extract_package_slug
+
 from ..models import Path
 
 
 def check_coverage(verify_all_files_tested: bool = True) -> None:
+    ensure_source_code_used()
     if verify_all_files_tested:
         verify_all_python_files_tested()
+
     coverage_percentage = cli.get("coverage report --format total")
     coverage_percentage_has_changed = update_coverage_shield(coverage_percentage)
     if coverage_percentage_has_changed:
@@ -61,3 +65,11 @@ def generate_python_files() -> Iterator[str]:
         relative_path = path.relative_to(project_folder)
         if relative_path.parts[0] != "build":
             yield str(relative_path)
+
+
+def ensure_source_code_used():
+    package_slug = extract_package_slug()
+    is_installed = cli.is_success("pip show", package_slug)
+    if is_installed:
+        cli.run("pip uninstall -y", package_slug)
+        cli.run("coverage run")

@@ -4,7 +4,6 @@ from unittest import mock
 import cli
 import pytest
 from _pytest.monkeypatch import MonkeyPatch
-
 from dev_tools.cli import (
     check_coverage,
     cleanup_readme,
@@ -12,7 +11,7 @@ from dev_tools.cli import (
     trigger_template_sync,
 )
 from dev_tools.models import Path
-from dev_tools.utils import clear_cli_args, set_cli_args
+from dev_tools.utils.tests import clear_cli_args, set_cli_args
 
 
 def test_check_coverage(repository_path: Path, monkeypatch: MonkeyPatch) -> None:

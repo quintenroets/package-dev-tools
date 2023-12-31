@@ -42,9 +42,6 @@ build-backend = "setuptools.build_meta"
 
 [tool.coverage.run]
 command_line = "-m pytest"
-source_pkgs = [
-    "dev_tools",
-]
 
 [tool.coverage.report]
 precision = 4
@@ -52,6 +49,11 @@ precision = 4
 [tool.mypy]
 strict = true
 no_implicit_reexport = false
+
+[tool.pytest.ini_options]
+pythonpath = [
+  "src"
+]
 
 [tool.ruff]
 select = [

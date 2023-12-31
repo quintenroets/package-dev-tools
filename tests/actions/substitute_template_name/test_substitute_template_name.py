@@ -1,5 +1,4 @@
 import cli
-
 from dev_tools.actions.substitute_template_name import substitute_template_name
 from dev_tools.models import Path
 

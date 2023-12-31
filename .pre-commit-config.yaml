@@ -26,6 +26,7 @@ repos:
         additional_dependencies: [
             "hypothesis",
             "pytest-mypy-plugins",
+            "quinten-cli",
             "simple-classproperty",
             "types-python-slugify",
         ]

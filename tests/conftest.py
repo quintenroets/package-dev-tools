@@ -6,9 +6,8 @@ from collections.abc import Iterator
 import cli
 import pytest
 from _pytest.tmpdir import TempPathFactory
-from hypothesis import HealthCheck
-
 from dev_tools.models import Path
+from hypothesis import HealthCheck
 
 suppressed_checks = (HealthCheck.function_scoped_fixture,)
 
@@ -19,7 +18,7 @@ def downloaded_repository_path(tmp_path_factory: TempPathFactory) -> Iterator[Pa
     path = Path(tmp_path)
     repository_url = "https://github.com/quintenroets/python-package-template"
     cli.get("git clone", repository_url, tmp_path, "--depth", 1)
-    cli.get("coverage run -m pytest", cwd=tmp_path)
+    cli.get("coverage run", cwd=tmp_path)
     yield path
     path.rmtree()
 

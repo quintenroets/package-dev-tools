@@ -10,7 +10,7 @@ jobs:
     environment: release
     steps:
     - name: Validate
-      uses: quintenroets/actions/validate@main
+      uses: quintenroets/dev-tools/actions/validate@main
 
   publish:
     name: Publish package
@@ -22,4 +22,4 @@ jobs:
       contents: write  # Needed for GitHub publishing
     steps:
       - name: Publish
-        uses: quintenroets/actions/publish@main
+        uses: quintenroets/dev-tools/actions/publish@main
