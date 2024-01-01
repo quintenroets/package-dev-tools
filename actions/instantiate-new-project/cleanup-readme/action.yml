@@ -1,0 +1,13 @@
+name: Cleanup README
+description: Remove documentation that is irrelevant for derived projects
+
+runs:
+  using: composite
+  steps:
+  - name: Install dependencies
+    run: pip install dev-tools
+    shell: bash
+
+  - name: Cleanup README
+    run: cleanup-readme
+    shell: bash
