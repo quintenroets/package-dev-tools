@@ -31,7 +31,7 @@ repos:
             "types-python-slugify",
         ]
   - repo: https://github.com/quintenroets/dev-tools
-    rev: dev
+    rev: bfee7b0
     hooks:
       - id: check-version
         always_run: true
