@@ -30,13 +30,10 @@ repos:
             "simple-classproperty",
             "types-python-slugify",
         ]
-  - repo: local
+  - repo: https://github.com/quintenroets/dev-tools
+    rev: dev
     hooks:
       - id: check-version
-        name: check-version
-        entry: check-version
-        language: system
-        pass_filenames: false
         always_run: true
   - repo: local
     hooks:
