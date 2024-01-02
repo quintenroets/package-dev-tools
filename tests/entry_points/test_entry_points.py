@@ -36,7 +36,8 @@ def test_cleanup_readme(repository_path: Path, monkeypatch: MonkeyPatch) -> None
 
 
 def test_trigger_template_sync(monkeypatch: MonkeyPatch) -> None:
-    token = os.environ.get("GITHUB_TOKEN") or cli.get("pw", "automationtoken")
+    token_name = "TEMPLATE_SYNC_TRIGGER_TOKEN"
+    token = os.environ.get(token_name) or cli.get("pw", "automationtoken")
     set_cli_args(monkeypatch, token)
     with mock.patch("github.Workflow"), pytest.raises(SystemExit):
         trigger_template_sync.entry_point()

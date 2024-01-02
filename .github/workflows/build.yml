@@ -11,6 +11,8 @@ jobs:
     steps:
     - name: Validate
       uses: quintenroets/dev-tools/actions/validate@main
+      env:
+        TEMPLATE_SYNC_TRIGGER_TOKEN: ${{ secrets.TEMPLATE_SYNC_TRIGGER_TOKEN }}
 
   publish:
     name: Publish package
