@@ -5,7 +5,7 @@ runs:
   using: 'composite'
   steps:
     - name: Setup Python
-      uses: quintenroets/dev-tools/actions/setup-python@main
+      uses: quintenroets/package-dev-tools/actions/setup-python@main
 
     - name: Install dependencies
       shell: bash

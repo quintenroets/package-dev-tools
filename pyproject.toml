@@ -1,5 +1,5 @@
 [project]
-name = "dev-tools"
+name = "package-dev-tools"
 version = "0.1.1"
 description = "Python package"
 authors = [{name = "Quinten Roets", email = "qdr2104@columbia.edu"}]
@@ -24,17 +24,17 @@ dev = [
     "pre-commit",
     "pytest",
     "pytest-mypy-plugins",
-    "dev-tools"
+    "package-dev-tools"
 ]
 
 [project.urls]
-"Source Code" = "https://github.com/quintenroets/dev-tools"
+"Source Code" = "https://github.com/quintenroets/package-dev-tools"
 
 [project.scripts]
-cleanup-readme = "dev_tools.interfaces.cli.cleanup_readme:entry_point"
-substitute-template-name = "dev_tools.interfaces.cli.substitute_template_name:entry_point"
-trigger-template-sync = "dev_tools.interfaces.cli.cleanup_readme:entry_point"
-check-coverage = "dev_tools.interfaces.cli.check_coverage:entry_point"
+cleanup-readme = "package_dev_tools.interfaces.cli.cleanup_readme:entry_point"
+substitute-template-name = "package_dev_tools.interfaces.cli.substitute_template_name:entry_point"
+trigger-template-sync = "package_dev_tools.interfaces.cli.cleanup_readme:entry_point"
+check-coverage = "package_dev_tools.interfaces.cli.check_coverage:entry_point"
 
 [build-system]
 requires = ["setuptools"]
@@ -45,6 +45,7 @@ command_line = "-m pytest"
 
 [tool.coverage.report]
 precision = 4
+fail_under = 100
 
 [tool.mypy]
 strict = true
@@ -78,4 +79,4 @@ script-files = [
 ]
 
 [tool.setuptools.package-data]
-dev_tools = ["py.typed"]
+package_dev_tools = ["py.typed"]

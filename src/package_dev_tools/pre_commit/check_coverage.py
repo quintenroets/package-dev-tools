@@ -4,7 +4,7 @@ from collections.abc import Iterator
 
 import cli
 
-from dev_tools.utils.package import extract_package_slug
+from package_dev_tools.utils.package import extract_package_slug
 
 from ..models import Path
 

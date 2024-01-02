@@ -1,8 +1,11 @@
 import cli
 import pytest
-from dev_tools.models import Path
-from dev_tools.pre_commit.check_coverage import check_coverage, update_coverage_shield
 from hypothesis import HealthCheck, given, settings, strategies
+from package_dev_tools.models import Path
+from package_dev_tools.pre_commit.check_coverage import (
+    check_coverage,
+    update_coverage_shield,
+)
 
 suppressed_checks = (HealthCheck.function_scoped_fixture,)
 

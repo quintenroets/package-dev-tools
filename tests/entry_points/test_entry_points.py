@@ -4,14 +4,14 @@ from unittest import mock
 import cli
 import pytest
 from _pytest.monkeypatch import MonkeyPatch
-from dev_tools.interfaces.cli import (
+from package_dev_tools.interfaces.cli import (
     check_coverage,
     cleanup_readme,
     substitute_template_name,
     trigger_template_sync,
 )
-from dev_tools.models import Path
-from dev_tools.utils.tests import clear_cli_args, set_cli_args
+from package_dev_tools.models import Path
+from package_dev_tools.utils.tests import clear_cli_args, set_cli_args
 
 
 def test_check_coverage(repository_path: Path, monkeypatch: MonkeyPatch) -> None:
@@ -24,7 +24,7 @@ def test_check_coverage(repository_path: Path, monkeypatch: MonkeyPatch) -> None
 def test_substitute_template_name(
     repository_path: Path, monkeypatch: MonkeyPatch
 ) -> None:
-    set_cli_args(monkeypatch, "--project-name", "dev-tools")
+    set_cli_args(monkeypatch, "--project-name", "package-dev-tools")
     with pytest.raises(SystemExit):
         substitute_template_name.entry_point()
 

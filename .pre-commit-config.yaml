@@ -30,7 +30,7 @@ repos:
             "simple-classproperty",
             "types-python-slugify",
         ]
-  - repo: https://github.com/quintenroets/dev-tools
+  - repo: https://github.com/quintenroets/package-dev-tools
     rev: fa23a2a
     hooks:
       - id: check-version
@@ -41,7 +41,7 @@ repos:
         entry: coverage run
         language: system
         pass_filenames: false
-  - repo: https://github.com/quintenroets/dev-tools
+  - repo: https://github.com/quintenroets/package-dev-tools
     rev: fa23a2a
     hooks:
       - id: check-coverage

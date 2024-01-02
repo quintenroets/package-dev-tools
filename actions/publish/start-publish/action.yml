@@ -28,5 +28,5 @@ runs:
         echo "PYPI_NAME=$name" >> "$GITHUB_OUTPUT"
 
     - name: Publish on PyPI
-      uses: quintenroets/dev-tools/actions/publish/start-publish/pypi@main
+      uses: quintenroets/package-dev-tools/actions/publish/start-publish/pypi@main
       if: ${{ steps.extract-pypi-name.outputs.PYPI_NAME }}

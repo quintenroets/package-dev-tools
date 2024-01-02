@@ -7,7 +7,7 @@ import cli
 from plib import Path
 from slugify import slugify
 
-from dev_tools.utils.package import extract_package_name, extract_package_slug
+from package_dev_tools.utils.package import extract_package_name, extract_package_slug
 
 
 @dataclass

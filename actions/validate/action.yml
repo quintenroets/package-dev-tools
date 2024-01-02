@@ -19,9 +19,9 @@ runs:
         echo "has_dockerfile=$has_dockerfile" >> "$GITHUB_OUTPUT"
         
     - name: Run validation in container
-      uses: quintenroets/dev-tools/actions/validate/start-containerized@main
+      uses: quintenroets/package-dev-tools/actions/validate/start-containerized@main
       if: ${{ steps.detect-dockerfile.outputs.has_dockerfile == 'true' }}
 
     - name: Run validation
-      uses: quintenroets/dev-tools/actions/validate/start@main
+      uses: quintenroets/package-dev-tools/actions/validate/start@main
       if: ${{ steps.detect-dockerfile.outputs.has_dockerfile == 'false' }}

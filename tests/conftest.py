@@ -6,8 +6,8 @@ from collections.abc import Iterator
 import cli
 import pytest
 from _pytest.tmpdir import TempPathFactory
-from dev_tools.models import Path
 from hypothesis import HealthCheck
+from package_dev_tools.models import Path
 
 suppressed_checks = (HealthCheck.function_scoped_fixture,)
 

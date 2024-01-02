@@ -14,7 +14,7 @@ runs:
     shell: bash
 
   - name: Substitute template name
-    uses: quintenroets/dev-tools/actions/instantiate-new-project/substitute-names@main
+    uses: quintenroets/package-dev-tools/actions/instantiate-new-project/substitute-names@main
 
   - name: Commit to git
     run: |
@@ -23,7 +23,7 @@ runs:
     shell: bash
 
   - name: Remove template-only workflows
-    uses: quintenroets/dev-tools/actions/instantiate-new-project/cleanup-workflows@main
+    uses: quintenroets/package-dev-tools/actions/instantiate-new-project/cleanup-workflows@main
 
   - name: Commit to git
     run: |
@@ -32,7 +32,7 @@ runs:
     shell: bash
 
   - name: Remove template-only documentation
-    uses: quintenroets/dev-tools/actions/instantiate-new-project/cleanup-readme@main
+    uses: quintenroets/package-dev-tools/actions/instantiate-new-project/cleanup-readme@main
 
   - name: Commit to git
     run: |

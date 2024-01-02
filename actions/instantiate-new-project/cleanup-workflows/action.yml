@@ -8,7 +8,7 @@ runs:
   using: 'composite'
   steps:
   - name: Install dependencies
-    run: pip install dev-tools
+    run: pip install package-dev-tools
     shell: bash
 
   - name: Cleanup workflows

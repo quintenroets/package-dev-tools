@@ -1,6 +1,6 @@
 import typer
 
-from dev_tools.pre_commit.check_coverage import check_coverage
+from package_dev_tools.pre_commit.check_coverage import check_coverage
 
 
 def entry_point() -> None:

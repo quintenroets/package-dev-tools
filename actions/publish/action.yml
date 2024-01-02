@@ -42,5 +42,5 @@ runs:
         echo "LATEST_RELEASE_VERSION=$latest_release_version" >> "$GITHUB_OUTPUT"
 
     - name: Start publish
-      uses: quintenroets/dev-tools/actions/publish/start-publish@main
+      uses: quintenroets/package-dev-tools/actions/publish/start-publish@main
       if: ${{ steps.detect-commit-number.outputs.is_initial_commit == 'false' && steps.extract-project-version.outputs.PROJECT_VERSION != steps.extract-latest-release-version.outputs.LATEST_RELEASE_VERSION }}

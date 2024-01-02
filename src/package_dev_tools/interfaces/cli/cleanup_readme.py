@@ -1,6 +1,6 @@
 import typer
 
-from dev_tools.actions.cleanup_readme import cleanup_readme
+from package_dev_tools.actions.cleanup_readme import cleanup_readme
 
 
 def entry_point() -> None:
