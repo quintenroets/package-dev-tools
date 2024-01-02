@@ -31,10 +31,10 @@ dev = [
 "Source Code" = "https://github.com/quintenroets/dev-tools"
 
 [project.scripts]
-cleanup-readme = "dev_tools.cli.cleanup_readme:entry_point"
-substitute-template-name = "dev_tools.cli.substitute_template_name:entry_point"
-trigger-template-sync = "dev_tools.cli.cleanup_readme:entry_point"
-check-coverage = "dev_tools.cli.check_coverage:entry_point"
+cleanup-readme = "dev_tools.interfaces.cli.cleanup_readme:entry_point"
+substitute-template-name = "dev_tools.interfaces.cli.substitute_template_name:entry_point"
+trigger-template-sync = "dev_tools.interfaces.cli.cleanup_readme:entry_point"
+check-coverage = "dev_tools.interfaces.cli.check_coverage:entry_point"
 
 [build-system]
 requires = ["setuptools"]

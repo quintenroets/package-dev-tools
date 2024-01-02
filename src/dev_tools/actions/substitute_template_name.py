@@ -7,7 +7,7 @@ import cli
 from plib import Path
 from slugify import slugify
 
-from dev_tools.utils.package import extract_package_slug
+from dev_tools.utils.package import extract_package_name, extract_package_slug
 
 
 @dataclass
@@ -39,6 +39,7 @@ class NameSubstitutor:
     project_name: str
     path: Path
     current_project_name: str = ""
+    custom_template_package_name: str = "python-package-qtemplate"
 
     def __post_init__(self) -> None:
         self.new_project = Project(self.project_name, self.path)
@@ -46,14 +47,18 @@ class NameSubstitutor:
             self.current_project_name = self.extract_current_project_name()
         self.template_project = Project(self.current_project_name, self.path)
         self.substitutions = {
-            "dev-tools": self.template_project.package_slug,
+            self.custom_template_package_name: self.template_project.package_slug,
             self.template_project.name: self.new_project.name,
             self.template_project.package_slug: self.new_project.package_slug,
             self.template_project.package_name: self.new_project.package_name,
         }
 
     def extract_current_project_name(self) -> str:
-        return extract_package_slug(self.path)
+        package_slug = extract_package_slug(self.path)
+        if package_slug == self.custom_template_package_name:
+            package_name = extract_package_name(self.path)
+            package_slug = slugify(package_name, separator="-")
+        return package_slug
 
     def run(self) -> None:
         for path in self.generate_paths_to_substitute():

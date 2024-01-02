@@ -2,14 +2,14 @@ from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 
 import github.Auth
-from github import Github, Repository, UnknownObjectException
-from plib import Path
+from github import Github, UnknownObjectException
+from github.Repository import Repository
 
 
 @dataclass
 class TemplateSyncTriggerer:
     token: str
-    workflow_name: Path = "sync-template.yml"
+    workflow_name: str = "sync-template.yml"
     max_workers: int = 10
 
     def __post_init__(self) -> None:
@@ -17,8 +17,8 @@ class TemplateSyncTriggerer:
         self.client = Github(auth=auth)
 
     def run(self) -> None:
-        repos = self.client.get_user().get_repos(type="owner")
-        repos = list(repos)
+        paginated_repos = self.client.get_user().get_repos(type="owner")
+        repos = list(paginated_repos)
         with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
             executor.map(self.trigger_if_possible, repos)
 

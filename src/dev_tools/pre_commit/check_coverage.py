@@ -1,4 +1,5 @@
 import sys
+import typing
 from collections.abc import Iterator
 
 import cli
@@ -9,11 +10,12 @@ from ..models import Path
 
 
 def check_coverage(verify_all_files_tested: bool = True) -> None:
-    ensure_source_code_used()
+    generate_coverage_results()
     if verify_all_files_tested:
         verify_all_python_files_tested()
 
     coverage_percentage = cli.get("coverage report --format total")
+    coverage_percentage = typing.cast(str, coverage_percentage)
     coverage_percentage_has_changed = update_coverage_shield(coverage_percentage)
     if coverage_percentage_has_changed:
         print(f"Updated test coverage: {coverage_percentage}%")
@@ -67,9 +69,17 @@ def generate_python_files() -> Iterator[str]:
             yield str(relative_path)
 
 
-def ensure_source_code_used():
+def generate_coverage_results() -> None:
+    coverage_results_path = Path(".coverage")
     package_slug = extract_package_slug()
-    is_installed = cli.is_success("pip show", package_slug)
-    if is_installed:
+    try:
+        package_info = cli.get("pip show", package_slug)
+    except cli.CalledProcessError:
+        is_installed_non_editable = False
+    else:
+        is_installed_non_editable = "Editable project location: " not in package_info
+    if is_installed_non_editable:
         cli.run("pip uninstall -y", package_slug)
+        coverage_results_path.unlink(missing_ok=True)
+    if not Path(".coverage").exists():
         cli.run("coverage run")

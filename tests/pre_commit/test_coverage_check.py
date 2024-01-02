@@ -37,10 +37,7 @@ def test_badge_missing_in_readme_indicated(repository_path: Path) -> None:
 
 
 def test_check_coverage_when_changed(repository_path: Path) -> None:
-    update_coverage_shield(-1)
-    with pytest.raises(SystemExit) as exception:
-        check_coverage(verify_all_files_tested=False)
-    assert exception.value.code == 1
+    verify_coverage_when_changed()
 
 
 def test_check_coverage_when_unchanged(repository_path: Path) -> None:
@@ -50,3 +47,15 @@ def test_check_coverage_when_unchanged(repository_path: Path) -> None:
     with pytest.raises(SystemExit) as exception:
         check_coverage(verify_all_files_tested=verify_all_files_tested)
     assert exception.value.code == 0  # status code 0 if coverage not changed
+
+
+def test_check_coverage_when_installed(repository_path: Path) -> None:
+    cli.run("pip install", repository_path)
+    verify_coverage_when_changed()
+
+
+def verify_coverage_when_changed() -> None:
+    update_coverage_shield(-1)
+    with pytest.raises(SystemExit) as exception:
+        check_coverage(verify_all_files_tested=False)
+    assert exception.value.code == 1

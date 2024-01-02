@@ -1,6 +1,6 @@
 - id: check-coverage
   name: check-coverage
-  description: "Calculate percentage of source code covered by tests and use result to update the coverage badge in the README."
+  description: "Calculate percentage of source code covered by tests and use result to update the coverage badge in the README file."
   entry: check-coverage
   language: python
   types: [python]

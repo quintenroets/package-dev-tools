@@ -4,7 +4,7 @@ from unittest import mock
 import cli
 import pytest
 from _pytest.monkeypatch import MonkeyPatch
-from dev_tools.cli import (
+from dev_tools.interfaces.cli import (
     check_coverage,
     cleanup_readme,
     substitute_template_name,

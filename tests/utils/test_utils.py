@@ -9,4 +9,4 @@ def test_extract_package_name(repository_path: Path):
 
 def test_extract_package_slug(repository_path: Path):
     package_slug = extract_package_slug(repository_path)
-    assert package_slug == "python-package-template"
+    assert package_slug == "python-package-qtemplate"
