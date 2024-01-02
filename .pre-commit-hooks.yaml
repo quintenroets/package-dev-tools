@@ -5,11 +5,11 @@
   language: python
   types: [python]
   pass_filenames: false
-  additional_dependencies: ['.']
+  additional_dependencies: ['dev-tools']
 - id: check-version
   name: check-version
   description: "Bump package version if needed."
   entry: check-version
   language: python
-  additional_dependencies: ['.']
+  additional_dependencies: ['dev-tools']
   pass_filenames: false
