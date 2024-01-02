@@ -3,7 +3,7 @@ import string
 import pytest
 from hypothesis import given, strategies
 from hypothesis.strategies import SearchStrategy
-from package_dev_tools.actions.substitute_template_name import Project
+from package_dev_tools.actions.substitute_template_name.project import Project
 
 
 def create_valid_name_strategy() -> SearchStrategy[str]:

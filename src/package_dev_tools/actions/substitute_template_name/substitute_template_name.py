@@ -4,34 +4,12 @@ from collections.abc import Iterator
 from dataclasses import dataclass
 
 import cli
-from plib import Path
 from slugify import slugify
 
 from package_dev_tools.utils.package import extract_package_name, extract_package_slug
 
-
-@dataclass
-class Project:
-    package_slug: str
-    path: Path = Path.cwd()
-
-    def __post_init__(self) -> None:
-        self.check_package_slug()
-        self.package_name = slugify(self.package_slug, separator="_")
-        self.name = slugify(self.package_slug, separator=" ").title()
-
-    def check_package_slug(self) -> None:
-        is_valid = self.package_slug == slugify(self.package_slug) and self.package_slug
-        if not is_valid:
-            self.raise_invalid_naming_exception()
-
-    def raise_invalid_naming_exception(self) -> None:
-        suggested_name = slugify(self.package_slug)
-        message = (
-            f"The project name '{self.package_slug}' is invalid.\n"
-            f"Suggested name: {suggested_name}"
-        )
-        raise ValueError(message)
+from .path import Path
+from .project import Project
 
 
 @dataclass
@@ -79,12 +57,7 @@ class NameSubstitutor:
             is_workflow = path.is_relative_to(workflows_folder)
             is_file = path.is_file()
             if not is_workflow and is_file:
-                try:
-                    path.text
-                    has_text = True
-                except UnicodeDecodeError:
-                    has_text = False
-                if has_text:
+                if path.has_text_content:
                     yield path
                 self.rename(path)
 
