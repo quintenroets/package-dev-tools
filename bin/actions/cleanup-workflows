@@ -1,0 +1,4 @@
+#! /bin/env bash
+
+rm workflows/instantiate-dev-tools.yml
+rm workflows/trigger-template-sync.yml

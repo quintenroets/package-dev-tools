@@ -1,0 +1,20 @@
+# This action renames all references to python-package-template when a new project is created from the template repository.
+# This includes:
+#   - python-package-template
+#   - python_package_template
+#   - Python Package Template
+# The action automatically infers the new project name.
+
+name: Substitute Template Name
+description: Substitute instances of python-package-template in a new project
+
+runs:
+  using: composite
+  steps:
+  - name: Install dependencies
+    run: pip install dev-tools
+    shell: bash
+
+  - name: Run replacement
+    run: substitute-template-name --project-name ${{ github.event.repository.name }}
+    shell: bash

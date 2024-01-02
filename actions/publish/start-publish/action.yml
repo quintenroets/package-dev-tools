@@ -1,0 +1,32 @@
+name: Publish project
+description: Publish project on GitHub and PyPI
+
+runs:
+  using: composite
+  steps:
+    - name: Extract project version
+      id: extract-project-version
+      shell: bash
+      run: |
+        project_version=$(cat pyproject.toml | grep 'version = "' | sed 's/version = "//' | sed 's/"//')
+        echo "PROJECT_VERSION=v$project_version"
+        echo "PROJECT_VERSION=v$project_version" >> "$GITHUB_OUTPUT"
+
+    - name: Publish on Github
+      uses: elgohr/Github-Release-Action@v5
+      env:
+        GH_TOKEN: ${{ github.token }}
+      with:
+        title: ${{ steps.extract-project-version.outputs.PROJECT_VERSION }}
+
+    - name: Extract PyPI name
+      id: extract-pypi-name
+      shell: bash
+      run: |
+        name=$( cat README.md | grep "^pip install " | sed 's/pip install //' | grep -v github || : )
+        echo "PYPI_NAME=$name"
+        echo "PYPI_NAME=$name" >> "$GITHUB_OUTPUT"
+
+    - name: Publish on PyPI
+      uses: quintenroets/dev-tools/actions/publish/start-publish/pypi@main
+      if: ${{ steps.extract-pypi-name.outputs.PYPI_NAME }}

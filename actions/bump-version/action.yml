@@ -1,0 +1,35 @@
+name: 'Bump version'
+description: 'Bump the version specified in pyproject.toml'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Checkout code PR
+      uses: actions/checkout@v3
+      with:
+        path: PR
+        ref: ${{ github.head_ref }}
+
+
+    - name: Checkout code main
+      uses: actions/checkout@v3
+      with:
+        path: main
+        ref: main
+        
+    - name: Install dependencies
+      run: pip install bump2version>=1.0
+      shell: bash
+        
+    - name: Compare pyproject.toml
+      run: |
+        if ! diff pyproject.toml ../main/pyproject.toml | grep -q version; then
+          bump2version --config-file .bumpversion.cfg patch
+          git config --global user.email "quinten.roets@gmail.com"
+          git config --global user.name "Quinten"
+          git add .
+          git commit -m "bump version"
+          git push
+        fi
+      shell: bash
+      working-directory: PR

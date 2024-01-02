@@ -11,4 +11,4 @@ jobs:
       pull-requests: write  # Create PR if update needed
     steps:
       - name: Sync template
-        uses: quintenroets/actions/template-sync@main
+        uses: quintenroets/dev-tools/actions/template-sync@main

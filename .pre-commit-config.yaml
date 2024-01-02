@@ -23,32 +23,28 @@ repos:
     rev: v1.7.1
     hooks:
       - id: mypy
-        additional_dependencies: ["pytest-mypy-plugins"]
-  - repo: local
+        additional_dependencies: [
+            "hypothesis",
+            "pytest-mypy-plugins",
+            "quinten-cli",
+            "simple-classproperty",
+            "types-python-slugify",
+        ]
+  - repo: https://github.com/quintenroets/dev-tools
+    rev: f3f6bf3
     hooks:
-      - id: bump-version
-        name: bump-version
-        entry: scripts/pre-commit/bump_version_on_main.sh
-        language: system
-        pass_filenames: false
-        always_run: true
+      - id: check-version
   - repo: local
     hooks:
       - id: pytest-check
         name: pytest-check
-        entry: coverage run -m pytest
+        entry: coverage run
         language: system
         pass_filenames: false
-        always_run: true
-  - repo: local
+  - repo: https://github.com/quintenroets/dev-tools
+    rev: f3f6bf3
     hooks:
-      - id: coverage-report
-        name: coverage-report
-        entry: scripts/pre-commit/report_coverage.sh
-        language: system
-        pass_filenames: false
-        always_run: true
-        verbose: true
+      - id: check-coverage
 
 
 ci:
