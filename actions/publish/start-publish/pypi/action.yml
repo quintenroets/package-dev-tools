@@ -4,6 +4,10 @@ description: Publish project on PyPI
 runs:
   using: composite
   steps:
+    - name: Install dependencies
+      shell: bash
+      run: pip install build
+
     - name: Build
       run: python -m build
       shell: bash
