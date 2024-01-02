@@ -3,9 +3,9 @@
   description: "Calculate percentage of source code covered by tests and use result to update the coverage badge in the README file."
   entry: check-coverage
   language: python
+  additional_dependencies: ['package-dev-tools']
   types: [python]
   pass_filenames: false
-  additional_dependencies: ['package-dev-tools']
 - id: check-version
   name: check-version
   description: "Bump package version if needed."
