@@ -31,10 +31,9 @@ repos:
             "types-python-slugify",
         ]
   - repo: https://github.com/quintenroets/dev-tools
-    rev: bfee7b0
+    rev: 1676b2f
     hooks:
       - id: check-version
-        always_run: true
   - repo: local
     hooks:
       - id: pytest-check
@@ -43,14 +42,10 @@ repos:
         language: system
         pass_filenames: false
         always_run: true
-  - repo: local
+  - repo: https://github.com/quintenroets/dev-tools
+    rev: 1676b2f
     hooks:
       - id: check-coverage
-        name: check-coverage
-        entry: check-coverage
-        language: system
-        pass_filenames: false
-        always_run: true
 
 
 ci:
