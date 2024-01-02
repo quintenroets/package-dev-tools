@@ -4,7 +4,6 @@
   entry: check-coverage
   language: python
   types: [python]
-  always_run: true
   pass_filenames: false
   additional_dependencies: ['.']
 - id: check-version
@@ -13,5 +12,4 @@
   entry: check-version
   language: python
   additional_dependencies: ['.']
-  always_run: true
   pass_filenames: false
