@@ -59,3 +59,20 @@ def verify_coverage_when_changed() -> None:
     with pytest.raises(SystemExit) as exception:
         check_coverage(verify_all_files_tested=False)
     assert exception.value.code == 1
+
+
+@given(
+    value=strategies.floats(min_value=0, max_value=100),
+    new_value=strategies.floats(min_value=0, max_value=100),
+)
+@settings(suppress_health_check=suppressed_checks)
+def test_readme_content_preserved(
+    value: float, new_value: float, repository_path: Path
+) -> None:
+    update_coverage_shield(value)
+    readme_length = len(Path.readme.text)
+    update_coverage_shield(new_value)
+    new_readme_length = len(Path.readme.text)
+    length_change = readme_length - new_readme_length
+    value_length_change = len(str(round(value))) - len(str(round(new_value)))
+    assert length_change == value_length_change
