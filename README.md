@@ -8,4 +8,4 @@
 ```shell
 pip install package-dev-tools
 ```
-make sure to use Python 3.11+
+make sure to use Python 3.10+

@@ -1,6 +1,6 @@
-import tomllib
 from typing import Any
 
+import toml
 from plib import Path
 
 
@@ -20,4 +20,4 @@ def extract_pyproject_info(path: Path | None) -> dict[str, Any]:
     if path is None:
         path = Path.cwd()
     info_path = path / "pyproject.toml"
-    return tomllib.loads(info_path.text)
+    return toml.loads(info_path.text)

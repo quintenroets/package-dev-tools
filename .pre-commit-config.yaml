@@ -29,6 +29,7 @@ repos:
             "quinten-cli",
             "simple-classproperty",
             "types-python-slugify",
+            "types-toml",
         ]
   - repo: https://github.com/quintenroets/package-dev-tools
     rev: d4b5224
