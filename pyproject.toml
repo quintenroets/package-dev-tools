@@ -1,6 +1,6 @@
 [project]
 name = "dev-tools"
-version = "0.0.1"
+version = "0.1.0"
 description = "Python package"
 authors = [{name = "Quinten Roets", email = "qdr2104@columbia.edu"}]
 license = {text = "MIT"}
