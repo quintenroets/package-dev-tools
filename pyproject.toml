@@ -22,7 +22,6 @@ dev = [
     "bump2version",
     "coverage",
     "hypothesis",
-    "package-dev-tools",
     "pre-commit",
     "pytest",
     "pytest-mypy-plugins",
