@@ -17,7 +17,13 @@ def downloaded_repository_path(tmp_path_factory: TempPathFactory) -> Iterator[Pa
     tmp_path = tmp_path_factory.mktemp("_")
     path = Path(tmp_path)
     repository_url = "https://github.com/quintenroets/python-package-template"
-    cli.get("git clone", repository_url, tmp_path, "--depth", 1)
+    commands = (
+        ("git config --global user.email quinten.roets@gmail.com",),
+        ("git config --global user.name Quinten",),
+        ("git clone", repository_url, tmp_path, "--depth", 1),
+    )
+    for command in commands:
+        cli.get(*command)
     cli.get("coverage run", cwd=tmp_path)
     yield path
     path.rmtree()
