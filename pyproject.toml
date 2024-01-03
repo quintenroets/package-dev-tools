@@ -1,6 +1,6 @@
 [project]
 name = "package-dev-tools"
-version = "0.2.1"
+version = "0.2.2"
 description = "CI/CD tools for Python packages"
 authors = [{name = "Quinten Roets", email = "qdr2104@columbia.edu"}]
 license = {text = "MIT"}
@@ -33,7 +33,7 @@ dev = [
 [project.scripts]
 cleanup-readme = "package_dev_tools.interfaces.cli.cleanup_readme:entry_point"
 substitute-template-name = "package_dev_tools.interfaces.cli.substitute_template_name:entry_point"
-trigger-template-sync = "package_dev_tools.interfaces.cli.cleanup_readme:entry_point"
+trigger-template-sync = "package_dev_tools.interfaces.cli.trigger_template_sync:entry_point"
 check-coverage = "package_dev_tools.interfaces.cli.check_coverage:entry_point"
 
 [build-system]
