@@ -74,8 +74,11 @@ def test_readme_content_preserved(
 ) -> None:
     update_coverage_shield(value)
     readme_length = len(Path.readme.text)
+    readme_num_lines = len(Path.readme.lines)
     update_coverage_shield(new_value)
     new_readme_length = len(Path.readme.text)
+    new_readme_num_lines = len(Path.readme.lines)
     length_change = readme_length - new_readme_length
     value_length_change = len(str(round(value))) - len(str(round(new_value)))
     assert length_change == value_length_change
+    assert readme_num_lines == new_readme_num_lines
