@@ -32,7 +32,7 @@ repos:
             "types-toml",
         ]
   - repo: https://github.com/quintenroets/package-dev-tools
-    rev: 4837d30
+    rev: 0bc12e9
     hooks:
       - id: check-version
   - repo: local
@@ -43,7 +43,7 @@ repos:
         language: system
         pass_filenames: false
   - repo: https://github.com/quintenroets/package-dev-tools
-    rev: 4837d30
+    rev: 0bc12e9
     hooks:
       - id: check-coverage
 
