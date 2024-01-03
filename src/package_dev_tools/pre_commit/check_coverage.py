@@ -32,7 +32,7 @@ def update_coverage_shield(coverage_percentage: float | str) -> bool:
     badge_url_root = "https://img.shields.io/badge"
     badge_url = f"{badge_url_root}/Coverage-{coverage_percentage_int }%25-brightgreen"
     markdown_line = f"{markdown_line_start}{badge_url})"
-    current_markdown_lines = Path.readme.lines
+    current_markdown_lines = Path.readme.text.splitlines()
     no_badge = not any(markdown_line_start in line for line in current_markdown_lines)
     if no_badge:
         raise Exception("README has no coverage badge yet.")
