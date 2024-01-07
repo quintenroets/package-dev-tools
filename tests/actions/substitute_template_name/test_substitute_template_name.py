@@ -1,5 +1,7 @@
 import cli
-from package_dev_tools.actions.substitute_template_name import substitute_template_name
+from package_dev_tools.actions.instantiate_new_project.substitute_template_name import (
+    NameSubstitutor,
+)
 from package_dev_tools.models import Path
 
 
@@ -21,6 +23,6 @@ def test_byte_content_skipping(repository_path: Path) -> None:
 
 def substitute_and_verify() -> None:
     project_name = "package-dev-tools"
-    substitute_template_name(project_name=project_name)
+    NameSubstitutor(project_name=project_name).run()
     info = Path("pyproject.toml").text
     assert project_name in info

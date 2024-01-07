@@ -1,21 +1,31 @@
 from __future__ import annotations
 
 from collections.abc import Iterator
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import cli
 from slugify import slugify
 
 from package_dev_tools.utils.package import extract_package_name, extract_package_slug
 
-from .path import Path
+from ....models import Path
 from .project import Project
 
 
 @dataclass
 class NameSubstitutor:
+    """Rename all references to python-package-template when a new project is created
+    from the template repository.
+
+    This includes:
+    - python-package-template
+    - python_package_template
+    - Python Package Template
+    The new project name is automatically inferred when not specified.
+    """
+
     project_name: str
-    path: Path
+    path: Path = field(default_factory=Path.cwd)
     current_project_name: str = ""
     custom_template_package_name: str = "python-package-qtemplate"
 
@@ -75,13 +85,3 @@ class NameSubstitutor:
         relative_paths = cli.lines(command, cwd=self.path)
         for path in relative_paths:
             yield self.path / path
-
-
-def substitute_template_name(
-    project_name: str = "",
-    path_str: str = "",
-    current_project_name: str = "",
-) -> None:
-    # TODO: use create instance from cli args from package-utils
-    path = Path(path_str) if path_str else Path.cwd()
-    NameSubstitutor(project_name, path, current_project_name=current_project_name).run()
