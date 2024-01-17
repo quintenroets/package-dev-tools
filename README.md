@@ -1,5 +1,6 @@
 # Package Dev Tools
 [![PyPI version](https://badge.fury.io/py/package-dev-tools.svg)](https://badge.fury.io/py/package-dev-tools)
+![Python version](https://img.shields.io/badge/python-3.10+-brighgreen.svg)
 ![Coverage](https://img.shields.io/badge/Coverage-100%25-brightgreen)
 
 ## Usage
@@ -11,4 +12,3 @@ see [python-package-template](https://github.com/quintenroets/python-package-tem
 ```shell
 pip install package-dev-tools
 ```
-make sure to use Python 3.10+
