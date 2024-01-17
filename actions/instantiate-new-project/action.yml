@@ -7,37 +7,12 @@ runs:
   - name: Checkout source
     uses: actions/checkout@v3
 
-  - name: Configure git
-    run: |
-      git config --global user.email "quinten.roets@gmail.com"
-      git config --global user.name "Quinten"
+  - name: Install dependencies
+    run: pip install package-dev-tools
     shell: bash
 
-  - name: Substitute template name
-    uses: quintenroets/package-dev-tools/actions/instantiate-new-project/substitute-names@main
-
-  - name: Commit to git
-    run: |
-      git add .
-      git commit -m "Substitute template name"
-    shell: bash
-
-  - name: Remove template-only workflows
-    uses: quintenroets/package-dev-tools/actions/instantiate-new-project/cleanup-workflows@main
-
-  - name: Commit to git
-    run: |
-      git add .
-      git commit -m "Remove template-only workflows"
-    shell: bash
-
-  - name: Remove template-only documentation
-    uses: quintenroets/package-dev-tools/actions/instantiate-new-project/cleanup-readme@main
-
-  - name: Commit to git
-    run: |
-      git add .
-      git commit -m "Remove template-only documentation"
+  - name: Run instantiation
+    run: instantiate-new-project --project-name ${{ github.event.repository.name }}
     shell: bash
 
   - name: Push changes

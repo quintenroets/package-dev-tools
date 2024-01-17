@@ -10,7 +10,6 @@ runs:
         path: PR
         ref: ${{ github.head_ref }}
 
-
     - name: Checkout code main
       uses: actions/checkout@v3
       with:

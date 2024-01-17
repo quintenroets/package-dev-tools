@@ -1,28 +1,42 @@
 from __future__ import annotations
 
+import urllib.parse
 from collections.abc import Iterator
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import cli
 from slugify import slugify
 
 from package_dev_tools.utils.package import extract_package_name, extract_package_slug
 
-from .path import Path
+from ....models import Path
+from ..git import GitInterface
 from .project import Project
 
 
 @dataclass
 class NameSubstitutor:
-    project_name: str
-    path: Path
-    current_project_name: str = ""
+    """Rename all references to python-package-template when a new project is created
+    from the template repository.
+
+    This includes:
+    - python-package-template
+    - python_package_template
+    - Python Package Template
+    The new project name is automatically inferred when not specified.
+    """
+
+    project_name: str | None = None
+    path: Path = field(default_factory=Path.cwd)
+    current_project_name: str | None = None
     custom_template_package_name: str = "python-package-qtemplate"
 
     def __post_init__(self) -> None:
-        self.new_project = Project(self.project_name, self.path)
-        if not self.current_project_name:
+        if self.project_name is None:
+            self.project_name = self.extract_new_project_name()
+        if self.current_project_name is None:
             self.current_project_name = self.extract_current_project_name()
+        self.new_project = Project(self.project_name, self.path)
         self.template_project = Project(self.current_project_name, self.path)
         self.substitutions = {
             self.custom_template_package_name: self.template_project.package_slug,
@@ -30,6 +44,10 @@ class NameSubstitutor:
             self.template_project.package_slug: self.new_project.package_slug,
             self.template_project.package_name: self.new_project.package_name,
         }
+
+    def extract_new_project_name(self) -> str:
+        git_url = GitInterface(self.path).get("config remote.origin.url")
+        return urllib.parse.urlparse(git_url).path.split("/")[-1]
 
     def extract_current_project_name(self) -> str:
         package_slug = extract_package_slug(self.path)
@@ -75,13 +93,3 @@ class NameSubstitutor:
         relative_paths = cli.lines(command, cwd=self.path)
         for path in relative_paths:
             yield self.path / path
-
-
-def substitute_template_name(
-    project_name: str = "",
-    path_str: str = "",
-    current_project_name: str = "",
-) -> None:
-    # TODO: use create instance from cli args from package-utils
-    path = Path(path_str) if path_str else Path.cwd()
-    NameSubstitutor(project_name, path, current_project_name=current_project_name).run()
