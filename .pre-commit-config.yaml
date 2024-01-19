@@ -37,8 +37,8 @@ repos:
       - id: check-version
   - repo: local
     hooks:
-      - id: pytest-check
-        name: pytest-check
+      - id: check-tests
+        name: Check tests
         entry: coverage run
         language: system
         pass_filenames: false

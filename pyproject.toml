@@ -23,6 +23,7 @@ dev = [
     "bump2version",
     "coverage",
     "hypothesis",
+    "package-dev-utils>=0.1",
     "pre-commit",
     "pytest",
     "pytest-mypy-plugins",
