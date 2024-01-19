@@ -8,7 +8,7 @@ runs:
       shell: bash
       run: docker build -t dev .
 
-    - name: Validate
+    - name: Check pre-commit
       shell: bash
       run: |
         docker run -v ${{ github.workspace }}:/app -w /app dev
