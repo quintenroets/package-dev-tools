@@ -9,7 +9,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
     name: Validate
-    runs-on: {{ $matrix.os }}
+    runs-on: ${{ matrix.os }}
     environment: release
     steps:
     - name: Validate

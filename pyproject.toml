@@ -7,6 +7,7 @@ license = {text = "MIT"}
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
+    "package-utils>=0.4",
     "pygithub>=2.1",
     "python-slugify>=8.0",
     "simple-classproperty>=4.0",
