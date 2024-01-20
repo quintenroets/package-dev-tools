@@ -35,7 +35,7 @@ def test_not_covered_files_detected(repository_path: Path) -> None:
 
 def test_badge_missing_in_readme_indicated(repository_path: Path) -> None:
     (repository_path / Path.readme.name).text = ""
-    with pytest.raises(Exception, match="README has no coverage badge yet."):
+    with pytest.raises(Exception, match="README has no Coverage badge yet."):
         check_coverage(verify_all_files_tested=False)
 
 

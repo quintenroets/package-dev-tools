@@ -1,23 +1,68 @@
-from typing import Any
+from collections.abc import Iterator
+from dataclasses import dataclass, field
+from typing import Any, ClassVar
 
+import requests
 import toml
 from plib import Path
 
 
-def extract_package_name(path: Path | None = None) -> str:
-    info = extract_pyproject_info(path)
-    package_data = info["tool"]["setuptools"]["package-data"]
-    project_name = next(iter(package_data))
-    return project_name
+@dataclass
+class PackageInfo:
+    path: Path = field(default_factory=Path.cwd)
+    os_mapper: ClassVar[dict[str, str]] = {"ubuntu": "linux", "macos": "macOS"}
 
+    @property
+    def package_name(self) -> str:
+        package_data = self.pyproject_info["tool"]["setuptools"]["package-data"]
+        project_name = next(iter(package_data))
+        return project_name
 
-def extract_package_slug(path: Path | None = None) -> str:
-    info = extract_pyproject_info(path)
-    return info["project"]["name"]
+    @property
+    def package_slug(self) -> str:
+        return self.pyproject_info["project"]["name"]
 
+    @property
+    def required_python_version(self) -> str:
+        return self.pyproject_info["project"]["requires-python"].split(">=")[1]
 
-def extract_pyproject_info(path: Path | None) -> dict[str, Any]:
-    if path is None:
-        path = Path.cwd()
-    info_path = path / "pyproject.toml"
-    return toml.loads(info_path.text)
+    @property
+    def required_python_minor(self) -> int:
+        minor_version = self.required_python_version.split(".")[-1]
+        return int(minor_version)
+
+    @property
+    def supported_python_versions(self) -> tuple[str, ...]:
+        latest_python_minor = self.retrieve_latest_python_minor()
+        minors = range(self.required_python_minor, latest_python_minor + 1)
+        return tuple(f"3.{minor_version}" for minor_version in minors)
+
+    def retrieve_latest_python_minor(self) -> int:
+        minor_version = self.required_python_minor
+        while self.release_exists(minor_version + 1):
+            minor_version += 1
+        return minor_version
+
+    @classmethod
+    def release_exists(cls, minor_version: int) -> bool:
+        version = f"3.{minor_version}.0"
+        base_url = "https://www.python.org/ftp/python/"
+        filename = f"Python-{version}.tar.xz"
+        url = f"{base_url}/{version}/{filename}"
+        return requests.head(url).status_code == 200
+
+    @property
+    def pyproject_info(self) -> dict[str, Any]:
+        info_path = self.path / "pyproject.toml"
+        return toml.loads(info_path.text)
+
+    @property
+    def supported_operating_systems(self) -> Iterator[str]:
+        workflow_path = self.path / ".github" / "workflows" / "build.yml"
+        os_keyword = "os: ["
+        os_line = next(line for line in workflow_path.lines if os_keyword in line)
+        os_entries = os_line.split(os_keyword)[1].split("]")[0].split(",")
+        for entry in os_entries:
+            parsed_entry = entry.strip().replace("-latest", "")
+            mapped_entry = self.os_mapper.get(parsed_entry, parsed_entry)
+            yield mapped_entry

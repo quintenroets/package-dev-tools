@@ -5,6 +5,7 @@ import cli
 import pytest
 from package_dev_tools.cli import (
     check_coverage,
+    check_shields,
     cleanup_readme,
     instantiate_new_project,
     substitute_template_name,
@@ -19,6 +20,11 @@ def test_check_coverage(repository_path: Path) -> None:
     exceptions = SystemExit, Exception
     with pytest.raises(exceptions):  # noqa
         check_coverage.entry_point()
+
+
+@no_cli_args
+def test_check_shields(repository_path: Path) -> None:
+    check_shields.entry_point()
 
 
 @cli_args("--project-name", "package-dev-tools")

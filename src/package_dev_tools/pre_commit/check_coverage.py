@@ -4,9 +4,10 @@ from collections.abc import Iterator
 
 import cli
 
-from package_dev_tools.utils.package import extract_package_slug
+from package_dev_tools.utils.package import PackageInfo
 
 from ..models import Path
+from ..utils.badge import Badge, BadgeUpdater
 
 
 def check_coverage(verify_all_files_tested: bool = True) -> None:
@@ -28,22 +29,8 @@ def update_coverage_shield(coverage_percentage: float | str) -> bool:
     if isinstance(coverage_percentage, str):
         coverage_percentage = float(coverage_percentage)
     coverage_percentage_int = round(coverage_percentage)
-    markdown_line_start = "![Coverage]("
-    badge_url_root = "https://img.shields.io/badge"
-    badge_url = f"{badge_url_root}/Coverage-{coverage_percentage_int }%25-brightgreen"
-    markdown_line = f"{markdown_line_start}{badge_url})"
-    current_markdown_lines = Path.readme.text.splitlines()
-    no_badge = not any(markdown_line_start in line for line in current_markdown_lines)
-    if no_badge:
-        raise Exception("README has no coverage badge yet.")
-    converage_percentage_has_changed = markdown_line not in current_markdown_lines
-    lines = (
-        markdown_line if line.startswith(markdown_line_start) else line
-        for line in current_markdown_lines
-    )
-    lines_with_empty_lines = *lines, ""
-    Path.readme.text = "\n".join(lines_with_empty_lines)
-    return converage_percentage_has_changed
+    badge = Badge("Coverage", f"coverage-{coverage_percentage_int}%25")
+    return BadgeUpdater(badge).run()
 
 
 def verify_all_python_files_tested() -> None:
@@ -71,7 +58,7 @@ def generate_python_files() -> Iterator[str]:
 
 def generate_coverage_results() -> None:
     coverage_results_path = Path(".coverage")
-    package_slug = extract_package_slug()
+    package_slug = PackageInfo().package_slug
     try:
         package_info = cli.get("pip show", package_slug)
     except cli.CalledProcessError:

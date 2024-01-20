@@ -26,4 +26,3 @@ class GitInterface:
         git_configuration = {"name": self.git_name, "email": self.git_email}
         for attribute, value in git_configuration.items():
             self.get(f"config --global user.{attribute} {value}")
-        self.get("config --global core.usebuiltinfsmonitor false")

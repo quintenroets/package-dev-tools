@@ -29,6 +29,7 @@ repos:
             "quinten-cli",
             "simple-classproperty",
             "types-python-slugify",
+            "types-requests",
             "types-toml",
         ]
   - repo: https://github.com/quintenroets/package-dev-tools
@@ -38,7 +39,7 @@ repos:
   - repo: local
     hooks:
       - id: check-tests
-        name: Check tests
+        name: check-tests
         entry: coverage run
         language: system
         pass_filenames: false
@@ -46,6 +47,10 @@ repos:
     rev: 2a21cee
     hooks:
       - id: check-coverage
+# - repo: https://github.com/quintenroets/package-dev-tools
+# rev: 2a21cee
+# hooks:
+# - id: check-shields
 
 
 ci:

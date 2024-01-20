@@ -34,6 +34,7 @@ dev = [
 
 [project.scripts]
 check-coverage = "package_dev_tools.cli.check_coverage:entry_point"
+check-shields = "package_dev_tools.cli.check_shields:entry_point"
 cleanup-readme = "package_dev_tools.cli.cleanup_readme:entry_point"
 instantiate-new-project = "package_dev_tools.cli.instantiate_new_project:entry_point"
 substitute-template-name = "package_dev_tools.cli.substitute_template_name:entry_point"

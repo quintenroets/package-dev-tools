@@ -5,7 +5,7 @@ from dataclasses import dataclass, field
 import cli
 from slugify import slugify
 
-from package_dev_tools.utils.package import extract_package_name, extract_package_slug
+from package_dev_tools.utils.package import PackageInfo
 
 from ....models import Path
 from ..git import GitInterface
@@ -48,9 +48,10 @@ class NameSubstitutor:
         return urllib.parse.urlparse(git_url).path.split("/")[-1]
 
     def extract_current_project_name(self) -> str:
-        package_slug = extract_package_slug(self.path)
+        package_info = PackageInfo(self.path)
+        package_slug = package_info.package_slug
         if package_slug == self.custom_template_package_name:
-            package_name = extract_package_name(self.path)
+            package_name = package_info.package_name
             package_slug = slugify(package_name, separator="-")
         return package_slug
 
