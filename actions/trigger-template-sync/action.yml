@@ -2,7 +2,7 @@ name: Trigger template sync
 description: Trigger template sync action in all repositories derived from template
 
 inputs:
-  token: 
+  token:
     description: 'Authentication token'
 
 runs:

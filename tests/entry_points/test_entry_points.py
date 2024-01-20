@@ -3,41 +3,49 @@ from unittest import mock
 
 import cli
 import pytest
-from _pytest.monkeypatch import MonkeyPatch
-from package_dev_tools.interfaces.cli import (
+from package_dev_tools.cli import (
     check_coverage,
+    check_shields,
     cleanup_readme,
+    instantiate_new_project,
     substitute_template_name,
     trigger_template_sync,
 )
 from package_dev_tools.models import Path
-from package_dev_tools.utils.tests import clear_cli_args, set_cli_args
+from package_dev_utils.tests.args import cli_args, no_cli_args
 
 
-def test_check_coverage(repository_path: Path, monkeypatch: MonkeyPatch) -> None:
-    clear_cli_args(monkeypatch)
+@no_cli_args
+def test_check_coverage(repository_path: Path) -> None:
     exceptions = SystemExit, Exception
     with pytest.raises(exceptions):  # noqa
         check_coverage.entry_point()
 
 
-def test_substitute_template_name(
-    repository_path: Path, monkeypatch: MonkeyPatch
-) -> None:
-    set_cli_args(monkeypatch, "--project-name", "package-dev-tools")
-    with pytest.raises(SystemExit):
-        substitute_template_name.entry_point()
+@no_cli_args
+def test_check_shields(repository_path: Path) -> None:
+    check_shields.entry_point()
 
 
-def test_cleanup_readme(repository_path: Path, monkeypatch: MonkeyPatch) -> None:
-    clear_cli_args(monkeypatch)
-    with pytest.raises(SystemExit):
-        cleanup_readme.entry_point()
+@cli_args("--project-name", "package-dev-tools")
+def test_substitute_template_name(repository_path: Path) -> None:
+    substitute_template_name.entry_point()
 
 
-def test_trigger_template_sync(monkeypatch: MonkeyPatch) -> None:
+@no_cli_args
+def test_cleanup_readme(repository_path: Path) -> None:
+    cleanup_readme.entry_point()
+
+
+@no_cli_args
+def test_instantiate_new_project(repository_path: Path) -> None:
+    instantiate_new_project.entry_point()
+
+
+def test_trigger_template_sync() -> None:
     token_name = "TEMPLATE_SYNC_TRIGGER_TOKEN"
     token = os.environ.get(token_name) or cli.get("pw", "automationtoken")
-    set_cli_args(monkeypatch, token)
-    with mock.patch("github.Workflow"), pytest.raises(SystemExit):
+    args = cli_args("--token", token)
+    patched_workflow = mock.patch("github.Workflow")
+    with args, patched_workflow:
         trigger_template_sync.entry_point()

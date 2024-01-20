@@ -11,3 +11,9 @@
   entry: check-version
   language: python
   pass_filenames: false
+- id: check-shields
+  name: check-shields
+  description: "Update shields when needed."
+  entry: check-shields
+  language: python
+  pass_filenames: false

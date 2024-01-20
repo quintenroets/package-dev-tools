@@ -7,6 +7,7 @@ license = {text = "MIT"}
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
+    "package-utils>=0.4",
     "pygithub>=2.1",
     "python-slugify>=8.0",
     "simple-classproperty>=4.0",
@@ -22,6 +23,7 @@ dev = [
     "bump2version",
     "coverage",
     "hypothesis",
+    "package-dev-utils>=0.1",
     "pre-commit",
     "pytest",
     "pytest-mypy-plugins",
@@ -31,10 +33,12 @@ dev = [
 "Source Code" = "https://github.com/quintenroets/package-dev-tools"
 
 [project.scripts]
-cleanup-readme = "package_dev_tools.interfaces.cli.cleanup_readme:entry_point"
-substitute-template-name = "package_dev_tools.interfaces.cli.substitute_template_name:entry_point"
-trigger-template-sync = "package_dev_tools.interfaces.cli.trigger_template_sync:entry_point"
-check-coverage = "package_dev_tools.interfaces.cli.check_coverage:entry_point"
+check-coverage = "package_dev_tools.cli.check_coverage:entry_point"
+check-shields = "package_dev_tools.cli.check_shields:entry_point"
+cleanup-readme = "package_dev_tools.cli.cleanup_readme:entry_point"
+instantiate-new-project = "package_dev_tools.cli.instantiate_new_project:entry_point"
+substitute-template-name = "package_dev_tools.cli.substitute_template_name:entry_point"
+trigger-template-sync = "package_dev_tools.cli.trigger_template_sync:entry_point"
 
 [build-system]
 requires = ["setuptools"]
@@ -74,7 +78,6 @@ known-first-party = ["src"]
 
 [tool.setuptools]
 script-files = [
-    "bin/actions/cleanup-workflows",
     "bin/pre-commit/check-version",
 ]
 

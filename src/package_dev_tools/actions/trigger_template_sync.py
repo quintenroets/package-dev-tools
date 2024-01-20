@@ -30,7 +30,3 @@ class TemplateSyncTriggerer:
 
         if workflow is not None:
             workflow.create_dispatch("main")
-
-
-def trigger_template_sync(token: str) -> None:
-    TemplateSyncTriggerer(token).run()

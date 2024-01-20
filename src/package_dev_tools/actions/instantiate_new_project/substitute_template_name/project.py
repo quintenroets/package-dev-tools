@@ -1,14 +1,14 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from slugify import slugify
 
-from .path import Path
+from ....models import Path
 
 
 @dataclass
 class Project:
     package_slug: str
-    path: Path = Path.cwd()
+    path: Path = field(default_factory=Path.cwd)
 
     def __post_init__(self) -> None:
         self.check_package_slug()

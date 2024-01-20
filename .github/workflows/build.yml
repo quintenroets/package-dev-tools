@@ -5,8 +5,11 @@ on:
 
 jobs:
   validate:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
     name: Validate
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     environment: release
     steps:
     - name: Validate

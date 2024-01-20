@@ -1,4 +1,6 @@
-from package_dev_tools.actions.substitute_template_name.project import Project
+from package_dev_tools.actions.instantiate_new_project.substitute_template_name import (
+    Project,
+)
 
 
 def test_naming_conversions() -> None:
