@@ -15,11 +15,11 @@ runs:
       with:
         path: main
         ref: main
-        
+
     - name: Install dependencies
       run: pip install bump2version>=1.0
       shell: bash
-        
+
     - name: Compare pyproject.toml
       run: |
         if ! diff pyproject.toml ../main/pyproject.toml | grep -q version; then
