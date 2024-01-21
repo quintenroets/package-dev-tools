@@ -7,7 +7,11 @@ license = {text = "MIT"}
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
+    "build",
+    "bump2version",
+    "coverage",
     "package-utils>=0.4",
+    "pre-commit>=3.5",
     "pygithub>=2.1",
     "python-slugify>=8.0",
     "simple-classproperty>=4.0",
@@ -19,14 +23,9 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-    "build",
-    "bump2version",
-    "coverage",
     "hypothesis",
-    "package-dev-utils>=0.1",
-    "pre-commit",
     "pytest",
-    "pytest-mypy-plugins",
+    "package-dev-utils>=0.1",
 ]
 
 [project.urls]
