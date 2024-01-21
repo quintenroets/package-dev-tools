@@ -29,18 +29,17 @@ class BadgeUpdater:
 
     def run(self):
         path = self.cwd / Path.readme.name
-        lines = path.text.splitlines()
+        lines = path.lines
         if not self.contains_badge(lines):
             raise Exception(f"README has no {self.badge.title} badge yet.")
         has_changed = self.badge.line not in lines
         if has_changed:
-            lines = (
-                self.badge.line if line.startswith(self.badge.line_start) else line
-                for line in lines
-            )
-            lines_with_empty_lines = *lines, ""
-            path.text = "\n".join(lines_with_empty_lines)
+            lines = (self.badge.line if self.is_badge(line) else line for line in lines)
+            path.lines = *lines, ""
         return has_changed
 
     def contains_badge(self, lines: list[str]) -> bool:
-        return any(self.badge.line_start in line for line in lines)
+        return any(self.is_badge(line) for line in lines)
+
+    def is_badge(self, line: str):
+        return line.startswith(self.badge.line_start)
