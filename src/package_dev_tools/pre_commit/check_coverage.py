@@ -57,7 +57,6 @@ def generate_python_files() -> Iterator[str]:
 
 
 def generate_coverage_results() -> None:
-    coverage_results_path = Path(".coverage")
     package_slug = PackageInfo().package_slug
     try:
         package_info = cli.get("pip show", package_slug)
@@ -67,6 +66,4 @@ def generate_coverage_results() -> None:
         is_installed_non_editable = "Editable project location: " not in package_info
     if is_installed_non_editable:
         cli.run("pip uninstall -y", package_slug)
-        coverage_results_path.unlink(missing_ok=True)
-    if not Path(".coverage").exists():
-        cli.run("coverage run")
+    cli.run("coverage run")
