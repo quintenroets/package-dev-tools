@@ -2,26 +2,49 @@ name: Build
 
 on:
   push:
-
+env:
+  TEMPLATE_SYNC_TRIGGER_TOKEN: ${{ secrets.TEMPLATE_SYNC_TRIGGER_TOKEN }}
 jobs:
-  validate:
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macos-latest]
-    name: Validate
-    runs-on: ${{ matrix.os }}
-    environment: release
+  check-pre-commit:
+    name: Check pre-commit hooks
+    runs-on: ubuntu-latest
     steps:
-    - name: Validate
-      uses: quintenroets/package-dev-tools/actions/validate@main
-      env:
-        TEMPLATE_SYNC_TRIGGER_TOKEN: ${{ secrets.TEMPLATE_SYNC_TRIGGER_TOKEN }}
+      - name: Check pre-commit hooks
+        uses: quintenroets/package-dev-tools/actions/validate/pre-commit@dev
+
+# verify-package:
+#   name: Verify package
+#   runs-on: ubuntu-latest
+#   steps:
+#     - name: Verify package
+#       uses: quintenroets/package-dev-tools/actions/validate/package@dev
+
+# extract-python-versions:
+#   name: Extract Python versions
+#   runs-on: ${{ ubuntu-latest }}
+#   steps:
+#     - name: Extract Python versions
+#       uses: quintenroets/package-dev-tools/actions/setup/extract-python-versions@dev
+
+# run-tests:
+#   name: Run tests
+#   strategy:
+#     matrix:
+#       os: [ubuntu-latest, macos-latest]
+#       python-version: ${{ fromJSON(needs.extract-python-versions.outputs.python_version) }}
+#   runs-on: ${{ matrix.os }}
+#   steps:
+#     - name: Run tests
+#       uses: quintenroets/package-dev-tools/actions/validate/tests@dev
+#       with:
+#         python-version: ${{ matrix.python-version }}
+
 
   publish:
     name: Publish package
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
-    needs: validate
+    needs: [check-pre-commit,]
     environment: release
     permissions:
       id-token: write  # Needed for PyPi publishing

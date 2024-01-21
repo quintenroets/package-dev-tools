@@ -1,0 +1,14 @@
+name: 'Verify package'
+description: 'verify package import'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup environment
+      uses: quintenroets/package-dev-tools/actions/setup/environment@dev
+
+    - name: Verify package
+      shell: bash
+      run: |
+        package_name=$(extract-package-name)
+        python -c "import $package_name"

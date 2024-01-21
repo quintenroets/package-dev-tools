@@ -1,0 +1,14 @@
+name: 'Run tests'
+description: 'Run tests'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup environment
+      uses: quintenroets/package-dev-tools/actions/setup/environment@main
+      with:
+        environment: dev
+
+    - name: Run tests
+      shell: bash
+      run: pytest

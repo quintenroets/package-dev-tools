@@ -29,6 +29,7 @@ repos:
       - id: mypy
         additional_dependencies: [
             "hypothesis",
+            "package-dev-utils",
             "pytest-mypy-plugins",
             "quinten-cli",
             "simple-classproperty",

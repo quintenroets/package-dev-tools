@@ -27,7 +27,7 @@ class BadgeUpdater:
     badge: Badge
     cwd: Path = field(default_factory=Path.cwd)
 
-    def run(self):
+    def run(self) -> bool:
         path = self.cwd / Path.readme.name
         lines = path.lines
         if not self.contains_badge(lines):
@@ -41,5 +41,5 @@ class BadgeUpdater:
     def contains_badge(self, lines: list[str]) -> bool:
         return any(self.is_badge(line) for line in lines)
 
-    def is_badge(self, line: str):
+    def is_badge(self, line: str) -> bool:
         return line.startswith(self.badge.line_start)

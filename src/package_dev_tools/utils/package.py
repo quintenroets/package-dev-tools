@@ -1,3 +1,4 @@
+import typing
 from collections.abc import Iterator
 from dataclasses import dataclass, field
 from typing import Any, ClassVar
@@ -16,15 +17,17 @@ class PackageInfo:
     def package_name(self) -> str:
         package_data = self.pyproject_info["tool"]["setuptools"]["package-data"]
         project_name = next(iter(package_data))
-        return project_name
+        return typing.cast(str, project_name)
 
     @property
     def package_slug(self) -> str:
-        return self.pyproject_info["project"]["name"]
+        package_slug = self.pyproject_info["project"]["name"]
+        return typing.cast(str, package_slug)
 
     @property
     def required_python_version(self) -> str:
-        return self.pyproject_info["project"]["requires-python"].split(">=")[1]
+        version = self.pyproject_info["project"]["requires-python"].split(">=")[1]
+        return typing.cast(str, version)
 
     @property
     def required_python_minor(self) -> int:
@@ -32,10 +35,10 @@ class PackageInfo:
         return int(minor_version)
 
     @property
-    def supported_python_versions(self) -> tuple[str, ...]:
+    def supported_python_versions(self) -> Iterator[str]:
         latest_python_minor = self.retrieve_latest_python_minor()
         minors = range(self.required_python_minor, latest_python_minor + 1)
-        return tuple(f"3.{minor_version}" for minor_version in minors)
+        return (f"3.{minor_version}" for minor_version in minors)
 
     def retrieve_latest_python_minor(self) -> int:
         minor_version = self.required_python_minor
