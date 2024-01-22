@@ -38,7 +38,7 @@ repos:
             "types-toml",
         ]
   - repo: https://github.com/quintenroets/package-dev-tools
-    rev: c11f0ab
+    rev: f47ff2e
     hooks:
       - id: check-coverage
   - repo: https://github.com/quintenroets/package-dev-tools
