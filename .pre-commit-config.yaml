@@ -29,6 +29,7 @@ repos:
       - id: mypy
         additional_dependencies: [
             "hypothesis",
+            "package-dev-utils",
             "pytest-mypy-plugins",
             "quinten-cli",
             "simple-classproperty",
@@ -37,24 +38,17 @@ repos:
             "types-toml",
         ]
   - repo: https://github.com/quintenroets/package-dev-tools
-    rev: 048f80f
-    hooks:
-      - id: check-version
-  - repo: local
-    hooks:
-      - id: check-tests
-        name: check-tests
-        entry: coverage run
-        language: system
-        pass_filenames: false
-  - repo: https://github.com/quintenroets/package-dev-tools
-    rev: 048f80f
+    rev: c11f0ab
     hooks:
       - id: check-coverage
   - repo: https://github.com/quintenroets/package-dev-tools
-    rev: 048f80f
+    rev: c11f0ab
     hooks:
       - id: check-shields
+  - repo: https://github.com/quintenroets/package-dev-tools
+    rev: c11f0ab
+    hooks:
+      - id: check-version
 
 
 ci:

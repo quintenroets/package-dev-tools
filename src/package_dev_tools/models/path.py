@@ -8,7 +8,7 @@ from simple_classproperty import classproperty
 T = TypeVar("T", bound="Path")
 
 
-class Path(plib.Path):  # type: ignore # TODO: remove after superpathlib fix
+class Path(plib.Path):
     @classproperty
     def readme(cls: type[T]) -> T:  # type: ignore
         return cls("README.md")

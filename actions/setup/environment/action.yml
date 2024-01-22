@@ -1,0 +1,81 @@
+name: 'Setup environment'
+description: 'Setup environment'
+
+inputs:
+  python-version:
+    description: "Python version to use"
+  environment:
+    description: "Dependency environment to install"
+  editable:
+    description: "Install package in editable mode"
+  repository:
+    description: "Repository to setup"
+    default: ${{ github.repository }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        clean: false
+        show-progress: false
+        repository: ${{ inputs.repository }}
+
+    - name: Determine Python version
+      id: determine-python-version
+      shell: bash
+      run: |
+        if [[ -z "${{ inputs.python-version }}" ]]; then
+          python_version=$(cat pyproject.toml | grep 'requires-python = ">=' | sed 's/requires-python = ">=//' | sed 's/"//')
+        else
+          python_version=${{ inputs.python-version }}
+        fi
+        echo "python_version=$python_version" >> "$GITHUB_OUTPUT"
+
+    - name: Set up Python
+      id: setup-python
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ steps.determine-python-version.outputs.python_version }}
+        cache: pip
+
+    - name: Extract path
+      id: extract-paths
+      shell: bash
+      run: |
+        site_packages=$(python -c "import site; print(site.getsitepackages()[-1])")
+        echo "site_packages=$site_packages" >> "$GITHUB_OUTPUT"
+        bin=$(dirname ${{ steps.setup-python.outputs.python-path }})
+        echo "bin=$bin" >> "$GITHUB_OUTPUT"
+
+    - name: Cache dependencies
+      id: cache
+      uses: actions/cache@v4
+      env:
+        KEY:
+          pip
+          ${{ inputs.environment }}
+          ${{ runner.os }}
+          ${{ steps.determine-python-version.outputs.python_version }}
+      with:
+        path: |
+          ${{ steps.extract-paths.outputs.site_packages }}
+          ${{ steps.extract-paths.outputs.bin }}
+        key: ${{ env.KEY }}-${{ hashFiles('pyproject.toml') }}-${{ inputs.repository }}
+        restore-keys: ${{ env.KEY }}
+
+    - name: Install dependencies
+      if: steps.cache.outputs.cache-hit != 'true'
+      shell: bash
+      run: |
+        if [ ${{ inputs.environment }} ]; then
+          requirement=".[${{ inputs.environment }}]"
+        else
+          requirement="."
+        fi
+        if [ ${{ inputs.editable }} ]; then
+          requirement="-e $requirement"
+        fi
+        pip install --upgrade pip
+        pip install $requirement

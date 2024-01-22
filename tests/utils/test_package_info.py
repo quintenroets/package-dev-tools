@@ -2,6 +2,9 @@ import pytest
 from package_dev_tools.models import Path
 from package_dev_tools.utils.package import PackageInfo
 
+required_python_version = "3.10"
+supported_python_versions = ["3.10", "3.11", "3.12"]
+
 
 @pytest.fixture
 def package_info(repository_path: Path) -> PackageInfo:
@@ -17,11 +20,11 @@ def test_package_slug(package_info: PackageInfo) -> None:
 
 
 def test_required_python_version(package_info: PackageInfo) -> None:
-    assert package_info.required_python_version == "3.10"
+    assert package_info.required_python_version == required_python_version
 
 
 def test_supported_python_versions(package_info: PackageInfo) -> None:
-    assert package_info.supported_python_versions == ("3.10", "3.11", "3.12")
+    assert list(package_info.supported_python_versions) == supported_python_versions
 
 
 def test_supported_operating_systems(package_info: PackageInfo) -> None:
