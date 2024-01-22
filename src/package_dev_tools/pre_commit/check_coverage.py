@@ -4,14 +4,12 @@ from collections.abc import Iterator
 
 import cli
 
-from package_dev_tools.utils.package import PackageInfo
-
 from ..models import Path
 from ..utils.badge import Badge, BadgeUpdater
 
 
 def check_coverage(verify_all_files_tested: bool = True) -> None:
-    generate_coverage_results()
+    verify_coverage_results()
     if verify_all_files_tested:
         verify_all_python_files_tested()
 
@@ -56,14 +54,6 @@ def generate_python_files() -> Iterator[str]:
             yield str(relative_path)
 
 
-def generate_coverage_results() -> None:
-    package_slug = PackageInfo().package_slug
-    try:
-        package_info = cli.get("pip show", package_slug)
-    except cli.CalledProcessError:
-        is_installed_non_editable = False
-    else:
-        is_installed_non_editable = "Editable project location: " not in package_info
-    if is_installed_non_editable:
-        cli.run("pip uninstall -y", package_slug)
-    cli.run("coverage run")
+def verify_coverage_results() -> None:
+    if not Path(".coverage").exists():
+        raise Exception("No coverage results found.")

@@ -37,8 +37,15 @@ repos:
             "types-requests",
             "types-toml",
         ]
+  - repo: local
+    hooks:
+      - id: run-tests
+        name: run-tests
+        entry: coverage run
+        language: system
+        pass_filenames: false
   - repo: https://github.com/quintenroets/package-dev-tools
-    rev: d25f1b8
+    rev: 4abc8fc
     hooks:
       - id: check-coverage
   - repo: https://github.com/quintenroets/package-dev-tools

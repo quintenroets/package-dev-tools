@@ -29,7 +29,15 @@ def test_not_covered_files_detected(repository_path: Path) -> None:
     for command in commands:
         cli.get(*command)
 
-    with pytest.raises(Exception):
+    message = "The following files are not covered by tests:"
+    with pytest.raises(Exception, match=message):
+        check_coverage()
+
+
+def test_missing_results_detected(repository_path: Path) -> None:
+    Path(".coverage").unlink()
+    message = "No coverage results found."
+    with pytest.raises(Exception, match=message):
         check_coverage()
 
 
@@ -50,11 +58,6 @@ def test_check_coverage_when_unchanged(repository_path: Path) -> None:
     with pytest.raises(SystemExit) as exception:
         check_coverage(verify_all_files_tested=verify_all_files_tested)
     assert exception.value.code == 0  # status code 0 if coverage not changed
-
-
-def test_check_coverage_when_installed(repository_path: Path) -> None:
-    cli.run("pip install", repository_path)
-    verify_coverage_when_changed()
 
 
 def verify_coverage_when_changed() -> None:
