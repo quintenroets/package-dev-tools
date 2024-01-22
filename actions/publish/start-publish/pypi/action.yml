@@ -5,8 +5,9 @@ runs:
   using: composite
   steps:
     - name: Install dependencies
-      shell: bash
-      run: pip install build
+      uses: quintenroets/package-dev-tools/setup/environment@main
+      with:
+        dependency: build
 
     - name: Build
       run: python -m build

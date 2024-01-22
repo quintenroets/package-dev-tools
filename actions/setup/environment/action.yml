@@ -11,11 +11,14 @@ inputs:
   repository:
     description: "Repository to setup"
     default: ${{ github.repository }}
+  dependency:
+    description: "Dependency to install"
 
 runs:
   using: 'composite'
   steps:
     - name: Checkout code
+      if: ${{ inputs.dependency == '' }}
       uses: actions/checkout@v4
       with:
         clean: false
@@ -28,8 +31,10 @@ runs:
       run: |
         if [[ -z "${{ inputs.python-version }}" ]]; then
           python_version=$(cat pyproject.toml | grep 'requires-python = ">=' | sed 's/requires-python = ">=//' | sed 's/"//')
-        else
+        elif [[ -z "${{ inputs.dependency }}" ]]; then
           python_version=${{ inputs.python-version }}
+        else
+          python_version=""
         fi
         echo "python_version=$python_version" >> "$GITHUB_OUTPUT"
 
@@ -62,14 +67,16 @@ runs:
         path: |
           ${{ steps.extract-paths.outputs.site_packages }}
           ${{ steps.extract-paths.outputs.bin }}
-        key: ${{ env.KEY }}-${{ hashFiles('pyproject.toml') }}-${{ inputs.repository }}
+        key: ${{ env.KEY }}-${{ hashFiles('pyproject.toml') }}-${{ inputs.repository }}-${{ inputs.dependency }}
         restore-keys: ${{ env.KEY }}
 
     - name: Install dependencies
       if: steps.cache.outputs.cache-hit != 'true'
       shell: bash
       run: |
-        if [ ${{ inputs.environment }} ]; then
+        if [ ${{ inputs.dependency }} ]; then
+          requirement=${{inputs.dependency}}
+        elif [ ${{ inputs.environment }} ]; then
           requirement=".[${{ inputs.environment }}]"
         else
           requirement="."
