@@ -45,35 +45,31 @@ runs:
         python-version: ${{ steps.determine-python-version.outputs.python_version }}
         cache: pip
 
-    - name: Extract path
-      id: extract-paths
-      shell: bash
-      run: |
-        site_packages=$(python -c "import site; print(site.getsitepackages()[-1])")
-        echo "site_packages=$site_packages" >> "$GITHUB_OUTPUT"
-        bin=$(dirname ${{ steps.setup-python.outputs.python-path }})
-        echo "bin=$bin" >> "$GITHUB_OUTPUT"
-
-    - name: Cache dependencies
+    - name: Cache virtual environment
       id: cache
       uses: actions/cache@v4
       env:
         KEY:
-          pip
+          venv
           ${{ inputs.environment }}
           ${{ runner.os }}
           ${{ steps.determine-python-version.outputs.python_version }}
       with:
-        path: |
-          ${{ steps.extract-paths.outputs.site_packages }}
-          ${{ steps.extract-paths.outputs.bin }}
+        path: .venv
         key: ${{ env.KEY }}-${{ hashFiles('pyproject.toml') }}-${{ inputs.repository }}-${{ inputs.dependency }}
         restore-keys: ${{ env.KEY }}
+
+    - name: Activate virtual environment
+      shell: bash
+      run: |
+        echo "$(pwd)/.venv/bin" >> $GITHUB_PATH
 
     - name: Install dependencies
       if: steps.cache.outputs.cache-hit != 'true'
       shell: bash
       run: |
+        python -m venv .venv
+
         if [ ${{ inputs.dependency }} ]; then
           requirement=${{inputs.dependency}}
         elif [ ${{ inputs.environment }} ]; then
