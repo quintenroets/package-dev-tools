@@ -45,7 +45,7 @@ repos:
         language: system
         pass_filenames: false
   - repo: https://github.com/quintenroets/package-dev-tools
-    rev: 4abc8fc
+    rev: 085ac60
     hooks:
       - id: check-coverage
   - repo: https://github.com/quintenroets/package-dev-tools
