@@ -1,6 +1,6 @@
 [project]
 name = "package-dev-tools"
-version = "0.2.2"
+version = "0.3.0"
 description = "CI/CD tools for Python packages"
 authors = [{name = "Quinten Roets", email = "qdr2104@columbia.edu"}]
 license = {text = "MIT"}
@@ -80,6 +80,7 @@ known-first-party = ["src"]
 
 [tool.setuptools]
 script-files = [
+    "bin/pre-commit/bump-version",
     "bin/pre-commit/check-version",
 ]
 
