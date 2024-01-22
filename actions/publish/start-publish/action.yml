@@ -8,7 +8,7 @@ runs:
       id: extract-project-version
       shell: bash
       run: |
-        project_version=$(cat pyproject.toml | grep 'version = "' | sed 's/version = "//' | sed 's/"//')
+        project_version=$(cat pyproject.toml | grep '^version = "' | sed 's/version = "//' | sed 's/"//')
         echo "PROJECT_VERSION=v$project_version"
         echo "PROJECT_VERSION=v$project_version" >> "$GITHUB_OUTPUT"
 
