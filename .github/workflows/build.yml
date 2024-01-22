@@ -12,39 +12,43 @@ jobs:
       - name: Check pre-commit hooks
         uses: quintenroets/package-dev-tools/actions/validate/pre-commit@dev
 
-# verify-package:
-#   name: Verify package
-#   runs-on: ubuntu-latest
-#   steps:
-#     - name: Verify package
-#       uses: quintenroets/package-dev-tools/actions/validate/package@dev
+  verify-package:
+    name: Verify package
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify package
+        uses: quintenroets/package-dev-tools/actions/validate/package@dev
 
-# extract-python-versions:
-#   name: Extract Python versions
-#   runs-on: ${{ ubuntu-latest }}
-#   steps:
-#     - name: Extract Python versions
-#       uses: quintenroets/package-dev-tools/actions/setup/extract-python-versions@dev
+  extract-python-versions:
+    name: Extract Python versions
+    runs-on: ubuntu-latest
+    outputs:
+      versions: ${{ steps.extract-python-versions.outputs.versions }}
+    steps:
+      - name: Extract Python versions
+        id: extract-python-versions
+        uses: quintenroets/package-dev-tools/actions/setup/extract-python-versions@dev
 
-# run-tests:
-#   name: Run tests
-#   strategy:
-#     matrix:
-#       os: [ubuntu-latest, macos-latest]
-#       python-version: ${{ fromJSON(needs.extract-python-versions.outputs.python_version) }}
-#   runs-on: ${{ matrix.os }}
-#   steps:
-#     - name: Run tests
-#       uses: quintenroets/package-dev-tools/actions/validate/tests@dev
-#       with:
-#         python-version: ${{ matrix.python-version }}
+  run-tests:
+    name: Run tests
+    needs: extract-python-versions
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        python-version: ${{ fromJSON(needs.extract-python-versions.outputs.versions) }}
+    runs-on: ${{ matrix.os }}
+    steps:
+    - name: Run tests
+      uses: quintenroets/package-dev-tools/actions/validate/tests@dev
+      with:
+        python-version: ${{ matrix.python-version }}
 
 
   publish:
     name: Publish package
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
-    needs: [check-pre-commit,]
+    needs: [check-pre-commit, verify-package, run-tests]
     environment: release
     permissions:
       id-token: write  # Needed for PyPi publishing

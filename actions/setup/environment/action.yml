@@ -8,6 +8,9 @@ inputs:
     description: "Dependency environment to install"
   editable:
     description: "Install package in editable mode"
+  repository:
+    description: "Repository to setup"
+    default: ${{ github.repository }}
 
 runs:
   using: 'composite'
@@ -17,6 +20,7 @@ runs:
       with:
         clean: false
         show-progress: false
+        repository: ${{ inputs.repository }}
 
     - name: Determine Python version
       id: determine-python-version
@@ -58,7 +62,7 @@ runs:
         path: |
           ${{ steps.extract-paths.outputs.site_packages }}
           ${{ steps.extract-paths.outputs.bin }}
-        key: ${{ env.KEY }}-${{ hashFiles('pyproject.toml') }}
+        key: ${{ env.KEY }}-${{ hashFiles('pyproject.toml') }}-${{ inputs.repository }}
         restore-keys: ${{ env.KEY }}
 
     - name: Install dependencies

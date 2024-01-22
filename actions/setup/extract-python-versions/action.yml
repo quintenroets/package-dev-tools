@@ -2,19 +2,19 @@ name: 'Extract Python versions'
 description: 'Extract Python versions supported by the project'
 
 outputs:
-  python_versions:
+  versions:
     description: "The Python versions supported by the project"
-    value: ${{ steps.extract-python-versions.python_versions }}
+    value: ${{ steps.extract-python-versions.outputs.versions }}
 
 runs:
   using: 'composite'
   steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+    - name: Setup environment
+      uses: quintenroets/package-dev-tools/actions/setup/environment@dev
       with:
-        sparse-checkout: pyproject.toml
+        repository: quintenroets/package-dev-tools
 
     - name: Extract Python version
       id: extract-python-versions
       shell: bash
-      run: echo "python_versions=$(extract-supported-python-versions)" >> "$GITHUB_OUTPUT"
+      run: echo "versions=$(extract-supported-python-versions)" >> "$GITHUB_OUTPUT"

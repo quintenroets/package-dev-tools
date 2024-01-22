@@ -1,12 +1,17 @@
 name: 'Run tests'
 description: 'Run tests'
 
+inputs:
+  python-version:
+    description: "Python version to use"
+
 runs:
   using: 'composite'
   steps:
     - name: Setup environment
-      uses: quintenroets/package-dev-tools/actions/setup/environment@main
+      uses: quintenroets/package-dev-tools/actions/setup/environment@dev
       with:
+        python-version: ${{ inputs.python-version }}
         environment: dev
 
     - name: Run tests
