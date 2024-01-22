@@ -10,14 +10,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check pre-commit hooks
-        uses: quintenroets/package-dev-tools/actions/validate/pre-commit@dev
+        uses: quintenroets/package-dev-tools/actions/validate/pre-commit@main
 
   verify-package:
     name: Verify package
     runs-on: ubuntu-latest
     steps:
       - name: Verify package
-        uses: quintenroets/package-dev-tools/actions/validate/package@dev
+        uses: quintenroets/package-dev-tools/actions/validate/package@main
 
   extract-python-versions:
     name: Extract Python versions
@@ -27,7 +27,7 @@ jobs:
     steps:
       - name: Extract Python versions
         id: extract-python-versions
-        uses: quintenroets/package-dev-tools/actions/setup/extract-python-versions@dev
+        uses: quintenroets/package-dev-tools/actions/setup/extract-python-versions@main
 
   run-tests:
     name: Run tests
@@ -39,10 +39,9 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
     - name: Run tests
-      uses: quintenroets/package-dev-tools/actions/validate/tests@dev
+      uses: quintenroets/package-dev-tools/actions/validate/tests@main
       with:
         python-version: ${{ matrix.python-version }}
-
 
   publish:
     name: Publish package

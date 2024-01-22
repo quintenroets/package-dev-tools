@@ -10,7 +10,7 @@ runs:
   using: 'composite'
   steps:
     - name: Setup environment
-      uses: quintenroets/package-dev-tools/actions/setup/environment@dev
+      uses: quintenroets/package-dev-tools/actions/setup/environment@main
       with:
         repository: quintenroets/package-dev-tools
 
