@@ -13,10 +13,10 @@ jobs:
         uses: quintenroets/package-dev-tools/actions/validate/pre-commit@main
 
   verify-package:
-    name: Verify package
+    name: Verify packaging
     runs-on: ubuntu-latest
     steps:
-      - name: Verify package
+      - name: Verify packaging
         uses: quintenroets/package-dev-tools/actions/validate/package@main
 
   extract-python-versions:

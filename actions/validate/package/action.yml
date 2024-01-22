@@ -1,4 +1,4 @@
-name: 'Verify package'
+name: 'Verify packaging'
 description: 'verify package import'
 
 runs:
