@@ -12,7 +12,7 @@ jobs:
       - name: Check pre-commit hooks
         uses: quintenroets/package-dev-tools/actions/validate/pre-commit@main
 
-  verify-package:
+  verify-packaging:
     name: Verify packaging
     runs-on: ubuntu-latest
     steps:
@@ -47,7 +47,7 @@ jobs:
     name: Publish package
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
-    needs: [check-pre-commit, verify-package, run-tests]
+    needs: [check-pre-commit, verify-packaging, run-tests]
     environment: release
     permissions:
       id-token: write  # Needed for PyPi publishing

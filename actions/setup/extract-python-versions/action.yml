@@ -12,7 +12,7 @@ runs:
     - name: Setup environment
       uses: quintenroets/package-dev-tools/actions/setup/environment@main
       with:
-        environment: dev
+        extra-dependency: package-dev-tools
 
     - name: Extract Python version
       id: extract-python-versions

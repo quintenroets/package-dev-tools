@@ -9,10 +9,10 @@ runs:
   using: composite
   steps:
   - name: Install dependencies
-    uses: quintenroets/package-dev-tools/setup/environment@main
+    uses: quintenroets/package-dev-tools/actions/setup/environment@main
     with:
       dependency: package-dev-tools
 
   - name: Run trigger
-    run: trigger-template-sync ${{ inputs.token }}
+    run: trigger-template-sync --token ${{ inputs.token }}
     shell: bash

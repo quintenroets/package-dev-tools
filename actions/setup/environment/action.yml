@@ -13,6 +13,8 @@ inputs:
     default: ${{ github.repository }}
   dependency:
     description: "Dependency to install"
+  extra-dependency:
+    description: "Extra dependency to install"
 
 runs:
   using: 'composite'
@@ -29,12 +31,12 @@ runs:
       id: determine-python-version
       shell: bash
       run: |
-        if [[ -z "${{ inputs.python-version }}" ]]; then
-          python_version=$(cat pyproject.toml | grep 'requires-python = ">=' | sed 's/requires-python = ">=//' | sed 's/"//')
-        elif [[ -z "${{ inputs.dependency }}" ]]; then
+        if [ ${{ inputs.python-version }} ]; then
           python_version=${{ inputs.python-version }}
+        elif [ -n ${{ inputs.dependency }} ]; then
+          python_version="3.11"
         else
-          python_version=""
+          python_version=$(cat pyproject.toml | grep 'requires-python = ">=' | sed 's/requires-python = ">=//' | sed 's/"//')
         fi
         echo "python_version=$python_version" >> "$GITHUB_OUTPUT"
 
@@ -60,16 +62,23 @@ runs:
         restore-keys: ${{ env.KEY }}
 
     - name: Activate virtual environment
+      id: activate-virtual-environment
       shell: bash
       run: |
-        echo "$(pwd)/.venv/bin" >> $GITHUB_PATH
+        if [ ${{ runner.os }} = 'Windows' ]; then
+          bin="Scripts"
+        else
+          bin="bin"
+        fi
+        path="$(pwd)/.venv/$bin"
+        echo "$path" >> $GITHUB_PATH
+        echo "path=$path" >> "$GITHUB_OUTPUT"
 
     - name: Install dependencies
       if: steps.cache.outputs.cache-hit != 'true'
       shell: bash
       run: |
         python -m venv .venv
-
         if [ ${{ inputs.dependency }} ]; then
           requirement=${{inputs.dependency}}
         elif [ ${{ inputs.environment }} ]; then
@@ -80,5 +89,9 @@ runs:
         if [ ${{ inputs.editable }} ]; then
           requirement="-e $requirement"
         fi
-        pip install --upgrade pip
-        pip install $requirement
+        if [ ${{ inputs.extra-dependency }} ]; then
+          requirement="${{ inputs.extra-dependency }} $requirement"
+        fi
+        install="${{ steps.activate-virtual-environment.outputs.path }}/python -m pip install"
+        $install --upgrade pip
+        $install $requirement

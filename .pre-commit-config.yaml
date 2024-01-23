@@ -57,7 +57,6 @@ repos:
     hooks:
       - id: check-version
 
-
 ci:
     autofix_commit_msg: auto fixes from pre-commit.com hooks
     autoupdate_commit_msg: 'pre-commit autoupdate'

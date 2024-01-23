@@ -6,6 +6,8 @@ runs:
   steps:
     - name: Setup environment
       uses: quintenroets/package-dev-tools/actions/setup/environment@main
+      with:
+        extra-dependency: package-dev-tools
 
     - name: Verify package
       shell: bash
