@@ -45,15 +45,15 @@ repos:
         language: system
         pass_filenames: false
   - repo: https://github.com/quintenroets/package-dev-tools
-    rev: 085ac60
+    rev: v0.3.1
     hooks:
       - id: check-coverage
   - repo: https://github.com/quintenroets/package-dev-tools
-    rev: c11f0ab
+    rev: v0.3.1
     hooks:
       - id: check-shields
   - repo: https://github.com/quintenroets/package-dev-tools
-    rev: c11f0ab
+    rev: v0.3.1
     hooks:
       - id: check-version
 
