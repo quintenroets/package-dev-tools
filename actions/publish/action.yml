@@ -29,8 +29,8 @@ runs:
       shell: bash
       run: |
         project_version=$(cat pyproject.toml | grep '^version = "' | sed 's/version = "//' | sed 's/"//')
-        echo "PROJECT_VERSION=v$project_version"
-        echo "PROJECT_VERSION=v$project_version" >> "$GITHUB_OUTPUT"
+        echo "project_version=v$project_version"
+        echo "project_version=v$project_version" >> "$GITHUB_OUTPUT"
 
     - name: Extract latest release version
       id: extract-latest-release-version
@@ -38,9 +38,11 @@ runs:
       run: |
         release_url=https://api.github.com/repos/${{ github.repository }}/releases/latest
         latest_release_version=$(curl $release_url | jq '.name' | sed "s/\"//g")
-        echo "LATEST_RELEASE_VERSION=$latest_release_version"
-        echo "LATEST_RELEASE_VERSION=$latest_release_version" >> "$GITHUB_OUTPUT"
+        echo "latest_release_version=$latest_release_version"
+        echo "latest_release_version=$latest_release_version" >> "$GITHUB_OUTPUT"
 
     - name: Start publish
       uses: quintenroets/package-dev-tools/actions/publish/start-publish@main
-      if: ${{ steps.detect-commit-number.outputs.is_initial_commit == 'false' && steps.extract-project-version.outputs.PROJECT_VERSION != steps.extract-latest-release-version.outputs.LATEST_RELEASE_VERSION }}
+      if: ${{ steps.detect-commit-number.outputs.is_initial_commit == 'false' && steps.extract-project-version.outputs.project_version != steps.extract-latest-release-version.outputs.latest_release_version }}
+      with:
+        project-version: ${{ steps.extract-project-version.outputs.project_version }}

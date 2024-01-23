@@ -1,23 +1,19 @@
 name: Publish project
 description: Publish project on GitHub and PyPI
 
+inputs:
+  project-version:
+    description: "The current version of the project"
+    required: true
+
 runs:
   using: composite
   steps:
-    - name: Extract project version
-      id: extract-project-version
-      shell: bash
-      run: |
-        project_version=$(cat pyproject.toml | grep '^version = "' | sed 's/version = "//' | sed 's/"//')
-        echo "PROJECT_VERSION=v$project_version"
-        echo "PROJECT_VERSION=v$project_version" >> "$GITHUB_OUTPUT"
-
     - name: Publish on Github
-      uses: elgohr/Github-Release-Action@v5
       env:
         GH_TOKEN: ${{ github.token }}
-      with:
-        title: ${{ steps.extract-project-version.outputs.PROJECT_VERSION }}
+      shell: bash
+      run: gh release create ${{ inputs.project-version }} --generate-notes
 
     - name: Extract PyPI name
       id: extract-pypi-name
