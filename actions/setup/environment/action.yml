@@ -45,6 +45,11 @@ runs:
         fi
         echo "python_version=$python_version" >> "$GITHUB_OUTPUT"
 
+    - name: Specify requirements
+      if: ${{ inputs.dependency }}
+      shell: bash
+      run: echo ${{ inputs.dependency }} > requirements.txt
+
     - name: Set up Python
       id: setup-python
       uses: actions/setup-python@v5
