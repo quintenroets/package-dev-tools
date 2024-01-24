@@ -59,7 +59,6 @@ runs:
       with:
         path: .venv
         key: ${{ env.KEY }}-${{ hashFiles('pyproject.toml') }}-${{ inputs.repository }}-${{ inputs.dependency }}
-        restore-keys: ${{ env.KEY }}
 
     - name: Activate virtual environment
       id: activate-virtual-environment
