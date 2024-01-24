@@ -28,14 +28,14 @@ repos:
     hooks:
       - id: mypy
         additional_dependencies: [
-            "hypothesis >=6.91.0, <7",
-            "package-dev-utils >=0.1, <1",
-            "pytest-mypy-plugins >=3.0.0, <4",
-            "quinten-cli >=1.1.12, <2",
-            "simple-classproperty >=4.0.2, <5",
-            "types-python-slugify >=8.0.0, <9",
-            "types-requests >=2.31.0, <3",
-            "types-toml >=0.10.8, <1",
+          "hypothesis >=6.91.0, <7",
+          "package-dev-utils >=0.1, <1",
+          "pytest-mypy-plugins >=3.0.0, <4",
+          "quinten-cli >=1.1.12, <2",
+          "simple-classproperty >=4.0.2, <5",
+          "types-python-slugify >=8.0.0, <9",
+          "types-requests >=2.31.0, <3",
+          "types-toml >=0.10.8, <1",
         ]
   - repo: local
     hooks:
