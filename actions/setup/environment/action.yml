@@ -1,0 +1,115 @@
+name: 'Setup environment'
+description: 'Setup environment in virtual environment'
+
+inputs:
+  python-version:
+    description: "Python version to use"
+  environment:
+    description: "Dependency environment to install"
+  editable:
+    description: "Install package in editable mode"
+  repository:
+    description: "Repository to setup"
+    default: ${{ github.repository }}
+  dependency:
+    description: "Dependency to install"
+  extra-dependency:
+    description: "Extra dependency to install"
+
+outputs:
+  environment-path:
+    description: "The path to the Python binary in the virtual environment"
+    value: ${{ steps.activate-virtual-environment.outputs.path }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Checkout code
+      if: ${{ inputs.dependency == '' }}
+      uses: actions/checkout@v4
+      with:
+        clean: false
+        show-progress: false
+        repository: ${{ inputs.repository }}
+
+    - name: Determine Python version
+      id: determine-python-version
+      shell: bash
+      run: |
+        if [ ${{ inputs.python-version }} ]; then
+          python_version=${{ inputs.python-version }}
+        elif [ -n ${{ inputs.dependency }} ]; then
+          python_version="3.11"
+        else
+          python_version=$(cat pyproject.toml | grep 'requires-python = ">=' | sed 's/requires-python = ">=//' | sed 's/"//')
+        fi
+        echo "python_version=$python_version" >> "$GITHUB_OUTPUT"
+
+    - name: Set up Python
+      id: setup-python
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ steps.determine-python-version.outputs.python_version }}
+        cache: pip
+
+    - name: Calculate dependencies hash
+      # Only hash pyproject.toml if dependency not specified
+      id: calculate-dependencies-hash
+      shell: bash
+      run: |
+        if [ -z ${{ inputs.dependency }} ]; then
+          hash=${{ hashFiles('pyproject.toml') }}
+        else
+          hash=""
+        fi
+        echo "hash=$hash" >> "$GITHUB_OUTPUT"
+
+    - name: Cache virtual environment
+      id: cache
+      uses: actions/cache@v4
+      with:
+        path: .venv
+        key:
+          venv
+          ${{ inputs.environment }}
+          ${{ runner.os }}
+          ${{ steps.determine-python-version.outputs.python_version }}-
+          ${{ steps.calculate-dependencies-hash.outputs.hash }}-
+          ${{ inputs.repository }}-
+          ${{ inputs.dependency }}-
+          ${{ inputs.extra-dependency }}
+
+    - name: Activate virtual environment
+      id: activate-virtual-environment
+      shell: bash
+      run: |
+        if [ ${{ runner.os }} = 'Windows' ]; then
+          bin="Scripts"
+        else
+          bin="bin"
+        fi
+        path="$(pwd)/.venv/$bin"
+        echo "$path" >> $GITHUB_PATH
+        echo "path=$path" >> "$GITHUB_OUTPUT"
+
+    - name: Install dependencies
+      if: steps.cache.outputs.cache-hit != 'true'
+      shell: bash
+      run: |
+        python -m venv .venv
+        if [ ${{ inputs.dependency }} ]; then
+          requirement=${{inputs.dependency}}
+        elif [ ${{ inputs.environment }} ]; then
+          requirement=".[${{ inputs.environment }}]"
+        else
+          requirement="."
+        fi
+        if [ ${{ inputs.editable }} ]; then
+          requirement="-e $requirement"
+        fi
+        if [ ${{ inputs.extra-dependency }} ]; then
+          requirement="${{ inputs.extra-dependency }} $requirement"
+        fi
+        install="${{ steps.activate-virtual-environment.outputs.path }}/python -m pip install"
+        $install --upgrade pip
+        $install $requirement

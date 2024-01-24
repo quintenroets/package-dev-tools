@@ -1,0 +1,16 @@
+name: 'Sync template'
+description: 'Sync changes from the template repository'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: actions-template-sync
+      uses: quintenroets/actions-template-sync@main
+      with:
+        github_token: ${{ github.token }}
+        source_repo_path: quintenroets/python-package-template

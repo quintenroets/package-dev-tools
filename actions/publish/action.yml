@@ -1,0 +1,48 @@
+name: Publish project
+description: Publish project on GitHub and PyPI
+
+runs:
+  using: composite
+  steps:
+    - name: Checkout source
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 2
+        # Need 2 most recent commits instead of only the most recent commit
+        # to check if the current commit is an initial commit.
+
+    - name: Detect commit number
+      id: detect-commit-number
+      shell: bash
+      run: |
+        is_initial_commit=$(($(git rev-list HEAD --count --max-count 2) == 1))
+          if [ $is_initial_commit -eq 0 ]; then
+            is_initial_commit="false"
+          else
+            is_initial_commit="true"
+          fi
+          echo "is_initial_commit=$is_initial_commit"
+          echo "is_initial_commit=$is_initial_commit" >> "$GITHUB_OUTPUT"
+
+    - name: Extract project version
+      id: extract-project-version
+      shell: bash
+      run: |
+        project_version=$(cat pyproject.toml | grep '^version = "' | sed 's/version = "//' | sed 's/"//')
+        echo "project_version=v$project_version"
+        echo "project_version=v$project_version" >> "$GITHUB_OUTPUT"
+
+    - name: Extract latest release version
+      id: extract-latest-release-version
+      shell: bash
+      run: |
+        release_url=https://api.github.com/repos/${{ github.repository }}/releases/latest
+        latest_release_version=$(curl $release_url | jq '.name' | sed "s/\"//g")
+        echo "latest_release_version=$latest_release_version"
+        echo "latest_release_version=$latest_release_version" >> "$GITHUB_OUTPUT"
+
+    - name: Start publish
+      uses: quintenroets/package-dev-tools/actions/publish/start-publish@main
+      if: ${{ steps.detect-commit-number.outputs.is_initial_commit == 'false' && steps.extract-project-version.outputs.project_version != steps.extract-latest-release-version.outputs.latest_release_version }}
+      with:
+        project-version: ${{ steps.extract-project-version.outputs.project_version }}

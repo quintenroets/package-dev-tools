@@ -1,0 +1,86 @@
+[project]
+name = "package-dev-tools"
+version = "0.3.3"
+description = "CI/CD tools for Python packages"
+authors = [{name = "Quinten Roets", email = "qdr2104@columbia.edu"}]
+license = {text = "MIT"}
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "bump2version >=1.0, < 2",
+    "coverage >=7.4, < 8",
+    "package-utils >=0.4, <1",
+    "pre-commit >=3.5, <4",
+    "pygithub >=2.1, <3",
+    "pytest >=7.4, <8",
+    "python-slugify >=8.0, <9",
+    "simple-classproperty >=4.0.2, <5",
+    "superpathlib >=1.3.9, <2",
+    "toml >=0.10, <1",
+    "quinten-cli >=1.1, <2",
+]
+
+[project.optional-dependencies]
+dev = [
+    "hypothesis >=6.91, <7",
+    "package-dev-utils >=0.1, <1",
+]
+
+[project.urls]
+"Source Code" = "https://github.com/quintenroets/package-dev-tools"
+
+[project.scripts]
+check-coverage = "package_dev_tools.cli.check_coverage:entry_point"
+check-shields = "package_dev_tools.cli.check_shields:entry_point"
+cleanup-readme = "package_dev_tools.cli.cleanup_readme:entry_point"
+extract-package-name = "package_dev_tools.cli.extract_package_name:entry_point"
+extract-required-python-version = "package_dev_tools.cli.extract_required_python_version:entry_point"
+extract-supported-python-versions = "package_dev_tools.cli.extract_supported_python_versions:entry_point"
+instantiate-new-project = "package_dev_tools.cli.instantiate_new_project:entry_point"
+substitute-template-name = "package_dev_tools.cli.substitute_template_name:entry_point"
+trigger-template-sync = "package_dev_tools.cli.trigger_template_sync:entry_point"
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[tool.coverage.run]
+command_line = "-m pytest"
+
+[tool.coverage.report]
+precision = 4
+fail_under = 100
+
+[tool.mypy]
+strict = true
+no_implicit_reexport = false
+
+[tool.pytest.ini_options]
+pythonpath = [
+  "src"
+]
+
+[tool.ruff]
+select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "F",  # pyflakes
+    "I",  # isort
+    "UP",  # pyupgrade
+]
+fix = true
+
+[tool.ruff.lint.isort]
+known-first-party = ["src"]
+
+[tool.ruff.per-file-ignores]
+"__init__.py" = ["F401"]
+
+[tool.setuptools]
+script-files = [
+    "bin/pre-commit/bump-version",
+    "bin/pre-commit/check-version",
+]
+
+[tool.setuptools.package-data]
+package_dev_tools = ["py.typed"]

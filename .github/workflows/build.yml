@@ -1,0 +1,57 @@
+name: Build
+
+on:
+  push:
+env:
+  TEMPLATE_SYNC_TRIGGER_TOKEN: ${{ secrets.TEMPLATE_SYNC_TRIGGER_TOKEN }}
+jobs:
+  check-pre-commit:
+    name: Check pre-commit hooks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check pre-commit hooks
+        uses: quintenroets/package-dev-tools/actions/validate/pre-commit@main
+
+  verify-packaging:
+    name: Verify packaging
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify packaging
+        uses: quintenroets/package-dev-tools/actions/validate/package@main
+
+  extract-python-versions:
+    name: Extract Python versions
+    runs-on: ubuntu-latest
+    outputs:
+      versions: ${{ steps.extract-python-versions.outputs.versions }}
+    steps:
+      - name: Extract Python versions
+        id: extract-python-versions
+        uses: quintenroets/package-dev-tools/actions/setup/extract-python-versions@main
+
+  run-tests:
+    name: Run tests
+    needs: extract-python-versions
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python-version: ${{ fromJSON(needs.extract-python-versions.outputs.versions) }}
+    runs-on: ${{ matrix.os }}
+    steps:
+    - name: Run tests
+      uses: quintenroets/package-dev-tools/actions/validate/tests@main
+      with:
+        python-version: ${{ matrix.python-version }}
+
+  publish:
+    name: Publish package
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    needs: [check-pre-commit, verify-packaging, run-tests]
+    environment: release
+    permissions:
+      id-token: write  # Needed for PyPi publishing
+      contents: write  # Needed for GitHub publishing
+    steps:
+      - name: Publish
+        uses: quintenroets/package-dev-tools/actions/publish@main

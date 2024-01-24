@@ -1,0 +1,28 @@
+name: Publish project
+description: Publish project on GitHub and PyPI
+
+inputs:
+  project-version:
+    description: "The current version of the project"
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Publish on Github
+      env:
+        GH_TOKEN: ${{ github.token }}
+      shell: bash
+      run: gh release create ${{ inputs.project-version }} --generate-notes
+
+    - name: Extract PyPI name
+      id: extract-pypi-name
+      shell: bash
+      run: |
+        name=$( cat README.md | grep "^pip install " | sed 's/pip install //' | grep -v github || : )
+        echo "PYPI_NAME=$name"
+        echo "PYPI_NAME=$name" >> "$GITHUB_OUTPUT"
+
+    - name: Publish on PyPI
+      uses: quintenroets/package-dev-tools/actions/publish/start-publish/pypi@main
+      if: ${{ steps.extract-pypi-name.outputs.PYPI_NAME }}

@@ -1,0 +1,25 @@
+name: 'Bump version'
+description: 'Bump the version specified in pyproject.toml'
+
+inputs:
+  part:
+    description: "Part to bump"
+    default: "patch"
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup environment
+      uses: quintenroets/package-dev-tools/actions/setup/environment@main
+      with:
+        environment: dev
+
+    - name: Bump version
+      shell: bash
+      run: |
+        bump2version --config-file .bumpversion.cfg ${{ inputs.part }}
+        git config --global user.email "quinten.roets@gmail.com"
+        git config --global user.name "Quinten Roets"
+        git add .
+        git commit -m "bump version"
+        git push

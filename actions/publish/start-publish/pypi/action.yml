@@ -1,0 +1,19 @@
+name: Publish project
+description: Publish project on PyPI
+
+runs:
+  using: composite
+  steps:
+    - name: Install dependencies
+      uses: quintenroets/package-dev-tools/actions/setup/environment@main
+      with:
+        dependency: build
+
+    - name: Build
+      run: python -m build
+      shell: bash
+
+    - name: Upload distribution to PyPI
+      uses: pypa/gh-action-pypi-publish@release/v1
+      with:
+        skip-existing: true
