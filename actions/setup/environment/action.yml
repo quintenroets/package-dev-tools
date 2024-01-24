@@ -1,5 +1,5 @@
 name: 'Setup environment'
-description: 'Setup environment'
+description: 'Setup environment in virtual environment'
 
 inputs:
   python-version:
@@ -15,6 +15,11 @@ inputs:
     description: "Dependency to install"
   extra-dependency:
     description: "Extra dependency to install"
+
+outputs:
+  python-path:
+    description: "The path to the Python binary in the virtual environment"
+    value: ${{ steps.activate-virtual-environment.outputs.path }}/python
 
 runs:
   using: 'composite'

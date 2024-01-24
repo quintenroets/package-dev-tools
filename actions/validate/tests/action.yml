@@ -9,6 +9,7 @@ runs:
   using: 'composite'
   steps:
     - name: Setup environment
+      id: setup-environment
       uses: quintenroets/package-dev-tools/actions/setup/environment@main
       with:
         python-version: ${{ inputs.python-version }}
@@ -16,4 +17,4 @@ runs:
 
     - name: Run tests
       shell: bash
-      run: pytest
+      run: ${{ steps.setup-environment.outputs.python-path }} -m pytest
