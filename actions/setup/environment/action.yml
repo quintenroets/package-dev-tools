@@ -47,6 +47,18 @@ runs:
         python-version: ${{ steps.determine-python-version.outputs.python_version }}
         cache: pip
 
+    - name: Calculate dependencies hash
+      # Only hash pyproject.toml if dependency not specified
+      id: calculate-dependencies-hash
+      shell: bash
+      run: |
+        if [ -z ${{ inputs.dependency }} ]; then
+          hash=${{ hashFiles('pyproject.toml') }}
+        else
+          hash=""
+        fi
+        echo "hash=$hash" >> "$GITHUB_OUTPUT"
+
     - name: Cache virtual environment
       id: cache
       uses: actions/cache@v4
@@ -57,8 +69,7 @@ runs:
           ${{ inputs.environment }}
           ${{ runner.os }}
           ${{ steps.determine-python-version.outputs.python_version }}-
-          # Only hash pyproject.toml if dependency not specified
-          ${{ (inputs.dependency == '') && hashFiles('pyproject.toml') }}-
+          ${{ steps.calculate-dependencies-hash.outputs.hash }}-
           ${{ inputs.repository }}-
           ${{ inputs.dependency }}-
           ${{ inputs.extra-dependency }}
