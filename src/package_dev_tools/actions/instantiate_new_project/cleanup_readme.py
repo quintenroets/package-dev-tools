@@ -11,7 +11,7 @@ class ReadmeCleaner:
 
     path: Path = field(default_factory=Path.cwd)
     delimiter: str = "#" * 6 + " " + "=" * 60
-    keyword: str = "## Usage"
+    keyword: str = "## Usage\n"
 
     def run(self) -> None:
         path = self.path / Path.readme
