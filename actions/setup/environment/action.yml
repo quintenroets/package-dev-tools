@@ -50,15 +50,18 @@ runs:
     - name: Cache virtual environment
       id: cache
       uses: actions/cache@v4
-      env:
-        KEY:
+      with:
+        path: .venv
+        key:
           venv
           ${{ inputs.environment }}
           ${{ runner.os }}
-          ${{ steps.determine-python-version.outputs.python_version }}
-      with:
-        path: .venv
-        key: ${{ env.KEY }}-${{ hashFiles('pyproject.toml') }}-${{ inputs.repository }}-${{ inputs.dependency }}
+          ${{ steps.determine-python-version.outputs.python_version }}-
+          # Only hash pyproject.toml if dependency not specified
+          ${{ inputs.dependency == '' && hashFiles('pyproject.toml') }}-
+          ${{ inputs.repository }}-
+          ${{ inputs.dependency }}-
+          ${{ inputs.extra-dependency }}
 
     - name: Activate virtual environment
       id: activate-virtual-environment
