@@ -58,7 +58,7 @@ runs:
           ${{ runner.os }}
           ${{ steps.determine-python-version.outputs.python_version }}-
           # Only hash pyproject.toml if dependency not specified
-          ${{ inputs.dependency == '' && hashFiles('pyproject.toml') }}-
+          ${{ (inputs.dependency == '') && hashFiles('pyproject.toml') }}-
           ${{ inputs.repository }}-
           ${{ inputs.dependency }}-
           ${{ inputs.extra-dependency }}
