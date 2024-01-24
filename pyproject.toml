@@ -15,7 +15,7 @@ dependencies = [
     "pytest >= 7.4, <8",
     "python-slugify >= 8.0, <9",
     "simple-classproperty >= 4.0, <5",
-    "superpathlib >= 1.3.5, <2",
+    "superpathlib >= 1.3.9, <2",
     "toml >= 0.10, <1",
     "quinten-cli >= 1.1, <2",
 ]

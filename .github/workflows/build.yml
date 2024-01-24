@@ -39,7 +39,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
     - name: Run tests
-      uses: quintenroets/package-dev-tools/actions/validate/tests@main
+      uses: quintenroets/package-dev-tools/actions/validate/tests@add-windows-support
       with:
         python-version: ${{ matrix.python-version }}
 

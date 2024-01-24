@@ -17,9 +17,9 @@ inputs:
     description: "Extra dependency to install"
 
 outputs:
-  python-path:
+  environment-path:
     description: "The path to the Python binary in the virtual environment"
-    value: ${{ steps.activate-virtual-environment.outputs.path }}/python
+    value: ${{ steps.activate-virtual-environment.outputs.path }}
 
 runs:
   using: 'composite'

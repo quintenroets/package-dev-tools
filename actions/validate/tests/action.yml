@@ -10,11 +10,13 @@ runs:
   steps:
     - name: Setup environment
       id: setup-environment
-      uses: quintenroets/package-dev-tools/actions/setup/environment@main
+      uses: quintenroets/package-dev-tools/actions/setup/environment@add-windows-support
       with:
         python-version: ${{ inputs.python-version }}
         environment: dev
 
     - name: Run tests
       shell: bash
-      run: ${{ steps.setup-environment.outputs.python-path }} -m pytest
+      run: |
+        export PATH=${{ steps.setup-environment.outputs.environment-path }}:$PATH
+        pytest
