@@ -10,7 +10,7 @@ runs:
   steps:
     - name: Setup environment
       id: setup-environment
-      uses: quintenroets/package-dev-tools/actions/setup/environment@add-windows-support
+      uses: quintenroets/package-dev-tools/actions/setup/environment@main
       with:
         python-version: ${{ inputs.python-version }}
         environment: dev
