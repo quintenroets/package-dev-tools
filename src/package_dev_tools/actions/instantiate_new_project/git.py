@@ -15,6 +15,7 @@ class GitInterface:
 
     def commit(self) -> None:
         self.get("add .")
+        self.configure()
         self.get("commit --no-verify -m", self.commit_message)
 
     def get(self, *args: str | Path | int) -> str:
