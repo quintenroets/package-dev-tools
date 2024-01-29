@@ -1,6 +1,6 @@
 [project]
 name = "package-dev-tools"
-version = "0.3.4"
+version = "0.3.5"
 description = "CI/CD tools for Python packages"
 authors = [{name = "Quinten Roets", email = "qdr2104@columbia.edu"}]
 license = {text = "MIT"}
@@ -24,6 +24,7 @@ dependencies = [
 dev = [
     "hypothesis >=6.91.0, <7",
     "package-dev-utils >=0.1.6, <1",
+    "python-package-qtemplate[dev] @ git+https://github.com/quintenroets/python-package-template.git@main",
 ]
 
 [project.urls]
@@ -54,7 +55,7 @@ fail_under = 100
 [tool.mypy]
 strict = true
 no_implicit_reexport = false
-explicit_packages_bases = true
+explicit_package_bases = true
 
 [tool.pytest.ini_options]
 pythonpath = [
