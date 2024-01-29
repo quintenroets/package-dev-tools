@@ -21,9 +21,22 @@ def downloaded_repository_path(tmp_path_factory: TempPathFactory) -> Iterator[Pa
     git_interface = GitInterface()
     git_interface.configure()
     git_interface.get("clone", repository_url, path, "--depth", 1)
-    cli.get("coverage run", cwd=tmp_path)
+    generate_coverage_results(path)
     yield path
     path.rmtree()
+
+
+def generate_coverage_results(path: Path) -> None:
+    venv_name = "test_repository_venv"
+    cli.get("python -m venv", venv_name, cwd=path)
+    running_on_windows = os.name == "nt"
+    bin_name = "Scripts" if running_on_windows else "bin"
+    bin_path = path / venv_name / bin_name
+    pip = "pip.exe" if running_on_windows else "pip"
+    coverage = "coverage.exe" if running_on_windows else "coverage"
+
+    cli.get(bin_path / pip, "install", "-e", ".[dev]", cwd=path)
+    cli.get(bin_path / coverage, "run", cwd=path)
 
 
 @pytest.fixture

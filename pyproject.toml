@@ -24,7 +24,6 @@ dependencies = [
 dev = [
     "hypothesis >=6.91.0, <7",
     "package-dev-utils >=0.1.6, <1",
-    "python-package-qtemplate[dev] @ git+https://github.com/quintenroets/python-package-template.git@main",
 ]
 
 [project.urls]
