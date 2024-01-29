@@ -44,9 +44,7 @@ runs:
     - name: Start publish
       uses: quintenroets/package-dev-tools/actions/publish/start-publish@main
       if: |
-        ${{ \
-          steps.detect-commit-number.outputs.is_initial_commit == 'false' && \
-          steps.extract-project-version.outputs.project_version != steps.extract-latest-release-version.outputs.latest_release_version \
-        }}
+        steps.detect-commit-number.outputs.is_initial_commit == 'false' &&
+        steps.extract-project-version.outputs.project_version != steps.extract-latest-release-version.outputs.latest_release_version
       with:
         project-version: ${{ steps.extract-project-version.outputs.project_version }}
