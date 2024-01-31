@@ -23,21 +23,13 @@ repos:
     rev: v4.5.0
     hooks:
       - id: trailing-whitespace
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.8.0
+  - repo: local
     hooks:
       - id: mypy
-        additional_dependencies: [
-          "package-dev-tools >= 0.3.4, <1",
-          "hypothesis >=6.91.0, <7",
-          "package-dev-utils >=0.1.6, <1",
-          "pytest-mypy-plugins >=3.0.0, <4",
-          "quinten-cli >=1.1.12, <2",
-          "simple-classproperty >=4.0.2, <5",
-          "types-python-slugify >=8.0.0.3, <9",
-          "types-requests >=2.31.0, <3",
-          "types-toml >=0.10.8, <1",
-        ]
+        name: mypy
+        entry: mypy
+        language: system
+        files: '\.py'
   - repo: local
     hooks:
       - id: run-tests
