@@ -1,0 +1,36 @@
+name: Publish project
+description: Publish npm project on GitHub
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/checkout@v4
+      with:
+        clean: false
+        show-progress: false
+
+    - name: Setup Node
+      uses: actions/setup-node@v4
+      with:
+        cache: npm
+
+    - name: Install dependencies
+      shell: bash
+      run: npm install
+
+    - name: Build
+      shell: bash
+      run: npm run build
+
+    - name: Zip files
+      shell: bash
+      run: zip -r dist.zip dist/
+
+    - name: Publish on Github
+      shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        version=$(jq -r ".version" package.json)
+        gh release delete v$version || :
+        gh release create v$version --generate-notes dist.zip
