@@ -1,4 +1,4 @@
-import cli
+import cli.exceptions
 import pytest
 from hypothesis import HealthCheck, given, settings, strategies
 from package_dev_tools.models import Path
@@ -19,19 +19,17 @@ def test_update_coverage_badge(repository_path: Path, value: float) -> None:
     assert value_str in readme_path.text
 
 
-def test_not_covered_files_detected(repository_path: Path) -> None:
-    path = repository_path / "not_covered_file.py"
-    path.touch()
-    commands = (
-        ("git add", path),
-        ("git commit --no-verify -m", "add not covered file"),
-    )
-    for command in commands:
-        cli.get(*command)
-
+def test_not_covered_files_detected(repository_path_with_uncovered_files: Path) -> None:
     message = "The following files are not covered by tests:"
     with pytest.raises(Exception, match=message):
         check_coverage()
+
+
+def test_insufficient_coverage_fraction_detected(
+    repository_path_with_uncovered_files: Path,
+) -> None:
+    with pytest.raises(cli.exceptions.CalledProcessError):
+        check_coverage(verify_all_files_tested=False)
 
 
 def test_missing_results_detected(repository_path: Path) -> None:

@@ -13,7 +13,11 @@ def check_coverage(verify_all_files_tested: bool = True) -> None:
     if verify_all_files_tested:
         verify_all_python_files_tested()
 
-    coverage_percentage = cli.get("coverage report --format total")
+    try:
+        coverage_percentage = cli.get("coverage report --format total")
+    except cli.exceptions.CalledProcessError as exception:
+        cli.get("coverage html", check=False)
+        raise exception
     coverage_percentage = typing.cast(str, coverage_percentage)
     coverage_percentage_has_changed = update_coverage_shield(coverage_percentage)
     if coverage_percentage_has_changed:
@@ -33,7 +37,7 @@ def update_coverage_shield(coverage_percentage: float | str) -> bool:
 
 def verify_all_python_files_tested() -> None:
     python_files = set(generate_python_files())
-    coverage_lines = cli.lines("coverage report")
+    coverage_lines = cli.lines("coverage report", check=False)
     covered_files = set(line.split()[0] for line in coverage_lines[2:-2])
     not_covered_files = python_files - covered_files
     if not_covered_files:

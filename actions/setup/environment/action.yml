@@ -11,6 +11,9 @@ inputs:
   repository:
     description: "Repository to setup"
     default: ${{ github.repository }}
+  venv-path:
+    description: "Path to save venv"
+    default: .venv
   dependency:
     description: "Dependency to install"
   extra-dependency:
@@ -73,7 +76,7 @@ runs:
       id: cache
       uses: actions/cache@v4
       with:
-        path: .venv
+        path: ${{ inputs.venv-path }}
         key:
           venv
           ${{ inputs.environment }}
@@ -93,7 +96,7 @@ runs:
         else
           bin="bin"
         fi
-        path="$(pwd)/.venv/$bin"
+        path="$(pwd)/${{ inputs.venv-path }}/$bin"
         echo "$path" >> $GITHUB_PATH
         echo "path=$path" >> "$GITHUB_OUTPUT"
 
@@ -101,7 +104,7 @@ runs:
       if: steps.cache.outputs.cache-hit != 'true'
       shell: bash
       run: |
-        python -m venv .venv
+        python -m venv ${{ inputs.venv-path }}
         if [ ${{ inputs.dependency }} ]; then
           requirement=${{inputs.dependency}}
         elif [ ${{ inputs.environment }} ]; then
