@@ -19,6 +19,7 @@ runs:
           ${{ runner.os }}
           ${{ steps.determine-python-version.outputs.python_version }}
       with:
+        save-always: true
         path: |
           ~/.cache/pre-commit
           .mypy_cache
