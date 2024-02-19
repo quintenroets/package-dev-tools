@@ -18,6 +18,9 @@ inputs:
     description: "Dependency to install"
   extra-dependency:
     description: "Extra dependency to install"
+  system-dependencies-file:
+    description: "File that specifies system dependencies"
+    default: "system-dependencies.txt"
 
 outputs:
   environment-path:
@@ -34,6 +37,26 @@ runs:
         clean: false
         show-progress: false
         repository: ${{ inputs.repository }}
+
+    - name: Check system dependencies
+      id: check-system-dependencies
+      uses: andstor/file-existence-action@v3
+      with:
+        files: ${{ inputs.system-dependencies-file }}
+
+    - name: Extract system dependencies
+      id: extract-system-dependencies
+      if: steps.check-system-dependencies.outputs.files_exists == 'true'
+      shell: bash
+      run: |
+        dependencies=$(cat ${{ inputs.system-dependencies-file }})
+        echo "dependencies=$dependencies" >> "$GITHUB_OUTPUT"
+
+    - name: Install system dependencies
+      if: steps.check-system-dependencies.outputs.files_exists == 'true'
+      uses: awalsh128/cache-apt-pkgs-action@latest
+      with:
+        packages: ${{ steps.extract-system-dependencies.outputs.dependencies }}
 
     - name: Determine Python version
       id: determine-python-version
