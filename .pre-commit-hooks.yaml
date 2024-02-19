@@ -1,19 +1,26 @@
 - id: check-coverage
-  name: check-coverage
+  name: check coverage
   description: "Calculate percentage of source code covered by tests and use result to update the coverage badge in the README file."
   entry: check-coverage
   language: python
   types: [python]
   pass_filenames: false
 - id: check-version
-  name: check-version
+  name: check package version
   description: "Bump package version if needed."
   entry: check-version
   language: python
   pass_filenames: false
 - id: check-shields
-  name: check-shields
+  name: check shields
   description: "Update shields when needed."
   entry: check-shields
   language: python
   pass_filenames: false
+- id: infer-missing-annotations
+  name: infer missing annotations
+  description: "Infer missing type annotations where possible."
+  entry: python
+  args: [-m, libcst.tool, codemod, autotyping.AutotypeCommand, --aggressive]
+  language: python
+  types: [python]
