@@ -24,3 +24,6 @@
   args: [-m, libcst.tool, codemod, autotyping.AutotypeCommand, --aggressive]
   language: python
   types: [python]
+  additional_dependencies: [
+    "black >=23.11.0, <24",
+  ]
