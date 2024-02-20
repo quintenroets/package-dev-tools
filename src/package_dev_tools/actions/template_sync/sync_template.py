@@ -48,7 +48,8 @@ class TemplateSyncer(git.Client):  # pragma: nocover
         except github.GithubException:
             update_branch_exists = False
         url = self.repository_client.clone_url
-        url = url.replace("https://", f"https://{self.token}@")
+        prefix = "https://"
+        url = url.replace(prefix, f"{prefix}quintenroets:{self.token}@")
         clone = (
             ("clone", "-b", self.update_branch) if update_branch_exists else ("clone",)
         )
@@ -79,8 +80,16 @@ class TemplateSyncer(git.Client):  # pragma: nocover
         path = self.downloaded_template_repository_folder
         cli.run("git", "clone", url, path)
 
-    def run_git(self, *args: str | Path, input_: str | None = None) -> None:
-        cli.run("git", *args, input=input_, cwd=self.downloaded_repository_folder)
+    def run_git(
+        self, *args: str | Path, input_: str | None = None, check: bool = True
+    ) -> None:
+        cli.run(
+            "git",
+            *args,
+            input=input_,
+            cwd=self.downloaded_repository_folder,
+            check=check,
+        )
 
     def instantiate_template(self) -> None:
         project_name = self.repository.split("/")[-1]
@@ -110,8 +119,8 @@ class TemplateSyncer(git.Client):  # pragma: nocover
 
         for changed_file in self.latest_commit.files:
             if changed_file.previous_filename:
-                self.run_git("add", changed_file.previous_filename)
-            self.run_git("add", changed_file.filename)
+                self.run_git("add", changed_file.previous_filename, check=False)
+            self.run_git("add", changed_file.filename, check=False)
 
         if self.ignore_patterns_path.exists():
             self.run_git("reset", f"--pathspec-from-file={self.ignore_patterns_path}")
