@@ -122,7 +122,7 @@ class TemplateSyncer(git.Client):  # pragma: nocover
         return is_updated
 
     def push_updates(self) -> None:
-        self.run_git("push")
+        self.run_git("push", "--set-upstream", "origin", self.update_branch)
         try:
             self.repository_client.create_pull(
                 self.default_branch,
