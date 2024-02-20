@@ -88,6 +88,7 @@ class TemplateSyncer(git.Client):  # pragma: nocover
         instantiator.run()
 
     def pull_template(self) -> None:
+        self.run_git("config", "pull.rebase", "false")
         command = (
             "pull",
             self.downloaded_template_repository_folder,
