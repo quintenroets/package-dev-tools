@@ -14,7 +14,7 @@ class GitInterface:
     commit_message: str = "Instantiate new project"
 
     def commit(self) -> None:
-        self.get("add .")
+        self.get("add -A")
         self.configure()
         self.get("commit --no-verify -m", self.commit_message)
 

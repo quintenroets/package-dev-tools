@@ -10,4 +10,4 @@ jobs:
       contents: write  # Repository will be modified
     steps:
     - name: Bump version
-      uses: quintenroets/package-dev-tools/actions/bump-version@main
+      uses: quintenroets/actions/bump-version@main

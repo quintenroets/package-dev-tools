@@ -1,6 +1,6 @@
 [project]
 name = "package-dev-tools"
-version = "0.4.0"
+version = "0.5.0"
 description = "CI/CD tools for Python packages"
 authors = [{name = "Quinten Roets", email = "qdr2104@columbia.edu"}]
 license = {text = "MIT"}
@@ -44,6 +44,7 @@ extract-required-python-version = "package_dev_tools.cli.extract_required_python
 extract-supported-python-versions = "package_dev_tools.cli.extract_supported_python_versions:entry_point"
 instantiate-new-project = "package_dev_tools.cli.instantiate_new_project:entry_point"
 substitute-template-name = "package_dev_tools.cli.substitute_template_name:entry_point"
+sync-template = "package_dev_tools.cli.sync_template:entry_point"
 trigger-template-sync = "package_dev_tools.cli.trigger_template_sync:entry_point"
 
 [build-system]
