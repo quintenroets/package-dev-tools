@@ -14,6 +14,7 @@ from package_dev_tools.cli import (
     extract_supported_python_versions,
     instantiate_new_project,
     substitute_template_name,
+    sync_template,
     trigger_template_sync,
 )
 from package_dev_tools.models import Path
@@ -43,11 +44,25 @@ def test_check_coverage(repository_path: Path) -> None:
         check_coverage.entry_point()
 
 
-def test_trigger_template_sync() -> None:
+@pytest.fixture(scope="session")
+def github_token() -> str:
     token_name = "TEMPLATE_SYNC_TRIGGER_TOKEN"
     token = os.environ.get(token_name) or cli.get("pw", "automationtoken")
-    token = typing.cast(str, token)
-    args = cli_args("--token", token)
+    return typing.cast(str, token)
+
+
+def test_trigger_template_sync(github_token: str) -> None:
+    args = cli_args("--token", github_token)
     patched_workflow = mock.patch("github.Workflow")
     with args, patched_workflow:
         trigger_template_sync.entry_point()
+
+
+def test_sync_template(github_token: str) -> None:
+    repository = "quintenroets/package-dev-tools"
+    args = cli_args("--token", github_token, "--repository", repository)
+    patched_push = mock.patch(
+        "package_dev_tools.actions.template_sync.sync_template.TemplateSyncer.push_updates"
+    )
+    with args, patched_push:
+        sync_template.entry_point()
