@@ -113,16 +113,10 @@ class TemplateSyncer(git.Client):  # pragma: nocover
             "theirs",
         )
         self.run_git(*command)
-        self.run_git("status", "-v")
 
     def commit_updated_files(self) -> bool:
-        self.run_git("reset")
-
-        for changed_file in self.latest_commit.files:
-            if changed_file.previous_filename:
-                self.run_git("add", changed_file.previous_filename, check=False)
-            self.run_git("add", changed_file.filename, check=False)
-
+        if self.only_latest_commit:
+            self.reset_files_not_in_template_commit()
         self.apply_ignore_patterns()
         self.configure_git()
         try:
@@ -133,6 +127,13 @@ class TemplateSyncer(git.Client):  # pragma: nocover
         except cli.CalledProcessError:
             is_updated = False
         return is_updated
+
+    def reset_files_not_in_template_commit(self) -> None:
+        self.run_git("reset")
+        for changed_file in self.latest_commit.files:
+            if changed_file.previous_filename:
+                self.run_git("add", changed_file.previous_filename, check=False)
+            self.run_git("add", changed_file.filename, check=False)
 
     def apply_ignore_patterns(self) -> None:
         path = self.downloaded_repository_folder / self.ignore_patterns_path
