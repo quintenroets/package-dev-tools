@@ -123,11 +123,7 @@ class TemplateSyncer(git.Client):  # pragma: nocover
                 self.run_git("add", changed_file.previous_filename, check=False)
             self.run_git("add", changed_file.filename, check=False)
 
-        if self.ignore_patterns_path.exists():
-            for pattern in self.ignore_patterns_path.lines:
-                if pattern.endswith("/"):
-                    pattern = f"{pattern}*"
-                self.run_git("reset", pattern)
+        self.apply_ignore_patterns()
         self.configure_git()
         try:
             self.run_git(
@@ -138,7 +134,17 @@ class TemplateSyncer(git.Client):  # pragma: nocover
             is_updated = False
         return is_updated
 
+    def apply_ignore_patterns(self) -> None:
+        path = self.downloaded_repository_folder / self.ignore_patterns_path
+        if path.exists():
+            for pattern in path.lines:
+                if pattern.endswith("/"):
+                    pattern = f"{pattern}*"
+                self.run_git("reset", pattern)
+
     def push_updates(self) -> None:
+        self.run_git("status", "-v")
+        exit()
         self.run_git("push", "--set-upstream", "origin", self.update_branch)
         try:
             self.repository_client.create_pull(
