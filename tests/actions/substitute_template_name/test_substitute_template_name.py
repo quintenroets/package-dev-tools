@@ -1,4 +1,5 @@
 import cli
+from package_dev_tools.actions.instantiate_new_project.git import GitInterface
 from package_dev_tools.actions.instantiate_new_project.substitute_template_name import (
     NameSubstitutor,
 )
@@ -12,6 +13,7 @@ def test_substitute_template_name(repository_path: Path) -> None:
 def test_byte_content_skipping(repository_path: Path) -> None:
     path = Path("binary_content")
     path.byte_content = b"\xFF"
+    GitInterface(repository_path).configure()
     commands = (
         ("git add", path),
         ("git commit --no-verify -m", "add byte file with byte content"),

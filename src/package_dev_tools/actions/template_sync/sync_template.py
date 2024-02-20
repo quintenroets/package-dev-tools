@@ -9,6 +9,7 @@ from github.Repository import Repository
 from plib import Path
 
 from ..instantiate_new_project import ProjectInstantiator
+from ..instantiate_new_project.git import GitInterface
 from ..instantiate_new_project.substitute_template_name import substitute_template_name
 from . import git
 
@@ -89,6 +90,7 @@ class TemplateSyncer(git.Client):  # pragma: nocover
 
     def pull_template(self) -> None:
         self.run_git("config", "pull.rebase", "false")
+        self.configure_git()
         command = (
             "pull",
             self.downloaded_template_repository_folder,
@@ -112,6 +114,7 @@ class TemplateSyncer(git.Client):  # pragma: nocover
 
         if self.ignore_patterns_path.exists():
             self.run_git("reset", f"--pathspec-from-file={self.ignore_patterns_path}")
+        self.configure_git()
         try:
             self.run_git(
                 "commit", "-m", self.latest_commit.commit.message, "--no-verify"
@@ -145,4 +148,7 @@ class TemplateSyncer(git.Client):  # pragma: nocover
     def latest_commit(self) -> Commit:
         commits = self.template_repository_client.get_commits()
         return next(iter(commits))
-        # return typing.cast(Commit, commit)
+
+    def configure_git(self) -> None:
+        path = substitute_template_name.Path(self.downloaded_repository_folder)
+        GitInterface(path).configure()

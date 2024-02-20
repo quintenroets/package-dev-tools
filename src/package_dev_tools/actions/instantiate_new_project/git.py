@@ -26,4 +26,4 @@ class GitInterface:
     def configure(self) -> None:
         git_configuration = {"name": self.git_name, "email": self.git_email}
         for attribute, value in git_configuration.items():
-            self.get(f"config --global user.{attribute} {value}")
+            self.get(f"config user.{attribute} {value}")

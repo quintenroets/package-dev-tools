@@ -1,6 +1,6 @@
 [project]
 name = "package-dev-tools"
-version = "0.5.1"
+version = "0.5.2"
 description = "CI/CD tools for Python packages"
 authors = [{name = "Quinten Roets", email = "qdr2104@columbia.edu"}]
 license = {text = "MIT"}
