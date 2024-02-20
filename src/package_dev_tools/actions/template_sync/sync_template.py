@@ -49,7 +49,8 @@ class TemplateSyncer(git.Client):  # pragma: nocover
             update_branch_exists = False
         url = self.repository_client.clone_url
         prefix = "https://"
-        url = url.replace(prefix, f"{prefix}quintenroets:{self.token}@")
+        username = self.repository.split("/")[0]
+        url = url.replace(prefix, f"{prefix}{username}:{self.token}@")
         clone = (
             ("clone", "-b", self.update_branch) if update_branch_exists else ("clone",)
         )
