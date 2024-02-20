@@ -124,7 +124,10 @@ class TemplateSyncer(git.Client):  # pragma: nocover
             self.run_git("add", changed_file.filename, check=False)
 
         if self.ignore_patterns_path.exists():
-            self.run_git("reset", f"--pathspec-from-file={self.ignore_patterns_path}")
+            for pattern in self.ignore_patterns_path.lines:
+                if pattern.endswith("/"):
+                    pattern = f"{pattern}*"
+                self.run_git("reset", pattern)
         self.configure_git()
         try:
             self.run_git(
