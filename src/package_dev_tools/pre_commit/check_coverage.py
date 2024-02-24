@@ -17,6 +17,7 @@ def check_coverage(verify_all_files_tested: bool = True) -> None:
         coverage_percentage = cli.get("coverage report --format total")
     except cli.exceptions.CalledProcessError as exception:
         cli.get("coverage html", check=False)
+        cli.run("coverage report", check=False)
         raise exception
     coverage_percentage = typing.cast(str, coverage_percentage)
     coverage_percentage_has_changed = update_coverage_shield(coverage_percentage)
