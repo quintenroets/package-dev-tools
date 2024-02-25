@@ -6,7 +6,7 @@ import cli
 import github.Auth
 from github.Commit import Commit
 from github.Repository import Repository
-from plib import Path
+from superpathlib import Path
 
 from ..instantiate_new_project import ProjectInstantiator
 from ..instantiate_new_project.git import GitInterface

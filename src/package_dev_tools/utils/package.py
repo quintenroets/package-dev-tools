@@ -5,7 +5,7 @@ from typing import Any, ClassVar
 
 import requests
 import toml
-from plib import Path
+from superpathlib import Path
 
 
 @dataclass
