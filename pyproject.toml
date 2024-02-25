@@ -19,7 +19,7 @@ dependencies = [
     "simple-classproperty >=4.0.2, <5",
     "superpathlib >=2.0.0, <3",
     "toml >=0.10.2, <1",
-    "quinten-cli >=1.1.12, <2",
+    "quinten-cli >=1.1.15, <2",
 ]
 
 [project.optional-dependencies]
