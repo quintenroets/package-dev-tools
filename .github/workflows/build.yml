@@ -4,10 +4,10 @@ on:
   push:
 env:
   TEMPLATE_SYNC_TRIGGER_TOKEN: ${{ secrets.TEMPLATE_SYNC_TRIGGER_TOKEN }}
+
 jobs:
   check-pre-commit:
     name: Check pre-commit hooks
-    if: false
     runs-on: ubuntu-latest
     steps:
       - name: Check pre-commit hooks
@@ -15,7 +15,6 @@ jobs:
 
   verify-packaging:
     name: Verify packaging
-    if: false
     runs-on: ubuntu-latest
     steps:
       - name: Verify packaging
@@ -23,7 +22,6 @@ jobs:
 
   extract-python-versions:
     name: Extract Python versions
-    if: false
     runs-on: ubuntu-latest
     outputs:
       versions: ${{ steps.extract-python-versions.outputs.versions }}
@@ -35,23 +33,22 @@ jobs:
   run-tests:
     name: Run tests
     needs: extract-python-versions
-    if: false
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
         python-version: ${{ fromJSON(needs.extract-python-versions.outputs.versions) }}
     runs-on: ${{ matrix.os }}
     steps:
-    - name: Run tests
-      uses: quintenroets/actions/validate/tests@main
-      with:
-        python-version: ${{ matrix.python-version }}
+      - name: Run tests
+        uses: quintenroets/actions/validate/tests@main
+        with:
+          python-version: ${{ matrix.python-version }}
 
   publish:
     name: Publish package
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
-    # needs: [check-pre-commit, verify-packaging, run-tests]
+    needs: [check-pre-commit, verify-packaging, run-tests]
     environment: release
     permissions:
       id-token: write  # Needed for PyPi publishing
@@ -59,3 +56,14 @@ jobs:
     steps:
       - name: Publish
         uses: quintenroets/actions/publish@main
+
+  trigger-template-sync:
+    name: Trigger template sync
+    runs-on: ubuntu-latest
+    if: github.repository == 'quintenroets/python-package-template' && github.ref == 'refs/heads/main'
+    needs: [check-pre-commit, verify-packaging, run-tests]
+    steps:
+      - name: Trigger template sync
+        uses: quintenroets/actions/trigger-template-sync@main
+        with:
+          token: ${{ secrets.TEMPLATE_SYNC_TRIGGER }}

@@ -85,9 +85,9 @@ def get_bin_path(repository_path: Path) -> Path:
     env_cache_path = (
         Path.HOME / ".cache" / "pytest-package-dev-tools" / "test_repository_dev_env"
     )
-    if not env_cache_path.exists():
-        create_bin_path(env_cache_path, repository_path)  # pragma: nocover, cached
     bin_path = env_cache_path / bin_name
+    if not bin_path.exists():
+        create_bin_path(env_cache_path, repository_path)  # pragma: nocover, cached
     return typing.cast(Path, bin_path)
 
 
