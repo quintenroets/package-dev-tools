@@ -42,7 +42,7 @@ def verify_all_python_files_tested() -> None:
     covered_files = set(line.split()[0] for line in coverage_lines[2:-2])
     not_covered_files = python_files - covered_files
     if not_covered_files:
-        cli.run("coverage report -mi", check=False)
+        cli.run("coverage html -i", check=False)
         message_parts = (
             "The following files are not covered by tests:",
             *not_covered_files,
