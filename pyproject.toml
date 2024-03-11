@@ -43,6 +43,9 @@ pythonpath = [
 ]
 
 [tool.ruff]
+fix = true
+
+[tool.ruff.lint]
 select = [
     "E",  # pycodestyle errors
     "W",  # pycodestyle warnings
@@ -50,12 +53,11 @@ select = [
     "I",  # isort
     "UP",  # pyupgrade
 ]
-fix = true
 
 [tool.ruff.lint.isort]
 known-first-party = ["src"]
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401"]
 
 [tool.setuptools.package-data]
