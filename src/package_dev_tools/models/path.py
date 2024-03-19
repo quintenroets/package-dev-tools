@@ -7,14 +7,6 @@ T = TypeVar("T", bound="Path")
 
 
 class Path(superpathlib.Path):
-    @classproperty
-    def readme(cls: type[T]) -> T:  # type: ignore
-        return cls("README.md")
-
-    @classproperty
-    def workflows(cls: type[T]) -> T:  # type: ignore
-        return cls(".github") / "workflows"
-
     @property
     def has_text_content(self) -> bool:
         try:
@@ -23,3 +15,13 @@ class Path(superpathlib.Path):
         except UnicodeDecodeError:
             has_text = False
         return has_text
+
+    @classmethod
+    @classproperty
+    def readme(cls: type[T]) -> T:
+        return cls("README.md")
+
+    @classmethod
+    @classproperty
+    def workflows(cls: type[T]) -> T:
+        return cls(".github") / "workflows"
