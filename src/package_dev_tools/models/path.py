@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+import typing
 from typing import TypeVar
 
 import superpathlib
@@ -7,19 +10,19 @@ T = TypeVar("T", bound="Path")
 
 
 class Path(superpathlib.Path):
+    @classmethod
     @classproperty
-    def readme(cls: type[T]) -> T:  # type: ignore
-        return cls("README.md")
+    def source_root(cls: type[T]) -> T:
+        return cls(__file__).parent.parent
 
+    @classmethod
     @classproperty
-    def workflows(cls: type[T]) -> T:  # type: ignore
-        return cls(".github") / "workflows"
+    def assets(cls: type[T]) -> T:
+        path = cls.script_assets / cls.source_root.name
+        return typing.cast(T, path)
 
-    @property
-    def has_text_content(self) -> bool:
-        try:
-            self.text
-            has_text = True
-        except UnicodeDecodeError:
-            has_text = False
-        return has_text
+    @classmethod
+    @classproperty
+    def config(cls: type[T]) -> T:
+        path = cls.assets / "config" / "config.yaml"
+        return typing.cast(T, path)
