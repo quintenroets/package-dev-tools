@@ -12,7 +12,7 @@ def test_substitute_template_name(repository_path: Path) -> None:
 
 def test_byte_content_skipping(repository_path: Path) -> None:
     path = Path("binary_content")
-    path.byte_content = b"\xFF"
+    path.byte_content = b"\xff"
     GitInterface(repository_path).configure()
     commands = (
         ("git add", path),

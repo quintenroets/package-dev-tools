@@ -1,4 +1,5 @@
 import typing
+from collections.abc import Iterator
 from dataclasses import dataclass, field
 from functools import cached_property
 
@@ -6,6 +7,7 @@ import cli
 import github.Auth
 from github.Commit import Commit
 from github.Repository import Repository
+from slugify import slugify
 from superpathlib import Path
 
 from ..instantiate_new_project import ProjectInstantiator
@@ -24,6 +26,18 @@ class TemplateSyncer(git.Client):  # pragma: nocover
     update_branch: str = "sync-template"
     downloaded_repository_folder: Path = field(init=False)
     downloaded_template_repository_folder: Path = field(init=False)
+
+    @property
+    def project_name(self) -> str:
+        return self.extract_name(self.repository)
+
+    @property
+    def template_name(self) -> str:
+        return self.extract_name(self.template_repository)
+
+    @classmethod
+    def extract_name(cls, repository: str) -> str:
+        return repository.split("/")[-1]
 
     def run(self) -> None:
         self.downloaded_repository_folder = Path.tempfile(create=False)
@@ -84,19 +98,12 @@ class TemplateSyncer(git.Client):  # pragma: nocover
     def run_git(
         self, *args: str | Path, input_: str | None = None, check: bool = True
     ) -> None:
-        cli.run(
-            "git",
-            *args,
-            input=input_,
-            cwd=self.downloaded_repository_folder,
-            check=check,
-        )
+        cwd = self.downloaded_repository_folder
+        cli.run("git", *args, input=input_, cwd=cwd, check=check)
 
     def instantiate_template(self) -> None:
-        project_name = self.repository.split("/")[-1]
-
         path = substitute_template_name.Path(self.downloaded_template_repository_folder)
-        instantiator = ProjectInstantiator(project_name=project_name, path=path)
+        instantiator = ProjectInstantiator(project_name=self.project_name, path=path)
         instantiator.run()
 
     def pull_template(self) -> None:
@@ -119,10 +126,9 @@ class TemplateSyncer(git.Client):  # pragma: nocover
             self.reset_files_not_in_template_commit()
         self.apply_ignore_patterns()
         self.configure_git()
+        command = "commit", "-m", self.latest_commit.commit.message, "--no-verify"
         try:
-            self.run_git(
-                "commit", "-m", self.latest_commit.commit.message, "--no-verify"
-            )
+            self.run_git(*command)
             is_updated = True
         except cli.CalledProcessError:
             is_updated = False
@@ -130,10 +136,21 @@ class TemplateSyncer(git.Client):  # pragma: nocover
 
     def reset_files_not_in_template_commit(self) -> None:
         self.run_git("reset")
+        files = self.generate_instantiated_files_in_template_commit()
+        for file_ in files:
+            self.run_git("add", file_, check=False)
+
+    def generate_instantiated_files_in_template_commit(self) -> Iterator[str]:
+        package_name = slugify(self.project_name, separator="_")
+        template_package_name = slugify(self.template_name, separator="_")
+        for file_ in self.generate_files_in_template_commit():
+            yield file_.replace(template_package_name, package_name)
+
+    def generate_files_in_template_commit(self) -> Iterator[str]:
         for changed_file in self.latest_commit.files:
-            if changed_file.previous_filename:
-                self.run_git("add", changed_file.previous_filename, check=False)
-            self.run_git("add", changed_file.filename, check=False)
+            if changed_file.previous_filename is not None:
+                yield changed_file.previous_filename
+            yield changed_file.filename
 
     def apply_ignore_patterns(self) -> None:
         path = self.downloaded_repository_folder / self.ignore_patterns_path
@@ -145,12 +162,10 @@ class TemplateSyncer(git.Client):  # pragma: nocover
 
     def push_updates(self) -> None:
         self.run_git("push", "--set-upstream", "origin", self.update_branch)
+        title = "Sync template changes"
         try:
             self.repository_client.create_pull(
-                self.default_branch,
-                self.update_branch,
-                title="Sync template changes",
-                body="",
+                self.default_branch, self.update_branch, title=title, body=""
             )
         except github.GithubException:
             pass  # Pull request already created
