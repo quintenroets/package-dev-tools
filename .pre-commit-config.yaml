@@ -1,5 +1,5 @@
 repos:
-  - repo: https://github.com/PyCQA/docformatter
+  - repo: https://github.com/myint/docformatter
     rev: v1.7.5
     hooks:
       - id: docformatter
@@ -56,5 +56,6 @@ repos:
       - id: check-version
 
 ci:
-    autofix_commit_msg: auto fixes from pre-commit.com hooks
-    autoupdate_commit_msg: 'pre-commit autoupdate'
+    autofix_commit_msg: auto fixes from pre-commit hooks
+    autoupdate_commit_msg: 'pre-commit auto updates'
+    skip: [mypy, run-tests, check-coverage]
