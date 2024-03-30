@@ -47,8 +47,8 @@ def download_repository(path: Path) -> None:
 def generate_coverage_results(path: Path) -> None:
     bin_path = get_bin_path(path)
     coverage = "coverage.exe" if running_on_windows else "coverage"
-    cli.get(bin_path / pip, "install", "--no-deps", "-e", ".", cwd=path)
-    cli.get(bin_path / coverage, "run", cwd=path)
+    cli.capture_output(bin_path / pip, "install", "--no-deps", "-e", ".", cwd=path)
+    cli.capture_output(bin_path / coverage, "run", cwd=path)
 
 
 @pytest.fixture
@@ -95,6 +95,6 @@ def create_bin_path(
     path: Path, repository_path: Path
 ) -> None:  # pragma: nocover, cached
     path.create_parent()
-    cli.get("python -m venv", path.name, cwd=path.parent)
+    cli.capture_output("python -m venv", path.name, cwd=path.parent)
     bin_path = path / bin_name
-    cli.get(bin_path / pip, "install", "-e", ".[dev]", cwd=repository_path)
+    cli.capture_output(bin_path / pip, "install", "-e", ".[dev]", cwd=repository_path)

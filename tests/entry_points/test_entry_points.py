@@ -1,5 +1,4 @@
 import os
-import typing
 from collections.abc import Callable
 from unittest import mock
 
@@ -47,8 +46,7 @@ def test_check_coverage(repository_path: Path) -> None:
 @pytest.fixture(scope="session")
 def github_token() -> str:
     token_name = "TEMPLATE_SYNC_TRIGGER_TOKEN"
-    token = os.environ.get(token_name) or cli.get("pw", "automationtoken")
-    return typing.cast(str, token)
+    return os.environ.get(token_name) or cli.capture_output("pw", "automationtoken")
 
 
 def test_trigger_template_sync(github_token: str) -> None:

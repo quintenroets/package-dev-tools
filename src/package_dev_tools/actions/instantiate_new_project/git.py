@@ -1,4 +1,3 @@
-import typing
 from dataclasses import dataclass, field
 
 import cli
@@ -20,8 +19,7 @@ class GitInterface:
 
     def get(self, *args: str | Path | int) -> str:
         git_arg = f"git {args[0]}"
-        result = cli.get(git_arg, *args[1:], cwd=self.path)
-        return typing.cast(str, result)
+        return cli.capture_output(git_arg, *args[1:], cwd=self.path)
 
     def configure(self) -> None:
         git_configuration = {"name": self.git_name, "email": self.git_email}

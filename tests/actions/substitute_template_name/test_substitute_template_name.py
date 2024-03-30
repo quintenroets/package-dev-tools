@@ -19,7 +19,7 @@ def test_byte_content_skipping(repository_path: Path) -> None:
         ("git commit --no-verify -m", "add byte file with byte content"),
     )
     for command in commands:
-        cli.get(*command)
+        cli.capture_output(*command)
     substitute_and_verify()
 
 

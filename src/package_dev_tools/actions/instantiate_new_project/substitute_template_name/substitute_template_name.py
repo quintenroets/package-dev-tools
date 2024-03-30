@@ -89,6 +89,6 @@ class NameSubstitutor:
 
     def generate_project_files(self) -> Iterator[Path]:
         command = ("git", "ls-tree", "-r", "HEAD", "--name-only")
-        relative_paths = cli.lines(command, cwd=self.path)
+        relative_paths = cli.capture_output_lines(command, cwd=self.path)
         for path in relative_paths:
             yield self.path / path

@@ -1,4 +1,4 @@
-import cli.exceptions
+import cli
 import pytest
 from hypothesis import HealthCheck, given, settings, strategies
 from package_dev_tools.models import Path
@@ -28,7 +28,7 @@ def test_not_covered_files_detected(repository_path_with_uncovered_files: Path) 
 def test_insufficient_coverage_fraction_detected(
     repository_path_with_uncovered_files: Path,
 ) -> None:
-    with pytest.raises(cli.exceptions.CalledProcessError):
+    with pytest.raises(cli.CalledProcessError):
         check_coverage(verify_all_files_tested=False)
 
 
