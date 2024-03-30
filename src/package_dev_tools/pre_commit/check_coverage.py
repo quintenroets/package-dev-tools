@@ -1,5 +1,4 @@
 import sys
-import typing
 from collections.abc import Iterator
 
 import cli
@@ -14,16 +13,15 @@ def check_coverage(verify_all_files_tested: bool = True) -> None:
         verify_all_python_files_tested()
 
     try:
-        coverage_percentage = cli.get("coverage report -i --format total")
-    except cli.exceptions.CalledProcessError as exception:
-        cli.get("coverage html -i", check=False)
+        coverage_percentage = cli.capture_output("coverage report -i --format total")
+    except cli.CalledProcessError as exception:
+        cli.capture_output("coverage html -i", check=False)
         cli.run("coverage report -mi", check=False)
         raise exception
-    coverage_percentage = typing.cast(str, coverage_percentage)
     coverage_percentage_has_changed = update_coverage_shield(coverage_percentage)
     if coverage_percentage_has_changed:
         print(f"Updated test coverage: {coverage_percentage}%")
-        cli.get("coverage html")
+        cli.capture_output("coverage html")
     exit_code = 1 if coverage_percentage_has_changed else 0
     sys.exit(exit_code)
 
@@ -38,7 +36,7 @@ def update_coverage_shield(coverage_percentage: float | str) -> bool:
 
 def verify_all_python_files_tested() -> None:
     python_files = set(generate_python_files())
-    coverage_lines = cli.lines("coverage report -i", check=False)
+    coverage_lines = cli.capture_output_lines("coverage report -i", check=False)
     covered_files = set(line.split()[0] for line in coverage_lines[2:-2])
     not_covered_files = python_files - covered_files
     if not_covered_files:

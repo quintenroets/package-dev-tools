@@ -18,5 +18,5 @@ def test_second_application_no_changes(repository_path: Path) -> None:
     project_name = "package-dev-tools"
     ProjectInstantiator(project_name=project_name).run()
     ProjectInstantiator(project_name=project_name, commit=False).run()
-    changes = cli.get("git status --porcelain")
+    changes = cli.capture_output("git status --porcelain")
     assert not changes

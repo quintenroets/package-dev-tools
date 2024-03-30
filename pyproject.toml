@@ -1,6 +1,6 @@
 [project]
 name = "package-dev-tools"
-version = "0.5.16"
+version = "0.5.17"
 description = "CI/CD tools for Python packages"
 authors = [{name = "Quinten Roets", email = "qdr2104@columbia.edu"}]
 license = {text = "MIT"}
@@ -13,13 +13,13 @@ dependencies = [
     "mypy >=1.8.0, <2",
     "package-utils >=0.6.1, <1",
     "pre-commit >=3.5.0, <4",
+    "powercli >=0.1.1, <1",
     "pygithub >=2.1.1, <3",
     "pytest >=7.4.3, <9",
     "python-slugify >=8.0.1, <9",
     "simple-classproperty >=4.0.2, <5",
     "superpathlib >=2.0.0, <3",
     "toml >=0.10.2, <1",
-    "quinten-cli >=1.1.15, <2",
 ]
 
 [project.optional-dependencies]

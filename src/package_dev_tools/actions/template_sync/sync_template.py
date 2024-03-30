@@ -1,4 +1,3 @@
-import typing
 from collections.abc import Iterator
 from dataclasses import dataclass, field
 from functools import cached_property
@@ -87,8 +86,7 @@ class TemplateSyncer(git.Client):  # pragma: nocover
         if not self.downloaded_template_repository_folder.exists():
             self.clone_template_repository()
         cwd = self.downloaded_template_repository_folder
-        result = cli.get("git", "diff", "-U0", "HEAD^", "HEAD", cwd=cwd)
-        return typing.cast(str, result)
+        return cli.capture_output("git", "diff", "-U0", "HEAD^", "HEAD", cwd=cwd)
 
     def clone_template_repository(self) -> None:
         url = self.template_repository_client.clone_url
