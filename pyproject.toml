@@ -7,7 +7,7 @@ license = {text = "MIT"}
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
-    "autotyping >=23.3.0, <24",
+    "autotyping >=23.3.0, <25",
     "bump2version >=1.0.1, <2",
     "coverage >=7.4.0, <8",
     "mypy >=1.8.0, <2",
