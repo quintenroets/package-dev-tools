@@ -33,6 +33,7 @@ repos:
         language: system
         files: '\.py'
         fail_fast: true
+        require_serial: true
   - repo: local
     hooks:
       - id: run-tests
