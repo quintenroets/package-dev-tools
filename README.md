@@ -5,9 +5,8 @@
 ![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)
 
 ## Usage
-* Use [pre-commit hooks](https://github.com/quintenroets/package-dev-tools/tree/main/.pre-commit-hooks.yaml) in .pre-commit-config.yaml
-
-see [python-package-template](https://github.com/quintenroets/python-package-template) for examples
+Use the [pre-commit hooks](https://github.com/quintenroets/package-dev-tools/tree/main/.pre-commit-hooks.yaml) in your .pre-commit-config.yaml
+* see [.pre-commit-config.yaml](https://github.com/quintenroets/package-dev-tools/tree/main/.pre-commit-config.yaml) for examples
 
 ## Installation
 ```shell
