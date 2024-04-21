@@ -5,7 +5,6 @@
 ![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)
 
 ## Usage
-* Use [actions](https://github.com/quintenroets/package-dev-tools/tree/main/actions) in .github/workflows
 * Use [pre-commit hooks](https://github.com/quintenroets/package-dev-tools/tree/main/.pre-commit-hooks.yaml) in .pre-commit-config.yaml
 
 see [python-package-template](https://github.com/quintenroets/python-package-template) for examples
