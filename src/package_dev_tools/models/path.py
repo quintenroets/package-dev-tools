@@ -1,4 +1,4 @@
-from typing import TypeVar
+from typing import TypeVar, cast
 
 import superpathlib
 from simple_classproperty import classproperty
@@ -7,21 +7,19 @@ T = TypeVar("T", bound="Path")
 
 
 class Path(superpathlib.Path):
-    @property
-    def has_text_content(self) -> bool:
-        try:
-            self.text
-            has_text = True
-        except UnicodeDecodeError:
-            has_text = False
-        return has_text
+    @classmethod
+    @classproperty
+    def source_root(cls: type[T]) -> T:
+        return cls(__file__).parent.parent
 
     @classmethod
     @classproperty
-    def readme(cls: type[T]) -> T:
-        return cls("README.md")
+    def assets(cls: type[T]) -> T:
+        path = cls.script_assets / cls.source_root.name
+        return cast(T, path)
 
     @classmethod
     @classproperty
-    def workflows(cls: type[T]) -> T:
-        return cls(".github") / "workflows"
+    def config(cls: type[T]) -> T:
+        path = cls.assets / "config" / "config.yaml"
+        return cast(T, path)
