@@ -44,7 +44,7 @@ class NameSubstitutor:
         }
 
     def extract_new_project_name(self) -> str:
-        git_url = GitInterface(self.path).get("config remote.origin.url")
+        git_url = GitInterface(self.path).capture_output("config remote.origin.url")
         return urllib.parse.urlparse(git_url).path.split("/")[-1]
 
     def extract_current_project_name(self) -> str:
@@ -57,9 +57,11 @@ class NameSubstitutor:
 
     def run(self) -> None:
         for path in self.generate_paths_to_substitute():
-            self.apply_substitutions(path)
+            if path.has_text_content:
+                self.substitute_content(path)
+            self.substitute_name(path)
 
-    def apply_substitutions(self, path: Path) -> None:
+    def substitute_content(self, path: Path) -> None:
         content = path.text
         if any(to_replace in content for to_replace in self.substitutions):
             for original, replacement in self.substitutions.items():
@@ -74,11 +76,9 @@ class NameSubstitutor:
             is_workflow = path.is_relative_to(workflows_folder)
             is_file = path.is_file()
             if not is_workflow and is_file:
-                if path.has_text_content:
-                    yield path
-                self.rename(path)
+                yield path
 
-    def rename(self, path: Path) -> None:
+    def substitute_name(self, path: Path) -> None:
         if any(name == self.template_project.package_name for name in path.parts):
             renamed_path_str = str(path).replace(
                 self.template_project.package_name,

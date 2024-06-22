@@ -21,5 +21,8 @@ class ProjectInstantiator(NameSubstitutor):
         )
         for runner in runners:
             runner.run()  # type: ignore
+
+        git = GitInterface(self.path)
+        git.clean()
         if self.commit:
-            GitInterface(self.path).commit()
+            git.commit()

@@ -41,7 +41,7 @@ def download_repository(path: Path) -> None:
     repository_url = "https://github.com/quintenroets/python-package-template"
     git_interface = GitInterface()
     git_interface.configure()
-    git_interface.get("clone", repository_url, path, "--depth", 1)
+    git_interface.capture_output("clone", repository_url, path, "--depth", 1)
 
 
 def generate_coverage_results(path: Path) -> None:
