@@ -39,7 +39,7 @@ def test_entry_point(entry_point: Callable[..., None], repository_path: Path) ->
 @no_cli_args
 def test_check_coverage(repository_path: Path) -> None:
     exceptions = SystemExit, Exception
-    with pytest.raises(exceptions):  # noqa
+    with pytest.raises(exceptions):
         check_coverage.entry_point()
 
 
@@ -60,7 +60,7 @@ def test_sync_template(github_token: str) -> None:
     repository = "quintenroets/package-dev-tools"
     args = cli_args("--token", github_token, "--repository", repository)
     patched_push = mock.patch(
-        "package_dev_tools.actions.template_sync.sync_template.TemplateSyncer.push_updates"
+        "package_dev_tools.actions.template_sync.sync_template.TemplateSyncer.push_updates",
     )
     with args, patched_push:
         sync_template.entry_point()

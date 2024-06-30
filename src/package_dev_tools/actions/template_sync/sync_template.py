@@ -94,7 +94,10 @@ class TemplateSyncer(git.Client):  # pragma: nocover
         cli.run("git", "clone", url, path)
 
     def run_git(
-        self, *args: str | Path, input_: str | None = None, check: bool = True
+        self,
+        *args: str | Path,
+        input_: str | None = None,
+        check: bool = True,
     ) -> None:
         cwd = self.downloaded_repository_folder
         cli.run("git", *args, input=input_, cwd=cwd, check=check)
@@ -163,7 +166,10 @@ class TemplateSyncer(git.Client):  # pragma: nocover
         title = "Sync template changes"
         try:
             self.repository_client.create_pull(
-                self.default_branch, self.update_branch, title=title, body=""
+                self.default_branch,
+                self.update_branch,
+                title=title,
+                body="",
             )
         except github.GithubException:
             pass  # Pull request already created
