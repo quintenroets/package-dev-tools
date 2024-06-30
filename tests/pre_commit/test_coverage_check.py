@@ -71,7 +71,9 @@ def verify_coverage_when_changed() -> None:
 )
 @settings(suppress_health_check=suppressed_checks)
 def test_readme_content_preserved(
-    value: float, new_value: float, repository_path: Path
+    value: float,
+    new_value: float,
+    repository_path: Path,
 ) -> None:
     update_coverage_shield(value)
     readme_length = len(Path.readme.text)

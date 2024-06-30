@@ -6,7 +6,7 @@ required_python_version = "3.10"
 supported_python_versions = ["3.10", "3.11", "3.12"]
 
 
-@pytest.fixture
+@pytest.fixture()
 def package_info(repository_path: Path) -> PackageInfo:
     return PackageInfo(repository_path)
 
