@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 
 from slugify import slugify
 
-from ....models import Path
+from package_dev_tools.models import Path
 
 
 @dataclass

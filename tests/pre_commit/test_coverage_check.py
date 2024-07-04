@@ -19,20 +19,21 @@ def test_update_coverage_badge(repository_path: Path, value: float) -> None:
     assert value_str in readme_path.text
 
 
-def test_not_covered_files_detected(repository_path_with_uncovered_files: Path) -> None:
+@pytest.mark.usefixtures("repository_path_with_uncovered_files")
+def test_not_covered_files_detected() -> None:
     message = "The following files are not covered by tests:"
     with pytest.raises(Exception, match=message):
         check_coverage()
 
 
-def test_insufficient_coverage_fraction_detected(
-    repository_path_with_uncovered_files: Path,
-) -> None:
+@pytest.mark.usefixtures("repository_path_with_uncovered_files")
+def test_insufficient_coverage_fraction_detected() -> None:
     with pytest.raises(cli.CalledProcessError):
         check_coverage(verify_all_files_tested=False)
 
 
-def test_missing_results_detected(repository_path: Path) -> None:
+@pytest.mark.usefixtures("repository_path")
+def test_missing_results_detected() -> None:
     Path(".coverage").unlink()
     message = "No coverage results found."
     with pytest.raises(Exception, match=message):
@@ -45,11 +46,13 @@ def test_badge_missing_in_readme_indicated(repository_path: Path) -> None:
         check_coverage(verify_all_files_tested=False)
 
 
-def test_check_coverage_when_changed(repository_path: Path) -> None:
+@pytest.mark.usefixtures("repository_path")
+def test_check_coverage_when_changed() -> None:
     verify_coverage_when_changed()
 
 
-def test_check_coverage_when_unchanged(repository_path: Path) -> None:
+@pytest.mark.usefixtures("repository_path")
+def test_check_coverage_when_unchanged() -> None:
     verify_all_files_tested = False
     with pytest.raises(SystemExit):
         check_coverage(verify_all_files_tested=verify_all_files_tested)
@@ -70,9 +73,8 @@ def verify_coverage_when_changed() -> None:
     new_value=strategies.floats(min_value=0, max_value=100),
 )
 @settings(suppress_health_check=suppressed_checks)
-def test_readme_content_preserved(
-    value: float, new_value: float, repository_path: Path
-) -> None:
+@pytest.mark.usefixtures("repository_path")
+def test_readme_content_preserved(value: float, new_value: float) -> None:
     update_coverage_shield(value)
     readme_length = len(Path.readme.text)
     readme_num_lines = len(Path.readme.lines)

@@ -1,4 +1,5 @@
 import cli
+import pytest
 from package_dev_tools.actions.instantiate_new_project.git import GitInterface
 from package_dev_tools.actions.instantiate_new_project.substitute_template_name import (
     NameSubstitutor,
@@ -6,7 +7,8 @@ from package_dev_tools.actions.instantiate_new_project.substitute_template_name 
 from package_dev_tools.models import Path
 
 
-def test_substitute_template_name(repository_path: Path) -> None:
+@pytest.mark.usefixtures("repository_path")
+def test_substitute_template_name() -> None:
     substitute_and_verify()
 
 

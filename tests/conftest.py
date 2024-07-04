@@ -28,7 +28,8 @@ def downloaded_repository_path_with_uncovered_files() -> Iterator[Path]:
 
 
 def create_processed_repository(
-    path: Path, callback: Callable[[Path], None] | None = None
+    path: Path,
+    callback: Callable[[Path], None] | None = None,
 ) -> None:
     path.unlink()
     download_repository(path)
@@ -51,17 +52,17 @@ def generate_coverage_results(path: Path) -> None:
     cli.capture_output(bin_path / coverage, "run", cwd=path)
 
 
-@pytest.fixture
+@pytest.fixture()
 def repository_path(downloaded_repository_path: Path) -> Iterator[Path]:
     yield from use_in_temporary_location(downloaded_repository_path)
 
 
-@pytest.fixture
+@pytest.fixture()
 def repository_path_with_uncovered_files(
     downloaded_repository_path_with_uncovered_files: Path,
 ) -> Iterator[Path]:
     yield from use_in_temporary_location(
-        downloaded_repository_path_with_uncovered_files
+        downloaded_repository_path_with_uncovered_files,
     )
 
 
@@ -78,7 +79,7 @@ def add_uncovered_files(path: Path) -> None:
     not_covered_path = path / "not_covered_file.py"
     not_covered_path.touch()
     test_path = path / "tests" / "test_not_executed_test.py"
-    test_path.lines = ("def run():", "\tpass")  # type: ignore
+    test_path.lines = ("def run():", "\tpass")  # type: ignore[assignment]
 
 
 def get_bin_path(repository_path: Path) -> Path:
@@ -92,7 +93,8 @@ def get_bin_path(repository_path: Path) -> Path:
 
 
 def create_bin_path(
-    path: Path, repository_path: Path
+    path: Path,
+    repository_path: Path,
 ) -> None:  # pragma: nocover, cached
     path.create_parent()
     cli.capture_output("python -m venv", path.name, cwd=path.parent)

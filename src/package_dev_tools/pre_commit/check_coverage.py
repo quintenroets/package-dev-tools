@@ -3,24 +3,24 @@ from collections.abc import Iterator
 
 import cli
 
-from ..models import Path
-from ..utils.badge import Badge, BadgeUpdater
+from package_dev_tools.models import Path
+from package_dev_tools.utils.badge import Badge, BadgeUpdater
 
 
-def check_coverage(verify_all_files_tested: bool = True) -> None:
+def check_coverage(*, verify_all_files_tested: bool = True) -> None:
     verify_coverage_results()
     if verify_all_files_tested:
         verify_all_python_files_tested()
 
     try:
         coverage_percentage = cli.capture_output("coverage report -i --format total")
-    except cli.CalledProcessError as exception:
+    except cli.CalledProcessError:
         cli.capture_output("coverage html -i", check=False)
         cli.run("coverage report -mi", check=False)
-        raise exception
+        raise
     coverage_percentage_has_changed = update_coverage_shield(coverage_percentage)
     if coverage_percentage_has_changed:
-        print(f"Updated test coverage: {coverage_percentage}%")
+        cli.console.print(f"Updated test coverage: {coverage_percentage}%")
         cli.capture_output("coverage html")
     exit_code = 1 if coverage_percentage_has_changed else 0
     sys.exit(exit_code)
@@ -37,7 +37,7 @@ def update_coverage_shield(coverage_percentage: float | str) -> bool:
 def verify_all_python_files_tested() -> None:
     python_files = set(generate_python_files())
     coverage_lines = cli.capture_output_lines("coverage report -i", check=False)
-    covered_files = set(line.split()[0] for line in coverage_lines[2:-2])
+    covered_files = {line.split()[0] for line in coverage_lines[2:-2]}
     not_covered_files = python_files - covered_files
     if not_covered_files:
         cli.run("coverage html -i", check=False)
@@ -46,7 +46,7 @@ def verify_all_python_files_tested() -> None:
             *not_covered_files,
         )
         message = "\n\t".join(message_parts)
-        raise Exception(message)
+        raise RuntimeError(message)
 
 
 def generate_python_files() -> Iterator[str]:
@@ -60,4 +60,5 @@ def generate_python_files() -> Iterator[str]:
 
 def verify_coverage_results() -> None:
     if not Path(".coverage").exists():
-        raise Exception("No coverage results found.")
+        message = "No coverage results found."
+        raise OSError(message)

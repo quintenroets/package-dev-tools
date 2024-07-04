@@ -71,12 +71,12 @@ pythonpath = [
 fix = true
 
 [tool.ruff.lint]
-select = [
-    "E",  # pycodestyle errors
-    "W",  # pycodestyle warnings
-    "F",  # pyflakes
-    "I",  # isort
-    "UP",  # pyupgrade
+select = ["ALL"]
+ignore = [
+    "ANN101",  # annotate self
+    "ANN102",  # annotate cls
+    "ANN401",  # annotated with Any
+    "D", # docstrings
 ]
 
 [tool.ruff.lint.isort]
@@ -84,6 +84,7 @@ known-first-party = ["src"]
 
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401"]
+"tests/*" = ["S101"]  # assert used
 
 [tool.setuptools]
 script-files = [
