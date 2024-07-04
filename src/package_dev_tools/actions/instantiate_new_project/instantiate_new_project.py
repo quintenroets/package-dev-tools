@@ -20,7 +20,7 @@ class ProjectInstantiator(NameSubstitutor):
             WorkflowsCleaner(self.path),
         )
         for runner in runners:
-            runner.run()  # type: ignore
+            runner.run()  # type: ignore[attr-defined]
 
         git = GitInterface(self.path)
         git.clean()

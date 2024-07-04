@@ -1,3 +1,4 @@
+import contextlib
 from collections.abc import Iterator
 from dataclasses import dataclass, field
 from functools import cached_property
@@ -9,16 +10,21 @@ from github.Repository import Repository
 from slugify import slugify
 from superpathlib import Path
 
-from ..instantiate_new_project import ProjectInstantiator
-from ..instantiate_new_project.git import GitInterface
-from ..instantiate_new_project.substitute_template_name import substitute_template_name
+from package_dev_tools.actions.instantiate_new_project import ProjectInstantiator
+from package_dev_tools.actions.instantiate_new_project.git import GitInterface
+from package_dev_tools.actions.instantiate_new_project.substitute_template_name import (
+    substitute_template_name,
+)
+
 from . import git
 
 
 @dataclass
 class TemplateSyncer(git.Client):  # pragma: nocover
     repository: str
-    ignore_patterns_path: Path = Path(".templatesyncignore")
+    ignore_patterns_path: Path = field(
+        default_factory=lambda: Path(".templatesyncignore"),
+    )
     template_repository: str = "quintenroets/python-package-template"
     only_latest_commit: bool = True
     default_branch: str = "main"
@@ -94,7 +100,10 @@ class TemplateSyncer(git.Client):  # pragma: nocover
         cli.run("git", "clone", url, path)
 
     def run_git(
-        self, *args: str | Path, input_: str | None = None, check: bool = True
+        self,
+        *args: str | Path,
+        input_: str | None = None,
+        check: bool = True,
     ) -> None:
         cwd = self.downloaded_repository_folder
         cli.run("git", *args, input=input_, cwd=cwd, check=check)
@@ -153,20 +162,22 @@ class TemplateSyncer(git.Client):  # pragma: nocover
     def apply_ignore_patterns(self) -> None:
         path = self.downloaded_repository_folder / self.ignore_patterns_path
         if path.exists():
-            for pattern in path.lines:
-                if pattern.endswith("/"):
-                    pattern = f"{pattern}*"
+            for line in path.lines:
+                pattern = f"{line}*" if line.endswith("/") else line
                 self.run_git("reset", pattern)
 
     def push_updates(self) -> None:
         self.run_git("push", "--set-upstream", "origin", self.update_branch)
         title = "Sync template changes"
-        try:
+        with contextlib.suppress(
+            github.GithubException,
+        ):  # Pull request already created
             self.repository_client.create_pull(
-                self.default_branch, self.update_branch, title=title, body=""
+                self.default_branch,
+                self.update_branch,
+                title=title,
+                body="",
             )
-        except github.GithubException:
-            pass  # Pull request already created
 
     @cached_property
     def repository_client(self) -> Repository:

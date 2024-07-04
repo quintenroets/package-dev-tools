@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 from functools import cached_property
 from typing import ClassVar
 
-from ..models import Path
+from package_dev_tools.models import Path
 
 
 @dataclass
@@ -31,7 +31,8 @@ class BadgeUpdater:
         path = self.cwd / Path.readme.name
         lines = path.lines
         if not self.contains_badge(lines):
-            raise Exception(f"README has no {self.badge.title} badge yet.")
+            message = f"README has no {self.badge.title} badge yet."
+            raise ValueError(message)
         has_changed = self.badge.line not in lines
         if has_changed:
             lines = (self.badge.line if self.is_badge(line) else line for line in lines)

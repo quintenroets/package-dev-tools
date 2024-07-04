@@ -5,10 +5,10 @@ from dataclasses import dataclass, field
 import cli
 from slugify import slugify
 
+from package_dev_tools.actions.instantiate_new_project.git import GitInterface
+from package_dev_tools.models import Path
 from package_dev_tools.utils.package import PackageInfo
 
-from ....models import Path
-from ..git import GitInterface
 from .project import Project
 
 

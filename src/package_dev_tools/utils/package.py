@@ -7,6 +7,8 @@ import requests
 import toml
 from superpathlib import Path
 
+SUCCESS_CODE = 200
+
 
 @dataclass
 class PackageInfo:
@@ -52,7 +54,7 @@ class PackageInfo:
         base_url = "https://www.python.org/ftp/python/"
         filename = f"Python-{version}.tar.xz"
         url = f"{base_url}/{version}/{filename}"
-        return requests.head(url).status_code == 200
+        return requests.head(url, timeout=10).status_code == SUCCESS_CODE
 
     @property
     def pyproject_info(self) -> dict[str, Any]:

@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 
 import cli
 
-from ...models import Path
+from package_dev_tools.models import Path
 
 
 @dataclass

@@ -1,11 +1,13 @@
 import cli
+import pytest
 from package_dev_tools.actions.instantiate_new_project import (
     ProjectInstantiator,
 )
 from package_dev_tools.models import Path
 
 
-def test_instantiate_new_project(repository_path: Path) -> None:
+@pytest.mark.usefixtures("repository_path")
+def test_instantiate_new_project() -> None:
     project_name = "package-dev-tools"
     ProjectInstantiator(project_name=project_name).run()
     info = Path("pyproject.toml").text
@@ -14,7 +16,8 @@ def test_instantiate_new_project(repository_path: Path) -> None:
     assert "=" not in readme
 
 
-def test_second_application_no_changes(repository_path: Path) -> None:
+@pytest.mark.usefixtures("repository_path")
+def test_second_application_no_changes() -> None:
     project_name = "package-dev-tools"
     ProjectInstantiator(project_name=project_name).run()
     ProjectInstantiator(project_name=project_name, commit=False).run()

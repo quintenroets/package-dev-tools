@@ -10,7 +10,7 @@ class Path(superpathlib.Path):
     @property
     def has_text_content(self) -> bool:
         try:
-            self.text
+            self.text  # noqa: B018
             has_text = True
         except UnicodeDecodeError:
             has_text = False
