@@ -8,6 +8,9 @@ import pytest
 from package_dev_tools.actions.instantiate_new_project.git import GitInterface
 from package_dev_tools.models import Path
 
+if typing.TYPE_CHECKING:
+    from cli.commands.run import CommandItem  # pragma: nocover
+
 running_on_windows = os.name == "nt"
 bin_name = "Scripts" if running_on_windows else "bin"
 pip = "pip.exe" if running_on_windows else "pip"
@@ -38,11 +41,19 @@ def create_processed_repository(
     generate_coverage_results(path)
 
 
-def download_repository(path: Path) -> None:
-    repository_url = "https://github.com/quintenroets/python-package-template"
+def download_repository(
+    path: Path,
+    name: str = "python-package-template",
+    depth: int | None = 1,
+) -> None:
+    repository_url = f"https://github.com/quintenroets/{name}"
     git_interface = GitInterface()
     git_interface.configure()
-    git_interface.capture_output("clone", repository_url, path, "--depth", 1)
+
+    command: tuple[CommandItem, ...] = ("clone", repository_url, path)
+    if depth is not None:
+        command = (*command, "--depth", depth)
+    git_interface.capture_output(*command)
 
 
 def generate_coverage_results(path: Path) -> None:

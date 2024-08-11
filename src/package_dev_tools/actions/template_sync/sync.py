@@ -11,12 +11,12 @@ from slugify import slugify
 from superpathlib import Path
 
 from package_dev_tools.actions.instantiate_new_project import ProjectInstantiator
-from package_dev_tools.actions.instantiate_new_project.git import GitInterface
 from package_dev_tools.actions.instantiate_new_project.substitute_template_name import (
     substitute_template_name,
 )
 
 from . import git
+from .merge import Merger
 
 
 @dataclass
@@ -26,11 +26,8 @@ class TemplateSyncer(git.Client):  # pragma: nocover
         default_factory=lambda: Path(".templatesyncignore"),
     )
     template_repository: str = "quintenroets/python-package-template"
-    only_latest_commit: bool = True
     default_branch: str = "main"
     update_branch: str = "sync-template"
-    downloaded_repository_folder: Path = field(init=False)
-    downloaded_template_repository_folder: Path = field(init=False)
 
     @property
     def project_name(self) -> str:
@@ -45,59 +42,19 @@ class TemplateSyncer(git.Client):  # pragma: nocover
         return repository.split("/")[-1]
 
     def run(self) -> None:
-        self.downloaded_repository_folder = Path.tempfile(create=False)
-        self.downloaded_template_repository_folder = Path.tempfile(create=False)
-        paths = (
+        merger = Merger(
             self.downloaded_repository_folder,
             self.downloaded_template_repository_folder,
+            self.project_name,
         )
-        with paths[0], paths[1]:
-            self._run()
-
-    def _run(self) -> None:
-        self.clone_repository()
-        is_updated = self.apply_updates()
-        if is_updated:
-            self.push_updates()
-
-    def clone_repository(self) -> None:
-        try:
-            self.repository_client.get_branch(self.update_branch)
-            update_branch_exists = True
-        except github.GithubException:
-            update_branch_exists = False
-        url = self.repository_client.clone_url
-        prefix = "https://"
-        username = self.repository.split("/")[0]
-        url = url.replace(prefix, f"{prefix}{username}:{self.token}@")
-        clone = (
-            ("clone", "-b", self.update_branch) if update_branch_exists else ("clone",)
-        )
-        cli.run("git", clone, url, self.downloaded_repository_folder)
-        if not update_branch_exists:
-            self.run_git("checkout", "-b", self.update_branch)
-
-    def apply_updates(self) -> bool:
-        updates = self.extract_template_updates()
-        try:
-            self.run_git("apply", input_=updates)
-            is_updated = True
-        except cli.CalledProcessError:
-            self.instantiate_template()
-            self.pull_template()
+        with (
+            self.downloaded_repository_folder,
+            self.downloaded_template_repository_folder,
+        ):
+            merger.merge_in_template_updates()
             is_updated = self.commit_updated_files()
-        return is_updated
-
-    def extract_template_updates(self) -> str:
-        if not self.downloaded_template_repository_folder.exists():
-            self.clone_template_repository()
-        cwd = self.downloaded_template_repository_folder
-        return cli.capture_output("git", "diff", "-U0", "HEAD^", "HEAD", cwd=cwd)
-
-    def clone_template_repository(self) -> None:
-        url = self.template_repository_client.clone_url
-        path = self.downloaded_template_repository_folder
-        cli.run("git", "clone", url, path)
+            if is_updated:
+                self.push_updates()
 
     def run_git(
         self,
@@ -113,26 +70,8 @@ class TemplateSyncer(git.Client):  # pragma: nocover
         instantiator = ProjectInstantiator(project_name=self.project_name, path=path)
         instantiator.run()
 
-    def pull_template(self) -> None:
-        self.run_git("config", "pull.rebase", "false")
-        self.configure_git()
-        command = (
-            "pull",
-            self.downloaded_template_repository_folder,
-            self.default_branch,
-            "--allow-unrelated-histories",
-            "--squash",
-            "--strategy=recursive",
-            "-X",
-            "theirs",
-        )
-        self.run_git(*command)
-
     def commit_updated_files(self) -> bool:
-        if self.only_latest_commit:
-            self.reset_files_not_in_template_commit()
         self.apply_ignore_patterns()
-        self.configure_git()
         command = "commit", "-m", self.latest_commit.commit.message, "--no-verify"
         try:
             self.run_git(*command)
@@ -168,14 +107,13 @@ class TemplateSyncer(git.Client):  # pragma: nocover
 
     def push_updates(self) -> None:
         self.run_git("push", "--set-upstream", "origin", self.update_branch)
-        title = "Sync template changes"
         with contextlib.suppress(
-            github.GithubException,
-        ):  # Pull request already created
+            github.GithubException,  # Pull request already created
+        ):
             self.repository_client.create_pull(
                 self.default_branch,
                 self.update_branch,
-                title=title,
+                title=self.latest_commit.commit.message,
                 body="",
             )
 
@@ -192,6 +130,38 @@ class TemplateSyncer(git.Client):  # pragma: nocover
         commits = self.template_repository_client.get_commits()
         return next(iter(commits))
 
-    def configure_git(self) -> None:
-        path = substitute_template_name.Path(self.downloaded_repository_folder)
-        GitInterface(path).configure()
+    @cached_property
+    def downloaded_repository_folder(self) -> Path:
+        path = Path.tempfile(create=False)
+        self.clone_repository(path)
+        return path
+
+    @cached_property
+    def downloaded_template_repository_folder(self) -> Path:
+        path = Path.tempfile(create=False)
+        self.clone_template_repository(path)
+        return path
+
+    def clone_repository(self, path: Path) -> None:
+        try:
+            self.repository_client.get_branch(self.update_branch)
+            update_branch_exists = True
+        except github.GithubException:
+            update_branch_exists = False
+        clone = (
+            ("clone", "-b", self.update_branch) if update_branch_exists else ("clone",)
+        )
+        cli.run("git", clone, self.project_clone_url, path)
+        if not update_branch_exists:
+            self.run_git("checkout", "-b", self.update_branch)
+
+    @property
+    def project_clone_url(self) -> str:
+        url = self.repository_client.clone_url
+        prefix = "https://"
+        username = self.repository.split("/")[0]
+        return url.replace(prefix, f"{prefix}{username}:{self.token}@")
+
+    def clone_template_repository(self, path: Path) -> None:
+        url = self.template_repository_client.clone_url
+        cli.run("git", "clone", url, path)
