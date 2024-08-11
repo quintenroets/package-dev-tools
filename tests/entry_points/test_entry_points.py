@@ -61,7 +61,7 @@ def test_sync_template(github_token: str) -> None:
     repository = "quintenroets/package-dev-tools"
     args = cli_args("--token", github_token, "--repository", repository)
     patched_push = mock.patch(
-        "package_dev_tools.actions.template_sync.sync_template.TemplateSyncer.push_updates",
+        "package_dev_tools.actions.template_sync.sync.TemplateSyncer.push_updates",
     )
     with args, patched_push:
         sync_template.entry_point()

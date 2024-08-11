@@ -45,7 +45,7 @@ class NameSubstitutor:
 
     def extract_new_project_name(self) -> str:
         git_url = GitInterface(self.path).capture_output("config remote.origin.url")
-        return urllib.parse.urlparse(git_url).path.split("/")[-1]
+        return urllib.parse.urlparse(git_url).path.split("/")[-1].removesuffix(".git")
 
     def extract_current_project_name(self) -> str:
         package_info = PackageInfo(self.path)
