@@ -153,7 +153,7 @@ class TemplateSyncer(git.Client):  # pragma: nocover
         )
         cli.run("git", clone, self.project_clone_url, path)
         if not update_branch_exists:
-            self.run_git("checkout", "-b", self.update_branch)
+            cli.run("git checkout -b", self.update_branch, cwd=path)
 
     @property
     def project_clone_url(self) -> str:

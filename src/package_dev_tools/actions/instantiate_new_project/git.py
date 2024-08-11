@@ -1,3 +1,4 @@
+import subprocess
 from dataclasses import dataclass, field
 
 import cli
@@ -24,6 +25,14 @@ class GitInterface:
     def capture_output(self, *args: CommandItem) -> str:
         git_arg = f"git {args[0]}"
         return cli.capture_output(git_arg, *args[1:], cwd=self.path)
+
+    def run(
+        self,
+        *args: CommandItem,
+        check: bool = True,
+    ) -> subprocess.CompletedProcess[str]:
+        git_arg = f"git {args[0]}"
+        return cli.run(git_arg, *args[1:], cwd=self.path, check=check)
 
     def configure(self) -> None:
         git_configuration = {"name": self.git_name, "email": self.git_email}
