@@ -1,4 +1,5 @@
 import contextlib
+from package_dev_tools.actions.instantiate_new_project.git import GitInterface
 from collections.abc import Iterator
 from dataclasses import dataclass, field
 from functools import cached_property
@@ -43,16 +44,17 @@ class TemplateSyncer(git.Client):  # pragma: nocover
 
     def run(self) -> None:
         merger = Merger(
-            self.downloaded_repository_folder,
-            self.downloaded_template_repository_folder,
+            self.downloaded_repository_directory,
+            self.downloaded_template_repository_directory,
             self.project_name,
         )
         with (
-            self.downloaded_repository_folder,
-            self.downloaded_template_repository_folder,
+            self.downloaded_repository_directory,
+            self.downloaded_template_repository_directory,
         ):
             merger.merge_in_template_updates()
             is_updated = self.commit_updated_files()
+            print(is_updated)
             if is_updated:
                 self.push_updates()
 
@@ -62,19 +64,22 @@ class TemplateSyncer(git.Client):  # pragma: nocover
         input_: str | None = None,
         check: bool = True,
     ) -> None:
-        cwd = self.downloaded_repository_folder
+        cwd = self.downloaded_repository_directory
         cli.run("git", *args, input=input_, cwd=cwd, check=check)
 
     def instantiate_template(self) -> None:
-        path = substitute_template_name.Path(self.downloaded_template_repository_folder)
+        path = substitute_template_name.Path(
+            self.downloaded_template_repository_directory
+        )
         instantiator = ProjectInstantiator(project_name=self.project_name, path=path)
         instantiator.run()
 
     def commit_updated_files(self) -> bool:
+        git = GitInterface(commit_message=self.latest_commit.commit.message)
+        git.run("add -A")
         self.apply_ignore_patterns()
-        command = "commit", "-m", self.latest_commit.commit.message, "--no-verify"
         try:
-            self.run_git(*command)
+            git.commit()
             is_updated = True
         except cli.CalledProcessError:
             is_updated = False
@@ -99,7 +104,7 @@ class TemplateSyncer(git.Client):  # pragma: nocover
             yield changed_file.filename
 
     def apply_ignore_patterns(self) -> None:
-        path = self.downloaded_repository_folder / self.ignore_patterns_path
+        path = self.downloaded_repository_directory / self.ignore_patterns_path
         if path.exists():
             for line in path.lines:
                 pattern = f"{line}*" if line.endswith("/") else line
@@ -131,13 +136,13 @@ class TemplateSyncer(git.Client):  # pragma: nocover
         return next(iter(commits))
 
     @cached_property
-    def downloaded_repository_folder(self) -> Path:
+    def downloaded_repository_directory(self) -> Path:
         path = Path.tempfile(create=False)
         self.clone_repository(path)
         return path
 
     @cached_property
-    def downloaded_template_repository_folder(self) -> Path:
+    def downloaded_template_repository_directory(self) -> Path:
         path = Path.tempfile(create=False)
         self.clone_template_repository(path)
         return path

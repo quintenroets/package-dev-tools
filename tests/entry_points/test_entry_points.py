@@ -44,12 +44,6 @@ def test_check_coverage() -> None:
         check_coverage.entry_point()
 
 
-@pytest.fixture(scope="session")
-def github_token() -> str:
-    key = "TEMPLATE_SYNC_TRIGGER_TOKEN"
-    return os.environ.get(key) or cli.capture_output("pw", "automationtoken")
-
-
 def test_trigger_template_sync(github_token: str) -> None:
     args = cli_args("--token", github_token)
     patched_workflow = mock.patch("github.Workflow")

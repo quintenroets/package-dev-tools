@@ -17,6 +17,12 @@ pip = "pip.exe" if running_on_windows else "pip"
 
 
 @pytest.fixture(scope="session")
+def github_token() -> str:
+    key = "TEMPLATE_SYNC_TRIGGER_TOKEN"
+    return os.environ.get(key) or cli.capture_output("pw", "automationtoken")
+
+
+@pytest.fixture(scope="session")
 def downloaded_repository_path() -> Iterator[Path]:
     with Path.tempfile() as path:
         create_processed_repository(path)
