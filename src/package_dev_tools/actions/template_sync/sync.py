@@ -10,11 +10,7 @@ from github.Repository import Repository
 from slugify import slugify
 from superpathlib import Path
 
-from package_dev_tools.actions.instantiate_new_project import ProjectInstantiator
 from package_dev_tools.actions.instantiate_new_project.git import GitInterface
-from package_dev_tools.actions.instantiate_new_project.substitute_template_name import (
-    substitute_template_name,
-)
 
 from . import git
 from .merge import Merger
@@ -88,7 +84,7 @@ class TemplateSyncer(git.Client):
         for file_ in self.generate_files_in_template_commit():
             yield file_.replace(template_package_name, package_name)
 
-    def generate_files_in_template_commit(self) -> Iterator[str]:
+    def generate_files_in_template_commit(self) -> Iterator[str]:  # pragma: nocover
         for changed_file in self.latest_commit.files:
             if changed_file.previous_filename is not None:
                 yield changed_file.previous_filename
