@@ -67,9 +67,8 @@ class TemplateSyncer(git.Client):
         self.reset_files_not_in_template_commit()
         self.apply_ignore_patterns()
         path = models.Path(self.downloaded_repository_directory)
-        message = self.latest_commit.commit.message.split("(#")[0]
         try:
-            GitInterface(path=path, commit_message=message).commit()
+            GitInterface(path=path, commit_message=self.commit_message).commit()
             is_updated = True
         except cli.CalledProcessError:
             is_updated = False
@@ -102,15 +101,35 @@ class TemplateSyncer(git.Client):
 
     def push_updates(self) -> None:  # pragma: nocover
         self.run_git("push", "--set-upstream", "origin", self.update_branch)
+        body = self.create_pull_request_body()
         with contextlib.suppress(
             github.GithubException,  # Pull request already created
         ):
             self.repository_client.create_pull(
                 self.default_branch,
                 self.update_branch,
-                title=self.latest_commit.commit.message,
-                body="",
+                title=self.commit_message,
+                body=body,
             )
+
+    def create_pull_request_body(self) -> str:
+        pull_request_tokens = "(#"
+        if pull_request_tokens in self.latest_commit.commit.message:
+            message = self.latest_commit.commit.message
+            number = message.split(pull_request_tokens)[-1].split(")")[0]
+            name = f"#{number}"
+            repository_url = self.template_repository_client.clone_url.removesuffix(
+                ".git",
+            )
+            url = f"{repository_url}/pull/{number}"
+        else:
+            name = self.latest_commit.commit.sha
+            url = self.latest_commit.commit.html_url
+        return f"Sync template repository updates in [{name}]({url})"
+
+    @cached_property
+    def commit_message(self) -> str:
+        return self.latest_commit.commit.message.split("(#")[0]
 
     @cached_property
     def repository_client(self) -> Repository:
