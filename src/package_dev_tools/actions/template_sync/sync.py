@@ -67,12 +67,9 @@ class TemplateSyncer(git.Client):
         self.reset_files_not_in_template_commit()
         self.apply_ignore_patterns()
         path = models.Path(self.downloaded_repository_directory)
+        message = self.latest_commit.commit.message.split("(#")[0]
         try:
-            git = GitInterface(
-                path=path,
-                commit_message=self.latest_commit.commit.message,
-            )
-            git.commit()
+            GitInterface(path=path, commit_message=message).commit()
             is_updated = True
         except cli.CalledProcessError:
             is_updated = False
