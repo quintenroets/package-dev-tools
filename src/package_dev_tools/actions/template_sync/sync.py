@@ -66,19 +66,11 @@ class TemplateSyncer(git.Client):
         cwd = self.downloaded_repository_directory
         cli.run("git", *args, input=input_, cwd=cwd, check=check)
 
-    def instantiate_template(self) -> None:
-        path = substitute_template_name.Path(
-            self.downloaded_template_repository_directory,
-        )
-        instantiator = ProjectInstantiator(project_name=self.project_name, path=path)
-        instantiator.run()
-
     def commit_updated_files(self) -> bool:
-        git = GitInterface(commit_message=self.latest_commit.commit.message)
-        git.run("add -A")
+        self.reset_files_not_in_template_commit()
         self.apply_ignore_patterns()
         try:
-            git.commit()
+            GitInterface(commit_message=self.latest_commit.commit.message).commit()
             is_updated = True
         except cli.CalledProcessError:
             is_updated = False

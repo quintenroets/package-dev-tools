@@ -22,6 +22,7 @@ def test_sync_template(
         "package_dev_tools.actions.template_sync.sync.TemplateSyncer.downloaded_template_repository_directory",
         new=template_directory,
     )
-    with patched_repository, patched_template_repository:
+    patched_commit = patch("github.Commit.Commit.files", new=["pyproject.toml"])
+    with patched_repository, patched_template_repository, patched_commit:
         TemplateSyncer(token=github_token, repository=repository_name).run()
     patched_push.assert_called_once()
