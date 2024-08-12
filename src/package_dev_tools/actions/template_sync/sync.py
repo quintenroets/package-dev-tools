@@ -26,6 +26,7 @@ class TemplateSyncer(git.Client):
     template_repository: str = "quintenroets/python-package-template"
     default_branch: str = "main"
     update_branch: str = "sync-template"
+    show_conflicts: bool = True
 
     @property
     def project_name(self) -> str:
@@ -44,6 +45,7 @@ class TemplateSyncer(git.Client):
             self.downloaded_repository_directory,
             self.downloaded_template_repository_directory,
             self.project_name,
+            show_conflicts=self.show_conflicts,
         )
         with (
             self.downloaded_repository_directory,
