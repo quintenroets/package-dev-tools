@@ -10,6 +10,7 @@ from github.Repository import Repository
 from slugify import slugify
 from superpathlib import Path
 
+from package_dev_tools import models
 from package_dev_tools.actions.instantiate_new_project.git import GitInterface
 
 from . import git
@@ -65,11 +66,16 @@ class TemplateSyncer(git.Client):
     def commit_updated_files(self) -> bool:
         self.reset_files_not_in_template_commit()
         self.apply_ignore_patterns()
+        path = models.Path(self.downloaded_repository_directory)
         try:
-            GitInterface(commit_message=self.latest_commit.commit.message).commit()
+            git = GitInterface(
+                path=path,
+                commit_message=self.latest_commit.commit.message,
+            )
+            git.commit()
             is_updated = True
         except cli.CalledProcessError:
-            is_updated = False
+            is_updated = False  # pragma: nocover
         return is_updated
 
     def reset_files_not_in_template_commit(self) -> None:
@@ -97,7 +103,7 @@ class TemplateSyncer(git.Client):
                 pattern = f"{line}*" if line.endswith("/") else line
                 self.run_git("reset", pattern)
 
-    def push_updates(self) -> None:
+    def push_updates(self) -> None:  # pragma: nocover
         self.run_git("push", "--set-upstream", "origin", self.update_branch)
         with contextlib.suppress(
             github.GithubException,  # Pull request already created
@@ -134,7 +140,7 @@ class TemplateSyncer(git.Client):
         self.clone_template_repository(path)
         return path
 
-    def clone_repository(self, path: Path) -> None:
+    def clone_repository(self, path: Path) -> None:  # pragma: nocover
         try:
             self.repository_client.get_branch(self.update_branch)
             update_branch_exists = True

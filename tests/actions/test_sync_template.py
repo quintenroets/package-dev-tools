@@ -1,31 +1,54 @@
+from collections.abc import Iterator
 from unittest.mock import MagicMock, patch
 
+import pytest
 from package_dev_tools.actions.template_sync.sync import TemplateSyncer
 from package_dev_tools.models import Path
 
+syncer_path = "package_dev_tools.actions.template_sync.sync.TemplateSyncer"
 
-@patch(
-    "package_dev_tools.actions.template_sync.sync.TemplateSyncer.push_updates",
-)
-def test_sync_template(
-    patched_push: MagicMock,
+
+@pytest.fixture()
+def syncer(
     template_directory: Path,
     repository_directory: Path,
     repository_name: str,
     github_token: str,
-) -> None:
+) -> Iterator[TemplateSyncer]:
     patched_repository = patch(
-        "package_dev_tools.actions.template_sync.sync.TemplateSyncer.downloaded_repository_directory",
+        f"{syncer_path}.downloaded_repository_directory",
         new=repository_directory,
     )
     patched_template_repository = patch(
-        "package_dev_tools.actions.template_sync.sync.TemplateSyncer.downloaded_template_repository_directory",
+        f"{syncer_path}.downloaded_template_repository_directory",
         new=template_directory,
     )
-    patched_commit = patch(
-        "package_dev_tools.actions.template_sync.sync.TemplateSyncer.generate_files_in_template_commit",
-        new=["pyproject.toml"],
-    )
-    with patched_repository, patched_template_repository, patched_commit:
-        TemplateSyncer(token=github_token, repository=repository_name).run()
-    patched_push.assert_called_once()
+    with patched_repository, patched_template_repository:
+        yield TemplateSyncer(token=github_token, repository=repository_name)
+
+
+@patch(f"{syncer_path}.push_updates")
+@patch(
+    f"{syncer_path}.generate_files_in_template_commit",
+    side_effect=lambda: ["pyproject.toml"],
+)
+def test_sync_template(
+    mocked_commit: MagicMock,
+    mocked_push: MagicMock,
+    syncer: TemplateSyncer,
+) -> None:
+    syncer.run()
+    mocked_commit.assert_called_once()
+    mocked_push.assert_called_once()
+
+
+@patch(f"{syncer_path}.push_updates")
+@patch(f"{syncer_path}.generate_files_in_template_commit", side_effect=list)
+def test_sync_template_without_changes(
+    mocked_commit: MagicMock,
+    mocked_push: MagicMock,
+    syncer: TemplateSyncer,
+) -> None:
+    syncer.run()
+    mocked_commit.assert_called_once()
+    mocked_push.assert_not_called()
