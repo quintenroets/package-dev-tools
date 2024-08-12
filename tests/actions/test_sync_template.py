@@ -52,3 +52,17 @@ def test_sync_template_without_changes(
     syncer.run()
     mocked_commit.assert_called_once()
     mocked_push.assert_not_called()
+
+
+def test_create_pull_request_body(syncer: TemplateSyncer) -> None:
+    syncer.latest_commit.commit._message._value = "(#30)"  # type: ignore[attr-defined]  # noqa: SLF001
+    body = syncer.create_pull_request_body()
+    assert "pull" in body
+
+
+def test_create_pull_request_body_without_template_pull_request(
+    syncer: TemplateSyncer,
+) -> None:
+    syncer.latest_commit.commit._message._value = "message"  # type: ignore[attr-defined]  # noqa: SLF001
+    body = syncer.create_pull_request_body()
+    assert "commit" in body
