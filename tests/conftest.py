@@ -117,3 +117,31 @@ def create_bin_path(
     cli.capture_output("python -m venv", path.name, cwd=path.parent)
     bin_path = path / bin_name
     cli.capture_output(bin_path / pip, "install", "-e", ".[dev]", cwd=repository_path)
+
+
+@pytest.fixture()
+def repository_name() -> str:
+    return "cli"
+
+
+@pytest.fixture()
+def template_directory() -> Iterator[Path]:
+    yield from clone(
+        "python-package-template",
+        commit="a24d34470db6860ea3470ae52fa2b4770b4c8af0",
+    )
+
+
+@pytest.fixture()
+def repository_directory(repository_name: str) -> Iterator[Path]:
+    yield from clone(repository_name, "a965aca767feac0c9438f6d8ada7f7d84e0519da")
+
+
+def clone(repository: str, commit: str) -> Iterator[Path]:
+    directory = Path.tempfile(create=False)
+    download_repository(directory, name=repository, depth=None)
+    git = GitInterface(directory)
+    git.configure()
+    git.capture_output("reset --hard", commit)
+    with directory:
+        yield directory
