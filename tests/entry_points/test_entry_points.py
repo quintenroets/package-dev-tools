@@ -1,8 +1,6 @@
-import os
 from collections.abc import Callable
 from unittest import mock
 
-import cli
 import pytest
 from package_dev_tools.cli import (
     check_coverage,

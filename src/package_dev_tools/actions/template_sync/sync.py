@@ -1,5 +1,4 @@
 import contextlib
-from package_dev_tools.actions.instantiate_new_project.git import GitInterface
 from collections.abc import Iterator
 from dataclasses import dataclass, field
 from functools import cached_property
@@ -12,6 +11,7 @@ from slugify import slugify
 from superpathlib import Path
 
 from package_dev_tools.actions.instantiate_new_project import ProjectInstantiator
+from package_dev_tools.actions.instantiate_new_project.git import GitInterface
 from package_dev_tools.actions.instantiate_new_project.substitute_template_name import (
     substitute_template_name,
 )
@@ -21,7 +21,7 @@ from .merge import Merger
 
 
 @dataclass
-class TemplateSyncer(git.Client):  # pragma: nocover
+class TemplateSyncer(git.Client):
     repository: str
     ignore_patterns_path: Path = field(
         default_factory=lambda: Path(".templatesyncignore"),
@@ -54,7 +54,6 @@ class TemplateSyncer(git.Client):  # pragma: nocover
         ):
             merger.merge_in_template_updates()
             is_updated = self.commit_updated_files()
-            print(is_updated)
             if is_updated:
                 self.push_updates()
 
@@ -69,7 +68,7 @@ class TemplateSyncer(git.Client):  # pragma: nocover
 
     def instantiate_template(self) -> None:
         path = substitute_template_name.Path(
-            self.downloaded_template_repository_directory
+            self.downloaded_template_repository_directory,
         )
         instantiator = ProjectInstantiator(project_name=self.project_name, path=path)
         instantiator.run()

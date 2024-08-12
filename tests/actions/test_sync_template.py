@@ -1,5 +1,5 @@
 from collections.abc import Iterator
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
 import pytest
 from package_dev_tools.actions.instantiate_new_project.git import GitInterface
