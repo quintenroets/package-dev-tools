@@ -75,7 +75,7 @@ class TemplateSyncer(git.Client):
             git.commit()
             is_updated = True
         except cli.CalledProcessError:
-            is_updated = False  # pragma: nocover
+            is_updated = False
         return is_updated
 
     def reset_files_not_in_template_commit(self) -> None:
