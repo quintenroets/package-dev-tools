@@ -16,6 +16,7 @@ class Merger:  # pragma: nocover
     template_directory: Path
     repository: str
     template_branch: str = "template"
+    show_conflicts: bool = True
 
     @cached_property
     def git(self) -> GitInterface:
@@ -27,7 +28,8 @@ class Merger:  # pragma: nocover
     def merge_in_template_updates(self) -> None:
         self.branch_template_updates()
         self.create_branch_with(self.repository_directory)
-        self.git.run(f"merge {self.template_branch} -X ours -m 'merge'", check=False)
+        action = "merge" if self.show_conflicts else "merge -X ours"
+        self.git.run(f"{action} {self.template_branch} -m 'merge'", check=False)
         self.overwrite_project_files(self.template_directory, self.repository_directory)
 
     def branch_template_updates(self) -> None:
