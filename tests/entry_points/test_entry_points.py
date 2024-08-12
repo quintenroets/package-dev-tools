@@ -1,8 +1,6 @@
-import os
 from collections.abc import Callable
 from unittest import mock
 
-import cli
 import pytest
 from package_dev_tools.cli import (
     check_coverage,
@@ -42,12 +40,6 @@ def test_check_coverage() -> None:
     exceptions = SystemExit, Exception
     with pytest.raises(exceptions):
         check_coverage.entry_point()
-
-
-@pytest.fixture(scope="session")
-def github_token() -> str:
-    key = "TEMPLATE_SYNC_TRIGGER_TOKEN"
-    return os.environ.get(key) or cli.capture_output("pw", "automationtoken")
 
 
 def test_trigger_template_sync(github_token: str) -> None:

@@ -10,17 +10,15 @@ from github.Repository import Repository
 from slugify import slugify
 from superpathlib import Path
 
-from package_dev_tools.actions.instantiate_new_project import ProjectInstantiator
-from package_dev_tools.actions.instantiate_new_project.substitute_template_name import (
-    substitute_template_name,
-)
+from package_dev_tools import models
+from package_dev_tools.actions.instantiate_new_project.git import GitInterface
 
 from . import git
 from .merge import Merger
 
 
 @dataclass
-class TemplateSyncer(git.Client):  # pragma: nocover
+class TemplateSyncer(git.Client):
     repository: str
     ignore_patterns_path: Path = field(
         default_factory=lambda: Path(".templatesyncignore"),
@@ -43,13 +41,13 @@ class TemplateSyncer(git.Client):  # pragma: nocover
 
     def run(self) -> None:
         merger = Merger(
-            self.downloaded_repository_folder,
-            self.downloaded_template_repository_folder,
+            self.downloaded_repository_directory,
+            self.downloaded_template_repository_directory,
             self.project_name,
         )
         with (
-            self.downloaded_repository_folder,
-            self.downloaded_template_repository_folder,
+            self.downloaded_repository_directory,
+            self.downloaded_template_repository_directory,
         ):
             merger.merge_in_template_updates()
             is_updated = self.commit_updated_files()
@@ -62,19 +60,19 @@ class TemplateSyncer(git.Client):  # pragma: nocover
         input_: str | None = None,
         check: bool = True,
     ) -> None:
-        cwd = self.downloaded_repository_folder
+        cwd = self.downloaded_repository_directory
         cli.run("git", *args, input=input_, cwd=cwd, check=check)
 
-    def instantiate_template(self) -> None:
-        path = substitute_template_name.Path(self.downloaded_template_repository_folder)
-        instantiator = ProjectInstantiator(project_name=self.project_name, path=path)
-        instantiator.run()
-
     def commit_updated_files(self) -> bool:
+        self.reset_files_not_in_template_commit()
         self.apply_ignore_patterns()
-        command = "commit", "-m", self.latest_commit.commit.message, "--no-verify"
+        path = models.Path(self.downloaded_repository_directory)
         try:
-            self.run_git(*command)
+            git = GitInterface(
+                path=path,
+                commit_message=self.latest_commit.commit.message,
+            )
+            git.commit()
             is_updated = True
         except cli.CalledProcessError:
             is_updated = False
@@ -92,20 +90,20 @@ class TemplateSyncer(git.Client):  # pragma: nocover
         for file_ in self.generate_files_in_template_commit():
             yield file_.replace(template_package_name, package_name)
 
-    def generate_files_in_template_commit(self) -> Iterator[str]:
+    def generate_files_in_template_commit(self) -> Iterator[str]:  # pragma: nocover
         for changed_file in self.latest_commit.files:
             if changed_file.previous_filename is not None:
                 yield changed_file.previous_filename
             yield changed_file.filename
 
     def apply_ignore_patterns(self) -> None:
-        path = self.downloaded_repository_folder / self.ignore_patterns_path
+        path = self.downloaded_repository_directory / self.ignore_patterns_path
         if path.exists():
             for line in path.lines:
                 pattern = f"{line}*" if line.endswith("/") else line
                 self.run_git("reset", pattern)
 
-    def push_updates(self) -> None:
+    def push_updates(self) -> None:  # pragma: nocover
         self.run_git("push", "--set-upstream", "origin", self.update_branch)
         with contextlib.suppress(
             github.GithubException,  # Pull request already created
@@ -131,18 +129,18 @@ class TemplateSyncer(git.Client):  # pragma: nocover
         return next(iter(commits))
 
     @cached_property
-    def downloaded_repository_folder(self) -> Path:
+    def downloaded_repository_directory(self) -> Path:
         path = Path.tempfile(create=False)
         self.clone_repository(path)
         return path
 
     @cached_property
-    def downloaded_template_repository_folder(self) -> Path:
+    def downloaded_template_repository_directory(self) -> Path:
         path = Path.tempfile(create=False)
         self.clone_template_repository(path)
         return path
 
-    def clone_repository(self, path: Path) -> None:
+    def clone_repository(self, path: Path) -> None:  # pragma: nocover
         try:
             self.repository_client.get_branch(self.update_branch)
             update_branch_exists = True
