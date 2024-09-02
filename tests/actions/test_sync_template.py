@@ -2,13 +2,14 @@ from collections.abc import Iterator
 from unittest.mock import MagicMock, patch
 
 import pytest
+
 from package_dev_tools.actions.template_sync.sync import TemplateSyncer
 from package_dev_tools.models import Path
 
 syncer_path = "package_dev_tools.actions.template_sync.sync.TemplateSyncer"
 
 
-@pytest.fixture()
+@pytest.fixture
 def syncer(
     template_directory: Path,
     repository_directory: Path,
