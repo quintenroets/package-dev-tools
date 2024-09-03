@@ -1,5 +1,6 @@
 import cli
 import pytest
+
 from package_dev_tools.actions.instantiate_new_project import (
     ProjectInstantiator,
 )

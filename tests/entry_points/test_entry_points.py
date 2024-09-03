@@ -2,6 +2,8 @@ from collections.abc import Callable
 from unittest import mock
 
 import pytest
+from package_dev_utils.tests.args import cli_args, no_cli_args
+
 from package_dev_tools.cli import (
     check_coverage,
     check_shields,
@@ -14,7 +16,6 @@ from package_dev_tools.cli import (
     sync_template,
     trigger_template_sync,
 )
-from package_dev_utils.tests.args import cli_args, no_cli_args
 
 entry_points = [
     check_shields.entry_point,

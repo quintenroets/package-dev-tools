@@ -5,6 +5,7 @@ from collections.abc import Callable, Iterator
 
 import cli
 import pytest
+
 from package_dev_tools.actions.instantiate_new_project.git import GitInterface
 from package_dev_tools.models import Path
 
@@ -69,12 +70,12 @@ def generate_coverage_results(path: Path) -> None:
     cli.capture_output(bin_path / coverage, "run", cwd=path)
 
 
-@pytest.fixture()
+@pytest.fixture
 def repository_path(downloaded_repository_path: Path) -> Iterator[Path]:
     yield from use_in_temporary_location(downloaded_repository_path)
 
 
-@pytest.fixture()
+@pytest.fixture
 def repository_path_with_uncovered_files(
     downloaded_repository_path_with_uncovered_files: Path,
 ) -> Iterator[Path]:
@@ -119,12 +120,12 @@ def create_bin_path(
     cli.capture_output(bin_path / pip, "install", "-e", ".[dev]", cwd=repository_path)
 
 
-@pytest.fixture()
+@pytest.fixture
 def repository_name() -> str:
     return "cli"
 
 
-@pytest.fixture()
+@pytest.fixture
 def template_directory() -> Iterator[Path]:
     yield from clone(
         "python-package-template",
@@ -132,7 +133,7 @@ def template_directory() -> Iterator[Path]:
     )
 
 
-@pytest.fixture()
+@pytest.fixture
 def repository_directory(repository_name: str) -> Iterator[Path]:
     yield from clone(repository_name, "a965aca767feac0c9438f6d8ada7f7d84e0519da")
 
