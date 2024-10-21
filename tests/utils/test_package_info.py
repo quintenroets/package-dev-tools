@@ -20,7 +20,7 @@ def package_info_with_max_version(repository_path: Path) -> PackageInfo:
         new = 'requires-python = ">=3.10, <3.13"'
         path = directory / name
         path.text = (repository_path / name).text.replace(old, new)
-    return PackageInfo(repository_path)
+        return PackageInfo(directory)
 
 
 def test_package_name(package_info: PackageInfo) -> None:
