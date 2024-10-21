@@ -4,14 +4,23 @@ from package_dev_tools.utils.package import PackageInfo
 
 def check_shields() -> None:
     package_info = PackageInfo()
-    versions = package_info.listed_version.replace("<=", "").split(", <")
-    python_version = "--".join(versions)
-    python_version_badge = f"python-{python_version}+"
+    python_version = create_python_version_badge()
     operating_systems = package_info.supported_operating_systems
     operating_system = "os-" + "%20%7c%20".join(operating_systems)
     badges = (
-        Badge("Python version", python_version_badge),
+        Badge("Python version", python_version),
         Badge("Operating system", operating_system),
     )
     for badge in badges:
         BadgeUpdater(badge).run()
+
+
+def create_python_version_badge(package_info: PackageInfo) -> str:
+    minimum_version = package_info.required_python_version
+    if "," in package_info.listed_version:  # pragma: nocover
+        minor = package_info.latest_supported_python_minor - 1
+        maximum_version = f"3.{minor}"
+        version = minimum_version + "--" + maximum_version
+    else:
+        version = minimum_version + "+"
+    return f"python-{version}"
