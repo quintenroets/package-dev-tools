@@ -24,25 +24,32 @@ def github_token() -> str:
 
 
 @pytest.fixture(scope="session")
-def downloaded_repository_path() -> Iterator[Path]:
+def downloaded_repository_path(github_token: str) -> Iterator[Path]:
     with Path.tempfile() as path:
-        create_processed_repository(path)
+        create_processed_repository(path, github_token=github_token)
         yield path
 
 
 @pytest.fixture(scope="session")
-def downloaded_repository_path_with_uncovered_files() -> Iterator[Path]:
+def downloaded_repository_path_with_uncovered_files(
+    github_token: str,
+) -> Iterator[Path]:
     with Path.tempfile() as path:
-        create_processed_repository(path, callback=add_uncovered_files)
+        create_processed_repository(
+            path,
+            callback=add_uncovered_files,
+            github_token=github_token,
+        )
         yield path
 
 
 def create_processed_repository(
     path: Path,
     callback: Callable[[Path], None] | None = None,
+    github_token: str | None = None,
 ) -> None:
     path.unlink()
-    download_repository(path)
+    download_repository(path, github_token=github_token)
     if callback is not None:
         callback(path)
     generate_coverage_results(path)
@@ -52,8 +59,12 @@ def download_repository(
     path: Path,
     name: str = "python-package-template",
     depth: int | None = 1,
+    github_token: str | None = None,
 ) -> None:
     repository_url = f"https://github.com/quintenroets/{name}"
+    if github_token is not None:
+        host = "github.com"
+        repository_url = repository_url.replace(host, github_token + "@" + host)
     git_interface = GitInterface()
     git_interface.configure()
 
@@ -126,21 +137,35 @@ def repository_name() -> str:
 
 
 @pytest.fixture
-def template_directory() -> Iterator[Path]:
+def template_directory(github_token: str) -> Iterator[Path]:
     yield from clone(
         "python-package-template",
         commit="a24d34470db6860ea3470ae52fa2b4770b4c8af0",
+        github_token=github_token,
     )
 
 
 @pytest.fixture
-def repository_directory(repository_name: str) -> Iterator[Path]:
-    yield from clone(repository_name, "a965aca767feac0c9438f6d8ada7f7d84e0519da")
+def repository_directory(repository_name: str, github_token: str) -> Iterator[Path]:
+    yield from clone(
+        repository_name,
+        "a965aca767feac0c9438f6d8ada7f7d84e0519da",
+        github_token=github_token,
+    )
 
 
-def clone(repository: str, commit: str) -> Iterator[Path]:
+def clone(
+    repository: str,
+    commit: str,
+    github_token: str | None = None,
+) -> Iterator[Path]:
     directory = Path.tempfile(create=False)
-    download_repository(directory, name=repository, depth=None)
+    download_repository(
+        directory,
+        name=repository,
+        depth=None,
+        github_token=github_token,
+    )
     git = GitInterface(directory)
     git.configure()
     git.capture_output("reset --hard", commit)
