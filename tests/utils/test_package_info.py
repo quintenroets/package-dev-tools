@@ -44,10 +44,8 @@ def test_supported_python_versions(package_info: PackageInfo) -> None:
 def test_supported_python_versions_with_max_version(
     package_info_with_max_version: PackageInfo,
 ) -> None:
-    assert (
-        list(package_info_with_max_version.supported_python_versions)
-        == supported_python_versions[:-1]
-    )
+    versions = package_info_with_max_version.supported_python_versions
+    assert list(versions) == supported_python_versions[:-1]
 
 
 def test_supported_operating_systems(package_info: PackageInfo) -> None:
