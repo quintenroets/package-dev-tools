@@ -24,9 +24,9 @@ def github_token() -> str:
 
 
 @pytest.fixture(scope="session")
-def downloaded_repository_path() -> Iterator[Path]:
+def downloaded_repository_path(github_token: str) -> Iterator[Path]:
     with Path.tempfile() as path:
-        create_processed_repository(path)
+        create_processed_repository(path, github_token=github_token)
         yield path
 
 

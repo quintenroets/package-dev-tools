@@ -40,7 +40,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: Run tests
-        uses: quintenroets/actions/validate/tests@debug
+        uses: quintenroets/actions/validate/tests@main
         with:
           python-version: ${{ matrix.python-version }}
 
