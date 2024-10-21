@@ -1,5 +1,6 @@
+from collections.abc import Iterator
+
 import pytest
-from typing import Iterator
 
 from package_dev_tools.models import Path
 from package_dev_tools.utils.package import PackageInfo
