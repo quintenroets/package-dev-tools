@@ -4,7 +4,7 @@ from package_dev_tools.utils.package import PackageInfo
 
 def check_shields() -> None:
     package_info = PackageInfo()
-    python_version = create_python_version_badge()
+    python_version = create_python_version_badge(package_info=package_info)
     operating_systems = package_info.supported_operating_systems
     operating_system = "os-" + "%20%7c%20".join(operating_systems)
     badges = (
