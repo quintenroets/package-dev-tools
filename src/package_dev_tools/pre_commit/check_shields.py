@@ -18,8 +18,7 @@ def check_shields() -> None:
 def create_python_version_badge(package_info: PackageInfo) -> str:
     minimum_version = package_info.required_python_version
     if "," in package_info.listed_version:  # pragma: nocover
-        minor = package_info.latest_supported_python_minor - 1
-        maximum_version = f"3.{minor}"
+        maximum_version = f"3.{package_info.latest_supported_python_minor}"
         version = minimum_version + "--" + maximum_version
     else:
         version = minimum_version + "+"
