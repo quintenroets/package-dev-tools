@@ -46,10 +46,11 @@ class PackageInfo:
 
     @property
     def supported_python_versions(self) -> Iterator[str]:
-        latest_python_minor = self.retrieve_latest_python_minor()
+        latest_python_minor = self.latest_supported_python_minor
         minors = range(self.required_python_minor, latest_python_minor + 1)
         return (f"3.{minor_version}" for minor_version in minors)
 
+    @property
     def latest_supported_python_minor(self) -> int:
         return (
             int(self.listed_version.split("<")[1].split(".")[-1]) - 1
