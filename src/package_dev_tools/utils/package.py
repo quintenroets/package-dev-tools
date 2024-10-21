@@ -1,6 +1,7 @@
 import typing
 from collections.abc import Iterator
 from dataclasses import dataclass, field
+from functools import cached_property
 from typing import Any, ClassVar
 
 import requests
@@ -26,10 +27,17 @@ class PackageInfo:
         package_slug = self.pyproject_info["project"]["name"]
         return typing.cast(str, package_slug)
 
-    @property
-    def required_python_version(self) -> str:
+    @cached_property
+    def listed_version(self) -> str:
         version = self.pyproject_info["project"]["requires-python"].split(">=")[1]
         return typing.cast(str, version)
+
+    @property
+    def required_python_version(self) -> str:
+        version = self.listed_version
+        if "," in version:
+            version = version.split(",")[0]
+        return version
 
     @property
     def required_python_minor(self) -> int:
@@ -41,6 +49,13 @@ class PackageInfo:
         latest_python_minor = self.retrieve_latest_python_minor()
         minors = range(self.required_python_minor, latest_python_minor + 1)
         return (f"3.{minor_version}" for minor_version in minors)
+
+    def latest_supported_python_minor(self) -> int:
+        return (
+            int(self.listed_version.split("<")[1].split(".")[-1]) - 1
+            if "," in self.listed_version
+            else self.retrieve_latest_python_minor()
+        )
 
     def retrieve_latest_python_minor(self) -> int:
         minor_version = self.required_python_minor
