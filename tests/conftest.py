@@ -31,18 +31,25 @@ def downloaded_repository_path() -> Iterator[Path]:
 
 
 @pytest.fixture(scope="session")
-def downloaded_repository_path_with_uncovered_files() -> Iterator[Path]:
+def downloaded_repository_path_with_uncovered_files(
+    github_token: str,
+) -> Iterator[Path]:
     with Path.tempfile() as path:
-        create_processed_repository(path, callback=add_uncovered_files)
+        create_processed_repository(
+            path,
+            callback=add_uncovered_files,
+            github_token=github_token,
+        )
         yield path
 
 
 def create_processed_repository(
     path: Path,
     callback: Callable[[Path], None] | None = None,
+    github_token: str | None = None,
 ) -> None:
     path.unlink()
-    download_repository(path)
+    download_repository(path, github_token=github_token)
     if callback is not None:
         callback(path)
     generate_coverage_results(path)
@@ -52,8 +59,12 @@ def download_repository(
     path: Path,
     name: str = "python-package-template",
     depth: int | None = 1,
+    github_token: str | None = None,
 ) -> None:
     repository_url = f"https://github.com/quintenroets/{name}"
+    if github_token is not None:
+        host = "github.com"
+        repository_url = repository_url.replace(host, github_token + "@" + host)
     git_interface = GitInterface()
     git_interface.configure()
 
