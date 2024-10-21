@@ -137,21 +137,35 @@ def repository_name() -> str:
 
 
 @pytest.fixture
-def template_directory() -> Iterator[Path]:
+def template_directory(github_token: str) -> Iterator[Path]:
     yield from clone(
         "python-package-template",
         commit="a24d34470db6860ea3470ae52fa2b4770b4c8af0",
+        github_token=github_token,
     )
 
 
 @pytest.fixture
-def repository_directory(repository_name: str) -> Iterator[Path]:
-    yield from clone(repository_name, "a965aca767feac0c9438f6d8ada7f7d84e0519da")
+def repository_directory(repository_name: str, github_token: str) -> Iterator[Path]:
+    yield from clone(
+        repository_name,
+        "a965aca767feac0c9438f6d8ada7f7d84e0519da",
+        github_token=github_token,
+    )
 
 
-def clone(repository: str, commit: str) -> Iterator[Path]:
+def clone(
+    repository: str,
+    commit: str,
+    github_token: str | None = None,
+) -> Iterator[Path]:
     directory = Path.tempfile(create=False)
-    download_repository(directory, name=repository, depth=None)
+    download_repository(
+        directory,
+        name=repository,
+        depth=None,
+        github_token=github_token,
+    )
     git = GitInterface(directory)
     git.configure()
     git.capture_output("reset --hard", commit)
