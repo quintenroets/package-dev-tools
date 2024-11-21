@@ -10,7 +10,7 @@ This project contains scripts and provides pre-commit hooks for:
 * updating project badges
 * bumping package versions
 * checking test coverage
-* instantiating new projects 
+* instantiating new projects
 * extracting supported Python versions
 * ..
 
