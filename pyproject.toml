@@ -73,16 +73,9 @@ fix = true
 [tool.ruff.lint]
 select = ["ALL"]
 ignore = [
-<<<<<<< HEAD
-    "ANN101",  # annotate self
-    "ANN102",  # annotate cls
-    "ANN401",  # annotated with Any
-    "D", # docstrings
-=======
     "ANN401",   # annotated with Any
     "D",        # docstrings
     "G004",     # logging f-string
->>>>>>> template
 ]
 
 [tool.ruff.lint.per-file-ignores]
