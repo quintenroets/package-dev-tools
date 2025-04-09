@@ -118,7 +118,7 @@ def get_bin_path(repository_path: Path) -> Path:
     bin_path = env_cache_path / bin_name
     if not bin_path.exists():
         create_bin_path(env_cache_path, repository_path)  # pragma: nocover, cached
-    return typing.cast(Path, bin_path)
+    return typing.cast("Path", bin_path)
 
 
 def create_bin_path(

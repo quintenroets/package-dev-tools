@@ -20,17 +20,17 @@ class PackageInfo:
     def package_name(self) -> str:
         package_data = self.pyproject_info["tool"]["setuptools"]["package-data"]
         project_name = next(iter(package_data))
-        return typing.cast(str, project_name)
+        return typing.cast("str", project_name)
 
     @property
     def package_slug(self) -> str:
         package_slug = self.pyproject_info["project"]["name"]
-        return typing.cast(str, package_slug)
+        return typing.cast("str", package_slug)
 
     @cached_property
     def listed_version(self) -> str:
         version = self.pyproject_info["project"]["requires-python"].split(">=")[1]
-        return typing.cast(str, version)
+        return typing.cast("str", version)
 
     @property
     def required_python_version(self) -> str:
