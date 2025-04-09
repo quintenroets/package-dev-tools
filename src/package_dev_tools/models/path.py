@@ -8,7 +8,6 @@ T = TypeVar("T", bound="Path")
 
 
 class Path(superpathlib.Path):
-<<<<<<< HEAD
     @property
     def has_text_content(self) -> bool:
         try:
@@ -27,21 +26,3 @@ class Path(superpathlib.Path):
     @classproperty
     def workflows(cls: type[T]) -> T:
         return cls(".github") / "workflows"
-=======
-    @classmethod
-    @classproperty
-    def source_root(cls) -> Self:
-        return cls(__file__).parent.parent
-
-    @classmethod
-    @classproperty
-    def assets(cls) -> Self:
-        path = cls.script_assets / cls.source_root.name
-        return cast("Self", path)
-
-    @classmethod
-    @classproperty
-    def config(cls) -> Self:
-        path = cls.assets / "config" / "config.yaml"
-        return cast("Self", path)
->>>>>>> template
