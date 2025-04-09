@@ -19,10 +19,10 @@ class Path(superpathlib.Path):
 
     @classmethod
     @classproperty
-    def readme(cls: type[T]) -> T:
+    def readme(cls) -> Self:
         return cls("README.md")
 
     @classmethod
     @classproperty
-    def workflows(cls: type[T]) -> T:
+    def workflows(cls) -> Self:
         return cls(".github") / "workflows"
