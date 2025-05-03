@@ -8,6 +8,7 @@ from package_dev_tools.cli import (
     check_coverage,
     check_shields,
     cleanup_readme,
+    export_pre_commit_config,
     extract_package_name,
     extract_required_python_version,
     extract_supported_python_versions,
@@ -16,6 +17,7 @@ from package_dev_tools.cli import (
     sync_template,
     trigger_template_sync,
 )
+from package_dev_tools.pre_commit import check_import
 
 entry_points = [
     check_shields.entry_point,
@@ -25,6 +27,8 @@ entry_points = [
     extract_required_python_version.entry_point,
     extract_supported_python_versions.entry_point,
     substitute_template_name.entry_point,
+    export_pre_commit_config.entry_point,
+    check_import.entry_point,
 ]
 
 
