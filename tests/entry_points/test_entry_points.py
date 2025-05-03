@@ -1,5 +1,6 @@
 from collections.abc import Callable
 from unittest import mock
+from unittest.mock import patch
 
 import pytest
 from package_dev_utils.tests.args import cli_args, no_cli_args
@@ -36,7 +37,8 @@ entry_points = [
 @pytest.mark.parametrize("entry_point", entry_points)
 @pytest.mark.usefixtures("repository_path")
 def test_entry_point(entry_point: Callable[..., None]) -> None:
-    entry_point()
+    with patch("importlib.import_module"):
+        entry_point()
 
 
 @no_cli_args
