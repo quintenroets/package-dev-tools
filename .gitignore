@@ -1,5 +1,11 @@
+<<<<<<< HEAD
 uv.lock
 .pre-commit-config.yaml
+=======
+.pre-commit-config.yaml
+template-Makefile
+uv.lock
+>>>>>>> template
 
 # IDE config files
 .idea/

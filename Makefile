@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 .SILENT:
 
 define run
@@ -16,3 +17,9 @@ pre-commit: .venv/bin/python .pre-commit-config.yaml
 
 test: .venv/bin/python
 	$(run) pytest
+=======
+template-Makefile:
+	curl https://raw.githubusercontent.com/quintenroets/package-dev-tools/refs/heads/main/template-Makefile -o template-Makefile
+
+include template-Makefile
+>>>>>>> template

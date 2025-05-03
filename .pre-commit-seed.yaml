@@ -32,6 +32,9 @@ repos:
         pass_filenames: false
       - entry: check-import
         pass_filenames: false
+<<<<<<< HEAD
 
 ci:
     autofix_commit_msg: auto fixes from pre-commit hooks
+=======
+>>>>>>> template
