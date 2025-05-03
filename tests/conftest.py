@@ -72,7 +72,7 @@ def download_repository(
     if "template" in name:
         depth = None
     if depth is not None:
-        command = (*command, "--depth", depth)
+        command = (*command, "--depth", depth)  # pragma: nocover
     git_interface.capture_output(*command)
     git_interface.path = path
     if "template" in name:
