@@ -2,16 +2,18 @@ name: Build
 
 on:
   push:
+
 env:
   TEMPLATE_SYNC_TRIGGER_TOKEN: ${{ secrets.TEMPLATE_SYNC_TRIGGER_TOKEN }}
 
 jobs:
-  check-pre-commit:
-    name: Check pre-commit hooks
+  validate:
+    name: Validate
     runs-on: ubuntu-latest
     steps:
-      - name: Check pre-commit hooks
-        uses: quintenroets/actions/validate/pre-commit@main
+      - name: Validate
+        id: validate
+        uses: quintenroets/actions/validate/@main
 
   extract-python-versions:
     name: Extract Python versions

@@ -11,7 +11,7 @@ endef
 .pre-commit-config.yaml: .pre-commit-seed.yaml
 	$(run) export-pre-commit-config
 
-pre-commit: .venv/bin/python .pre-commit-config.yaml
+validate: .venv/bin/python .pre-commit-config.yaml
 	$(run) pre-commit run --show-diff-on-failure --color=always --all-files
 
 test: .venv/bin/python
