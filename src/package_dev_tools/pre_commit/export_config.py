@@ -1,4 +1,4 @@
-from typing import Any, cast
+from typing import cast
 
 from superpathlib import Path
 
@@ -7,13 +7,15 @@ def export_config() -> None:
     config_file = Path(".pre-commit-config.yaml")
     seed_file = Path(".pre-commit-seed.yaml")
     if seed_file.exists():
-        config = cast("dict[str, list[dict[str, list[Any]]]]", seed_file.yaml)
-        hooks = cast("list[dict[str, str]]", config["repos"][0]["hooks"])
+        hooks = cast("list[dict[str, str | bool]]", seed_file.yaml)
+        defaults: dict[str, str | bool] = {
+            "pass_filenames": False,
+            "language": "system",
+        }
+        default_copies = {"id": "entry", "name": "id"}
         for hook in hooks:
-            if "language" not in hook:
-                hook["language"] = "system"
-            if "id" not in hook:
-                hook["id"] = hook["entry"]
-            if "name" not in hook:
-                hook["name"] = hook["id"]
-        config_file.yaml = config
+            for k, v in defaults.items():
+                hook.setdefault(k, v)
+            for k, v in default_copies.items():
+                hook.setdefault(k, hook[v])
+        config_file.yaml = {"repos": [{"repo": "local", "hooks": hooks}]}

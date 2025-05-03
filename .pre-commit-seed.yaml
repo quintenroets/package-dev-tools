@@ -1,37 +1,26 @@
-repos:
-  - repo: local
-    hooks:
-      - entry: docformatter
-        files: '\.py'
-        args: [--in-place, --make-summary-multi-line, --close-quotes-on-newline, --wrap-summaries, "88"]
-      - entry: ruff
-        args: [check, --fix]
-        files: '\.py'
-      - id: ruff-format
-        entry: ruff
-        args: [format]
-        files: '\.py'
-      - id: infer-missing-annotations
-        entry: python
-        files: '\.py'
-        args: [-m, libcst.tool, codemod, autotyping.AutotypeCommand, --aggressive]
-      - entry: mypy
-        files: '\.py'
-        fail_fast: true
-        require_serial: true
-      - id: run-tests
-        entry: coverage run
-        pass_filenames: false
-        always_run: true
-        fail_fast: true
-      - entry: check-coverage
-        pass_filenames: false
-      - entry: check-shields
-        pass_filenames: false
-      - entry: check-version
-        pass_filenames: false
-      - entry: check-import
-        pass_filenames: false
-
-ci:
-    autofix_commit_msg: auto fixes from pre-commit hooks
+- entry: docformatter
+  args: [--in-place, --make-summary-multi-line, --close-quotes-on-newline, --wrap-summaries, "88"]
+  pass_filenames: true
+  files: '\.py'
+- entry: ruff
+  args: [check, --fix, .]
+  files: '\.py'
+- id: ruff-format
+  entry: ruff
+  args: [format, .]
+- id: infer-missing-annotations
+  entry: python
+  args: [-m, libcst.tool, codemod, autotyping.AutotypeCommand, --aggressive]
+  pass_filenames: true
+  files: '\.py'
+- entry: mypy
+  args: [.]
+  fail_fast: true
+  require_serial: true
+- id: run-tests
+  entry: coverage run
+  fail_fast: true
+- entry: check-coverage
+- entry: check-shields
+- entry: check-version
+- entry: check-import
