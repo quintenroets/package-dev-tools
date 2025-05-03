@@ -72,7 +72,8 @@ def download_repository(
     if depth is not None:
         command = (*command, "--depth", depth)
     git_interface.capture_output(*command)
-    git_interface.capture_output("checkout ci")
+    if "template" in name:
+        git_interface.capture_output("checkout ci")
 
 
 def generate_coverage_results(path: Path) -> None:
