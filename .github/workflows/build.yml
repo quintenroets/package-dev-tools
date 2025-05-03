@@ -13,13 +13,6 @@ jobs:
       - name: Check pre-commit hooks
         uses: quintenroets/actions/validate/pre-commit@main
 
-  verify-packaging:
-    name: Verify packaging
-    runs-on: ubuntu-latest
-    steps:
-      - name: Verify packaging
-        uses: quintenroets/actions/validate/package@main
-
   extract-python-versions:
     name: Extract Python versions
     runs-on: ubuntu-latest
@@ -48,7 +41,7 @@ jobs:
     name: Publish package
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
-    needs: [check-pre-commit, verify-packaging, run-tests]
+    needs: [check-pre-commit, run-tests]
     environment: release
     permissions:
       id-token: write  # Needed for PyPi publishing
@@ -61,7 +54,7 @@ jobs:
     name: Trigger template sync
     runs-on: ubuntu-latest
     if: github.repository == 'quintenroets/python-package-template' && github.ref == 'refs/heads/main'
-    needs: [check-pre-commit, verify-packaging, run-tests]
+    needs: [check-pre-commit, run-tests]
     steps:
       - name: Trigger template sync
         uses: quintenroets/actions/trigger-template-sync@main
