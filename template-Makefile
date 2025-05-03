@@ -1,7 +1,7 @@
 .SILENT:
 
 define run
-unset VIRTUAL_ENV && uv run
+. .venv/bin/activate &&
 endef
 
 .venv/bin/python:
