@@ -69,6 +69,8 @@ def download_repository(
     git_interface.configure()
 
     command: tuple[CommandItem, ...] = ("clone", repository_url, path)
+    if "template" in name:
+        depth = None
     if depth is not None:
         command = (*command, "--depth", depth)
     git_interface.capture_output(*command)
