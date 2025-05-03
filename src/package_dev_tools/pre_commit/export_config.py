@@ -15,9 +15,7 @@ def export_config() -> None:
         default_copies = {"id": "entry", "name": "id"}
         for hook in hooks:
             for k, v in defaults.items():
-                if k not in hook:
-                    hook[k] = v
+                hook.setdefault(k, v)
             for k, v in default_copies.items():
-                if k not in hook:
-                    hook[k] = hook[v]
+                hook.setdefault(k, hook[v])
         config_file.yaml = {"repos": [{"repo": "local", "hooks": hooks}]}
