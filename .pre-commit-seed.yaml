@@ -4,10 +4,6 @@
   files: '\.py'
 - entry: ruff
   args: [check, --fix, .]
-<<<<<<< HEAD
-  files: '\.py'
-=======
->>>>>>> template
 - id: ruff-format
   entry: ruff
   args: [format, .]
