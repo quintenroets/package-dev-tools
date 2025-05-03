@@ -4,7 +4,6 @@
   files: '\.py'
 - entry: ruff
   args: [check, --fix, .]
-  files: '\.py'
 - id: ruff-format
   entry: ruff
   args: [format, .]
