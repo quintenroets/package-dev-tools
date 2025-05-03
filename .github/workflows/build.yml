@@ -43,7 +43,7 @@ jobs:
     name: Publish package
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
-    needs: [check-pre-commit, run-tests]
+    needs: [validate, run-tests]
     environment: release
     permissions:
       id-token: write  # Needed for PyPi publishing
@@ -56,7 +56,7 @@ jobs:
     name: Trigger template sync
     runs-on: ubuntu-latest
     if: github.repository == 'quintenroets/python-package-template' && github.ref == 'refs/heads/main'
-    needs: [check-pre-commit, run-tests]
+    needs: [validate, run-tests]
     steps:
       - name: Trigger template sync
         uses: quintenroets/actions/trigger-template-sync@main
