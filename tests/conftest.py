@@ -108,7 +108,7 @@ def add_uncovered_files(path: Path) -> None:
     not_covered_path = path / "not_covered_file.py"
     not_covered_path.touch()
     test_path = path / "tests" / "test_not_executed_test.py"
-    test_path.lines = ("def run():", "\tpass")  # type: ignore[assignment]
+    test_path.lines = ("def run():", "\tpass")
 
 
 def get_bin_path(repository_path: Path) -> Path:
