@@ -26,7 +26,7 @@ dependencies = [
     # formatting binaries, stricter version range
     "docformatter >=1.7.5, <1.8",
     "mypy >= 1.15.0, < 1.17",
-    "ruff >=0.11.8, <0.12"
+    "ruff >=0.11.8, <0.13"
 ]
 
 [project.optional-dependencies]
