@@ -26,5 +26,5 @@ def create_invalid_name_strategy() -> SearchStrategy[str]:
 
 @given(name=create_invalid_name_strategy())
 def test_invalid_name_rejection(name: str) -> None:
-    with pytest.raises(ValueError, match=".*is invalid.*"):
+    with pytest.raises(ValueError, match=r".*is invalid.*"):
         Project(name)

@@ -1,3 +1,5 @@
+import re
+
 import cli
 import pytest
 from hypothesis import HealthCheck, given, settings, strategies
@@ -43,7 +45,7 @@ def test_missing_results_detected() -> None:
 
 def test_badge_missing_in_readme_indicated(repository_path: Path) -> None:
     (repository_path / Path.readme.name).text = ""
-    with pytest.raises(Exception, match="README has no Coverage badge yet."):
+    with pytest.raises(Exception, match=re.escape("README has no Coverage badge yet.")):
         check_coverage(verify_all_files_tested=False)
 
 
