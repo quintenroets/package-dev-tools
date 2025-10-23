@@ -19,7 +19,7 @@ def package_info_with_max_version(repository_path: Path) -> Iterator[PackageInfo
     name = "pyproject.toml"
     with Path.tempdir() as directory:
         old = 'requires-python = ">=3.10"'
-        new = 'requires-python = ">=3.10, <3.13"'
+        new = 'requires-python = ">=3.10, <3.14"'
         path = directory / name
         path.text = (repository_path / name).text.replace(old, new)
         yield PackageInfo(directory)
