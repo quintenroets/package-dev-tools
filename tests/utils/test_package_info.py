@@ -6,7 +6,7 @@ from package_dev_tools.models import Path
 from package_dev_tools.utils.package import PackageInfo
 
 required_python_version = "3.10"
-supported_python_versions = ["3.10", "3.11", "3.12", "3.13"]
+supported_python_versions = ["3.10", "3.11", "3.12", "3.13", "3.14"]
 
 
 @pytest.fixture
