@@ -5,7 +5,7 @@ description = "CI/CD tools for Python packages"
 authors = [{name = "Quinten Roets", email = "qdr2104@columbia.edu"}]
 license = "MIT"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.10, <3.14"
 dependencies = [
     "package-utils >=0.6.1, <1",
     "powercli >=0.1.2, <1",
