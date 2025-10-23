@@ -6,7 +6,7 @@ from package_dev_tools.models import Path
 from package_dev_tools.utils.package import PackageInfo
 
 required_python_version = "3.10"
-supported_python_versions = ["3.10", "3.11", "3.12", "3.13"]
+supported_python_versions = ["3.10", "3.11", "3.12", "3.13", "3.14"]
 
 
 @pytest.fixture
@@ -19,7 +19,7 @@ def package_info_with_max_version(repository_path: Path) -> Iterator[PackageInfo
     name = "pyproject.toml"
     with Path.tempdir() as directory:
         old = 'requires-python = ">=3.10"'
-        new = 'requires-python = ">=3.10, <3.13"'
+        new = 'requires-python = ">=3.10, <3.14"'
         path = directory / name
         path.text = (repository_path / name).text.replace(old, new)
         yield PackageInfo(directory)
