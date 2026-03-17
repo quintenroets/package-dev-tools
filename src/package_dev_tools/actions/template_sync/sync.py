@@ -11,7 +11,10 @@ from slugify import slugify
 from superpathlib import Path
 
 from package_dev_tools import models
-from package_dev_tools.actions.instantiate_new_project.git import GitInterface
+from package_dev_tools.actions.instantiate_new_project.git import (
+    GitInterface,
+    resolve_git_binary,
+)
 
 from . import git
 from .merge import Merger
@@ -20,8 +23,9 @@ from .merge import Merger
 @dataclass
 class TemplateSyncer(git.Client):
     repository: str
+    git_binary: str = field(default_factory=resolve_git_binary)
     ignore_patterns_path: Path = field(
-        default_factory=lambda: Path(".templatesyncignore"),
+        default_factory=lambda: Path("config/templatesyncignore"),
     )
     template_repository: str = "quintenroets/python-package-template"
     default_branch: str = "main"
@@ -62,8 +66,13 @@ class TemplateSyncer(git.Client):
         input_: str | None = None,
         check: bool = True,
     ) -> None:
-        cwd = self.downloaded_repository_directory
-        cli.run("git", *args, input=input_, cwd=cwd, check=check)
+        cli.capture_output(
+            self.git_binary,
+            *args,
+            input=input_,
+            cwd=self.downloaded_repository_directory,
+            check=check,
+        )
 
     def commit_updated_files(self) -> bool:
         self.reset_files_not_in_template_commit()
@@ -134,7 +143,7 @@ class TemplateSyncer(git.Client):
         return self.latest_commit.commit.message.split("(#")[0]
 
     @cached_property
-    def repository_client(self) -> Repository:
+    def repository_client(self) -> Repository:  # pragma: nocover
         return self.client.get_repo(self.repository)
 
     @cached_property
@@ -167,9 +176,9 @@ class TemplateSyncer(git.Client):
         clone = (
             ("clone", "-b", self.update_branch) if update_branch_exists else ("clone",)
         )
-        cli.run("git", clone, self.project_clone_url, path)
+        cli.run(self.git_binary, clone, self.project_clone_url, path)
         if not update_branch_exists:
-            cli.run("git checkout -b", self.update_branch, cwd=path)
+            cli.run(f"{self.git_binary} checkout -b", self.update_branch, cwd=path)
 
     @property
     def project_clone_url(self) -> str:
@@ -178,6 +187,6 @@ class TemplateSyncer(git.Client):
         username = self.repository.split("/")[0]
         return url.replace(prefix, f"{prefix}{username}:{self.token}@")
 
-    def clone_template_repository(self, path: Path) -> None:
+    def clone_template_repository(self, path: Path) -> None:  # pragma: nocover
         url = self.template_repository_client.clone_url
-        cli.run("git", "clone", url, path)
+        cli.run(self.git_binary, "clone", url, path)

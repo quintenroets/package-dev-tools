@@ -1,3 +1,9 @@
+- id: expand-docstrings
+  name: expand docstrings
+  description: "Expand single-line docstrings to multiline."
+  entry: expand-docstrings
+  language: python
+  types: [python]
 - id: check-coverage
   name: check coverage
   description: "Calculate percentage of source code covered by tests and use result to update the coverage badge in the README file."

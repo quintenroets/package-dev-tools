@@ -12,9 +12,9 @@ class WorkflowsCleaner:
     )
 
     def run(self) -> None:
-        """Some workflows in the template repository do not need to run in derived
+        """
+        Some workflows in the template repository do not need to run in derived
         repositories.
-
         This action removes them from newly instantiated projects
         derived from the template repository.
         """

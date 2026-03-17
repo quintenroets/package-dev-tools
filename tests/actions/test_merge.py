@@ -6,12 +6,11 @@ from package_dev_tools.models import Path
 def test_merge_template_changes(
     template_directory: Path,
     repository_directory: Path,
-    repository_name: str,
 ) -> None:
     merger = Merger(
         repository_directory,
         template_directory,
-        repository=repository_name,
+        repository="cli",
     )
     merger.merge_in_template_updates()
     git = GitInterface(repository_directory)

@@ -8,7 +8,7 @@ endef
 	command -v uv >/dev/null 2>&1 || (curl -LsSf https://astral.sh/uv/install.sh | sh)
 	uv sync --dev --all-extras
 
-.pre-commit-config.yaml: .pre-commit-seed.yaml
+.pre-commit-config.yaml: config/pre-commit-seed.yaml
 	$(run) export-pre-commit-config
 
 validate: .venv/bin/python .pre-commit-config.yaml

@@ -29,7 +29,8 @@ class Merger:  # pragma: nocover
         self.branch_template_updates()
         self.create_branch_with(self.repository_directory)
         action = "merge" if self.show_conflicts else "merge -X ours"
-        self.git.run(f"{action} {self.template_branch} -m 'merge'", check=False)
+        command = f"{action} {self.template_branch} -m 'merge'"
+        self.git.capture_output(command, check=False)
         self.overwrite_project_files(self.template_directory, self.repository_directory)
 
     def branch_template_updates(self) -> None:
@@ -48,8 +49,7 @@ class Merger:  # pragma: nocover
         ProjectInstantiator(project_name=self.repository, path=path_with_methods).run()
 
     def create_branch_with(self, path: Path, name: str = "branch") -> None:
-        self.git.capture_output("checkout main")
-        self.git.capture_output("checkout -b", name)
+        self.git.capture_output("checkout -B", name, "main")
         self.overwrite_project_files(path, self.template_directory)
         self.git.capture_output("add -A")
         self.git.commit()
@@ -63,13 +63,15 @@ class Merger:  # pragma: nocover
 
     def generate_project_files(self) -> Iterator[Path]:
         path = models.Path(self.repository_directory)
-        instantiator = ProjectInstantiator(path=path, current_project_name="dummy")
-        for file in instantiator.generate_project_files():
+        for file in generate_project_files(path):
             yield file.relative_to(path)
 
     @classmethod
     def remove_project_files(cls, directory: Path) -> None:
-        path = models.Path(directory)
-        instantiator = ProjectInstantiator(path=path)
-        for file in instantiator.generate_project_files():
+        for file in generate_project_files(models.Path(directory)):
             file.unlink()
+
+
+def generate_project_files(path: models.Path) -> Iterator[models.Path]:
+    instantiator = ProjectInstantiator(path=path, current_project_name="dummy")
+    yield from instantiator.generate_project_files()
