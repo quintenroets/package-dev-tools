@@ -1,5 +1,4 @@
 import sys
-from collections.abc import Iterator
 
 import cli
 
@@ -35,7 +34,7 @@ def update_coverage_shield(coverage_percentage: float | str) -> bool:
 
 
 def verify_all_python_files_tested() -> None:
-    python_files = set(generate_python_files())
+    python_files = set(cli.capture_output_lines("git ls-files '*.py'"))
     coverage_lines = cli.capture_output_lines("coverage report -i", check=False)
     covered_files = {line.split()[0] for line in coverage_lines[2:-2]}
     not_covered_files = python_files - covered_files
@@ -47,10 +46,6 @@ def verify_all_python_files_tested() -> None:
         )
         message = "\n\t".join(message_parts)
         raise RuntimeError(message)
-
-
-def generate_python_files() -> Iterator[str]:
-    yield from cli.capture_output_lines("git ls-files '*.py'")
 
 
 def verify_coverage_results() -> None:

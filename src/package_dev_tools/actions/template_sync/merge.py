@@ -29,10 +29,8 @@ class Merger:  # pragma: nocover
         self.branch_template_updates()
         self.create_branch_with(self.repository_directory)
         action = "merge" if self.show_conflicts else "merge -X ours"
-        self.git.capture_output(
-            f"{action} {self.template_branch} -m 'merge'",
-            check=False,
-        )
+        command = f"{action} {self.template_branch} -m 'merge'"
+        self.git.capture_output(command, check=False)
         self.overwrite_project_files(self.template_directory, self.repository_directory)
 
     def branch_template_updates(self) -> None:

@@ -23,6 +23,7 @@ from .merge import Merger
 @dataclass
 class TemplateSyncer(git.Client):
     repository: str
+    git_binary: str = field(default_factory=resolve_git_binary)
     ignore_patterns_path: Path = field(
         default_factory=lambda: Path(".templatesyncignore"),
     )
@@ -65,12 +66,11 @@ class TemplateSyncer(git.Client):
         input_: str | None = None,
         check: bool = True,
     ) -> None:
-        cwd = self.downloaded_repository_directory
         cli.capture_output(
-            resolve_git_binary(),
+            self.git_binary,
             *args,
             input=input_,
-            cwd=cwd,
+            cwd=self.downloaded_repository_directory,
             check=check,
         )
 
@@ -176,9 +176,9 @@ class TemplateSyncer(git.Client):
         clone = (
             ("clone", "-b", self.update_branch) if update_branch_exists else ("clone",)
         )
-        cli.run(resolve_git_binary(), clone, self.project_clone_url, path)
+        cli.run(self.git_binary, clone, self.project_clone_url, path)
         if not update_branch_exists:
-            cli.run(f"{resolve_git_binary()} checkout -b", self.update_branch, cwd=path)
+            cli.run(f"{self.git_binary} checkout -b", self.update_branch, cwd=path)
 
     @property
     def project_clone_url(self) -> str:  # pragma: nocover
@@ -189,4 +189,4 @@ class TemplateSyncer(git.Client):
 
     def clone_template_repository(self, path: Path) -> None:  # pragma: nocover
         url = self.template_repository_client.clone_url
-        cli.run(resolve_git_binary(), "clone", url, path)
+        cli.run(self.git_binary, "clone", url, path)

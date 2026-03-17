@@ -42,12 +42,12 @@ class Paths:
 
 
 def generate_coverage_results(path: Path) -> None:  # pragma: nocover, cached
-    bin_path = get_bin_path(path)
+    bin_path = prepare_bin_path(path)
     cli.capture_output(bin_path / pip, "install", "--no-deps", "-e", ".", cwd=path)
     cli.capture_output(bin_path / coverage, "run", cwd=path)
 
 
-def get_bin_path(repository_path: Path) -> Path:  # pragma: nocover, cached
+def prepare_bin_path(repository_path: Path) -> Path:  # pragma: nocover, cached
     bin_path = Paths.dev_env / bin_name
     if not (bin_path / coverage).exists():
         create_bin_path(Paths.dev_env, repository_path)
@@ -67,32 +67,28 @@ def create_bin_path(
 
 
 def locate_processed_repository(*, with_uncovered_files: bool = False) -> Path:
-    return (
-        locate_uncovered_processed_repository()
+    suffix = "-uncovered" if with_uncovered_files else ""
+    create = (
+        create_uncovered_processed_repository
         if with_uncovered_files
-        else locate_base_processed_repository()
+        else create_processed_repository
     )
-
-
-def locate_base_processed_repository() -> Path:
-    cache_path = Paths.cache / "python-package-template-processed"
+    cache_path = cast(
+        "Path",
+        Paths.cache / f"python-package-template-processed{suffix}",
+    )
     if not (cache_path / "pyproject.toml").exists():  # pragma: nocover, cached
-        create_processed_repository(cast("Path", cache_path))
-    return cast("Path", cache_path)
-
-
-def locate_uncovered_processed_repository() -> Path:
-    cache_path = Paths.cache / "python-package-template-processed-uncovered"
-    if not (cache_path / "pyproject.toml").exists():  # pragma: nocover, cached
-        create_uncovered_processed_repository(cast("Path", cache_path))
-    return cast("Path", cache_path)
+        create(cache_path)
+    return cache_path
 
 
 def create_uncovered_processed_repository(
     path: Path,
 ) -> None:  # pragma: nocover, cached
-    shutil.copytree(locate_base_processed_repository(), path)
-    add_uncovered_files(path)
+    shutil.copytree(locate_processed_repository(), path)
+    (path / "not_covered_file.py").touch()
+    test_path = path / "tests" / "test_not_executed_test.py"
+    test_path.lines = ("def run():", "\tpass")
     generate_coverage_results(path)
 
 
@@ -118,13 +114,6 @@ def download_repository(
     if depth is not None:
         command = (*command, "--depth", depth)
     git_interface.capture_output(*command)
-
-
-def add_uncovered_files(path: Path) -> None:  # pragma: nocover, cached
-    not_covered_path = path / "not_covered_file.py"
-    not_covered_path.touch()
-    test_path = path / "tests" / "test_not_executed_test.py"
-    test_path.lines = ("def run():", "\tpass")
 
 
 def locate_cached_checkout(name: str, commit: str) -> Path:
