@@ -57,6 +57,16 @@ def test_entry_point(entry_point: Callable[..., None]) -> None:
 
 @no_cli_args
 @pytest.mark.usefixtures("repository_path")
+def test_export_pre_commit_config_with_seed() -> None:
+    seed_file = Path("config/pre-commit-seed.yaml")
+    seed_file.create_parent()
+    seed_file.yaml = [{"entry": "ruff", "args": ["check", "."]}]
+    with patch("importlib.import_module"):
+        export_pre_commit_config.entry_point()
+
+
+@no_cli_args
+@pytest.mark.usefixtures("repository_path")
 def test_check_coverage() -> None:
     exceptions = SystemExit, Exception
     with pytest.raises(exceptions):

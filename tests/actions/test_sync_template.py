@@ -1,3 +1,4 @@
+import shutil
 from collections.abc import Iterator
 from unittest.mock import MagicMock, patch
 
@@ -8,6 +9,7 @@ from package_dev_tools.models import Path
 from tests import environment
 
 syncer_path = "package_dev_tools.actions.template_sync.sync.TemplateSyncer"
+clone_url = "https://github.com/quintenroets/cli.git"
 
 
 @pytest.fixture
@@ -15,16 +17,28 @@ def syncer(
     template_directory: Path,
     repository_directory: Path,
 ) -> Iterator[TemplateSyncer]:
-    patched_repository = patch(
-        f"{syncer_path}.downloaded_repository_directory",
-        new=repository_directory,
+    ignore_file = repository_directory / "config" / "templatesyncignore"
+    ignore_file.create_parent()
+    ignore_file.write_text(".github/workflows/\n")
+    mock_repository_client = MagicMock()
+    mock_repository_client.clone_url = clone_url
+    patched_clone_repository = patch(
+        f"{syncer_path}.clone_repository",
+        side_effect=lambda path: shutil.copytree(repository_directory, path),
     )
-    patched_template_repository = patch(
-        f"{syncer_path}.downloaded_template_repository_directory",
-        new=template_directory,
+    patched_clone_template = patch(
+        f"{syncer_path}.clone_template_repository",
+        side_effect=lambda path: shutil.copytree(template_directory, path),
     )
-    with patched_repository, patched_template_repository:
-        yield TemplateSyncer(token=environment.github_token(), repository="cli")
+    patched_repository_client = patch(
+        f"{syncer_path}.repository_client",
+        new=mock_repository_client,
+    )
+    with patched_clone_repository, patched_clone_template, patched_repository_client:
+        yield TemplateSyncer(
+            token=environment.github_token(),
+            repository="quintenroets/cli",
+        )
 
 
 @patch(f"{syncer_path}.push_updates")
@@ -52,6 +66,11 @@ def test_sync_template_without_changes(
     syncer.run()
     mocked_commit.assert_called_once()
     mocked_push.assert_not_called()
+
+
+def test_project_clone_url(syncer: TemplateSyncer) -> None:
+    url = syncer.project_clone_url
+    assert f"https://quintenroets:{syncer.token}@" in url
 
 
 def test_create_pull_request_body(syncer: TemplateSyncer) -> None:

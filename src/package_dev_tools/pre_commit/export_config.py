@@ -5,7 +5,7 @@ from superpathlib import Path
 
 def export_config() -> None:
     config_file = Path(".pre-commit-config.yaml")
-    seed_file = Path(".pre-commit-seed.yaml")
+    seed_file = Path("config/pre-commit-seed.yaml")
     if seed_file.exists():
         hooks = cast("list[dict[str, str | bool]]", seed_file.yaml)
         defaults: dict[str, str | bool] = {

@@ -25,7 +25,7 @@ class TemplateSyncer(git.Client):
     repository: str
     git_binary: str = field(default_factory=resolve_git_binary)
     ignore_patterns_path: Path = field(
-        default_factory=lambda: Path(".templatesyncignore"),
+        default_factory=lambda: Path("config/templatesyncignore"),
     )
     template_repository: str = "quintenroets/python-package-template"
     default_branch: str = "main"
@@ -156,13 +156,13 @@ class TemplateSyncer(git.Client):
         return next(iter(commits))
 
     @cached_property
-    def downloaded_repository_directory(self) -> Path:  # pragma: nocover
+    def downloaded_repository_directory(self) -> Path:
         path = Path.tempfile(create=False)
         self.clone_repository(path)
         return path
 
     @cached_property
-    def downloaded_template_repository_directory(self) -> Path:  # pragma: nocover
+    def downloaded_template_repository_directory(self) -> Path:
         path = Path.tempfile(create=False)
         self.clone_template_repository(path)
         return path
@@ -181,7 +181,7 @@ class TemplateSyncer(git.Client):
             cli.run(f"{self.git_binary} checkout -b", self.update_branch, cwd=path)
 
     @property
-    def project_clone_url(self) -> str:  # pragma: nocover
+    def project_clone_url(self) -> str:
         url = self.repository_client.clone_url
         prefix = "https://"
         username = self.repository.split("/")[0]
