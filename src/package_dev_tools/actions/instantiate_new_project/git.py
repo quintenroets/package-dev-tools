@@ -13,11 +13,15 @@ from package_dev_tools.models import Path
 
 @cache
 def resolve_git_binary() -> str:
-    return next(
+    paths = (
         path
         for p in os.get_exec_path()
         if (path := shutil.which("git", path=str(p)))
         and not path.startswith(str(Path.home()))
+    )
+    return next(
+        paths,
+        shutil.which("git") or "git",
     )
 
 
