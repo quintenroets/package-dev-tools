@@ -48,10 +48,8 @@ class DocstringExpander(cst.CSTTransformer):
         block_indent = (
             node.indent if isinstance(node.indent, str) else self.default_indent
         )
-        frame = BlockFrame(
-            self.stack[-1].indent + block_indent,
-            self.next_block_eligible,
-        )
+        indent = self.stack[-1].indent + block_indent
+        frame = BlockFrame(indent, self.next_block_eligible)
         self.stack.append(frame)
         self.next_block_eligible = False
 
@@ -70,18 +68,17 @@ class DocstringExpander(cst.CSTTransformer):
     ) -> cst.BaseStatement:
         was_eligible = self.stack[-1].expect_docstring
         self.stack[-1].expect_docstring = False
-        return (
-            self.expand(updated) if was_eligible and is_one_liner(updated) else updated
-        )
+        should_expand = was_eligible and is_one_liner(updated)
+        return self.expand(updated) if should_expand else updated
 
     def expand(self, node: cst.SimpleStatementLine) -> cst.SimpleStatementLine:
         expr = cast("cst.Expr", node.body[0])
         string = cast("cst.SimpleString", expr.value)
         indent = self.stack[-1].indent
-        quote_len = len(TRIPLE_QUOTE)
-        new_string = string.with_changes(
-            value=f"{TRIPLE_QUOTE}\n{indent}{string.value[quote_len:-quote_len]}\n{indent}{TRIPLE_QUOTE}",
-        )
+        quote_length = len(TRIPLE_QUOTE)
+        content = string.value[quote_length:-quote_length]
+        new_lines = TRIPLE_QUOTE, f"{indent}{content}", f"{indent}{TRIPLE_QUOTE}"
+        new_string = string.with_changes(value="\n".join(new_lines))
         return node.with_changes(body=[expr.with_changes(value=new_string)])
 
 

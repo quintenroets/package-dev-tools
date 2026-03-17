@@ -17,9 +17,6 @@ def syncer(
     template_directory: Path,
     repository_directory: Path,
 ) -> Iterator[TemplateSyncer]:
-    ignore_file = repository_directory / "config" / "templatesyncignore"
-    ignore_file.create_parent()
-    ignore_file.write_text(".github/workflows/\n")
     mock_repository_client = MagicMock()
     mock_repository_client.clone_url = clone_url
     patched_clone_repository = patch(
