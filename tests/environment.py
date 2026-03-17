@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 
 class Commits:
     template = "a24d34470db6860ea3470ae52fa2b4770b4c8af0"
-    cli = "a965aca767feac0c9438f6d8ada7f7d84e0519da"
+    cli = "a8e24ea4eef62d0e19f92fefd1ff28628620a40d"
 
 
 @cache
