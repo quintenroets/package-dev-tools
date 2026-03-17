@@ -1,4 +1,4 @@
-name: Publish development version
+name: Manual publish
 
 on:
   workflow_dispatch:
