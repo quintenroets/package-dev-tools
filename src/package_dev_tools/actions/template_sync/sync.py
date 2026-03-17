@@ -42,7 +42,7 @@ class TemplateSyncer(git.Client):
 
     @classmethod
     def extract_name(cls, repository: str) -> str:
-        return repository.split("/")[-1]
+        return repository.rsplit("/", maxsplit=1)[-1]
 
     def run(self) -> None:
         merger = Merger(
