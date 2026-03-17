@@ -1,4 +1,5 @@
-from collections.abc import Callable
+from collections.abc import Callable, Iterator
+from contextlib import contextmanager
 from unittest import mock
 from unittest.mock import patch
 
@@ -18,7 +19,20 @@ from package_dev_tools.cli import (
     sync_template,
     trigger_template_sync,
 )
+from package_dev_tools.models import Path
 from package_dev_tools.pre_commit import check_import
+from tests import environment
+
+syncer_path = "package_dev_tools.actions.template_sync.sync.TemplateSyncer"
+
+
+@contextmanager
+def with_syncer_directories(repository: Path, template: Path) -> Iterator[None]:
+    repo_dir = f"{syncer_path}.downloaded_repository_directory"
+    template_dir = f"{syncer_path}.downloaded_template_repository_directory"
+    with mock.patch(repo_dir, new=repository), mock.patch(template_dir, new=template):
+        yield
+
 
 entry_points = [
     check_shields.entry_point,
@@ -49,18 +63,17 @@ def test_check_coverage() -> None:
         check_coverage.entry_point()
 
 
-def test_trigger_template_sync(github_token: str) -> None:
-    args = cli_args("--token", github_token)
+def test_trigger_template_sync() -> None:
+    args = cli_args("--token", environment.github_token())
     patched_workflow = mock.patch("github.Workflow")
     with args, patched_workflow:
         trigger_template_sync.entry_point()
 
 
-def test_sync_template(github_token: str) -> None:
+def test_sync_template(template_directory: Path, repository_directory: Path) -> None:
     repository = "quintenroets/package-dev-tools"
-    args = cli_args("--token", github_token, "--repository", repository)
-    patched_push = mock.patch(
-        "package_dev_tools.actions.template_sync.sync.TemplateSyncer.push_updates",
-    )
-    with args, patched_push:
+    args = cli_args("--token", environment.github_token(), "--repository", repository)
+    patched_push = mock.patch(f"{syncer_path}.push_updates")
+    directories = with_syncer_directories(repository_directory, template_directory)
+    with args, patched_push, directories:
         sync_template.entry_point()

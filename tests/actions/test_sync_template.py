@@ -5,6 +5,7 @@ import pytest
 
 from package_dev_tools.actions.template_sync.sync import TemplateSyncer
 from package_dev_tools.models import Path
+from tests import environment
 
 syncer_path = "package_dev_tools.actions.template_sync.sync.TemplateSyncer"
 
@@ -13,8 +14,6 @@ syncer_path = "package_dev_tools.actions.template_sync.sync.TemplateSyncer"
 def syncer(
     template_directory: Path,
     repository_directory: Path,
-    repository_name: str,
-    github_token: str,
 ) -> Iterator[TemplateSyncer]:
     patched_repository = patch(
         f"{syncer_path}.downloaded_repository_directory",
@@ -25,7 +24,7 @@ def syncer(
         new=template_directory,
     )
     with patched_repository, patched_template_repository:
-        yield TemplateSyncer(token=github_token, repository=repository_name)
+        yield TemplateSyncer(token=environment.github_token(), repository="cli")
 
 
 @patch(f"{syncer_path}.push_updates")

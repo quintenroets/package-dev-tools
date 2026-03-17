@@ -14,7 +14,8 @@ from .project import Project
 
 @dataclass
 class NameSubstitutor:
-    """Rename all references to python-package-template when a new project is created
+    """
+    Rename all references to python-package-template when a new project is created
     from the template repository.
 
     This includes:

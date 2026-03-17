@@ -1,12 +1,10 @@
-- entry: docformatter
-  args: [--in-place, --make-summary-multi-line, --close-quotes-on-newline, --wrap-summaries, "88"]
-  pass_filenames: true
-  files: '\.py'
 - entry: ruff
   args: [check, --fix, .]
 - id: ruff-format
   entry: ruff
   args: [format, .]
+- entry: expand-docstrings
+  files: '\.py'
 - id: infer-missing-annotations
   entry: python
   args: [-m, libcst.tool, codemod, autotyping.AutotypeCommand, --aggressive]

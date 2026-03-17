@@ -1,11 +1,11 @@
 [project]
 name = "package-dev-tools"
-version = "0.7.1"
+version = "0.8.0"
 description = "CI/CD tools for Python packages"
 authors = [{name = "Quinten Roets", email = "qdr2104@columbia.edu"}]
 license = "MIT"
 readme = "README.md"
-requires-python = ">=3.10, <3.14"
+requires-python = ">=3.10"
 dependencies = [
     "package-utils >=0.6.1, <1",
     "powercli >=0.1.2, <1",
@@ -24,7 +24,6 @@ dependencies = [
     "pytest >=7.4.3, <9",
 
     # formatting binaries, stricter version range
-    "docformatter >=1.7.5, <1.8",
     "mypy >= 1.15.0, < 1.19",
     "ruff >=0.13.2, <0.15"
 ]
@@ -45,6 +44,7 @@ dev = [
 [project.scripts]
 check-coverage = "package_dev_tools.cli.check_coverage:entry_point"
 check-import = "package_dev_tools.pre_commit.check_import:entry_point"
+expand-docstrings = "package_dev_tools.pre_commit.expand_docstrings:entry_point"
 check-shields = "package_dev_tools.cli.check_shields:entry_point"
 cleanup-readme = "package_dev_tools.cli.cleanup_readme:entry_point"
 export-pre-commit-config = "package_dev_tools.cli.export_pre_commit_config:entry_point"
@@ -83,13 +83,19 @@ fix = true
 select = ["ALL"]
 ignore = [
     "ANN401",   # annotated with Any
-    "D",        # docstrings
+    "D1",       # missing docstrings
+    "D200",     # one-line docstring
+    "D203",     # conflicts with D211
+    "D205",     # blank line between summary and description
+    "D212",     # conflicts with D213
+    "D401",     # imperative first line
     "G004",     # logging f-string
 ]
 
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401"]
-"tests/*" = ["S101"]  # assert used
+"tests/*" = ["S101", "N805"]  # assert used; classproperty uses cls not self
+"src/package_dev_tools/pre_commit/expand_docstrings.py" = ["N802"]
 
 [tool.setuptools]
 script-files = [
