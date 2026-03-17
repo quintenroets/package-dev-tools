@@ -1,4 +1,5 @@
 import os
+import shlex
 import shutil
 import subprocess
 from dataclasses import dataclass, field
@@ -19,10 +20,7 @@ def resolve_git_binary() -> str:
         if (path := shutil.which("git", path=str(p)))
         and not path.startswith(str(Path.home()))
     )
-    return next(
-        paths,
-        shutil.which("git") or "git",
-    )
+    return shlex.quote(next(paths, shutil.which("git") or "git"))
 
 
 @dataclass
