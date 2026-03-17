@@ -1,0 +1,16 @@
+name: Publish development version
+
+on:
+  workflow_dispatch:
+
+jobs:
+  publish:
+    name: Publish package
+    runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      id-token: write  # Needed for PyPi publishing
+      contents: write  # Needed for GitHub publishing
+    steps:
+      - name: Publish
+        uses: quintenroets/actions/publish@main
