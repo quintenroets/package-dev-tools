@@ -21,7 +21,7 @@ class TemplateSyncTriggerer(git.Client):
     def trigger_if_possible(self, repo: Repository) -> None:
         try:
             workflow = repo.get_workflow(self.workflow_name)
-        except UnknownObjectException:
+        except UnknownObjectException:  # pragma: nocover
             workflow = None
 
         if workflow is not None:
