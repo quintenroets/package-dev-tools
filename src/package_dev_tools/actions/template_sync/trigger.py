@@ -1,3 +1,4 @@
+import contextlib
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 
@@ -19,10 +20,5 @@ class TemplateSyncTriggerer(git.Client):
             executor.map(self.trigger_if_possible, repos)
 
     def trigger_if_possible(self, repo: Repository) -> None:
-        try:
-            workflow = repo.get_workflow(self.workflow_name)
-        except UnknownObjectException:
-            workflow = None
-
-        if workflow is not None:
-            workflow.create_dispatch("main")
+        with contextlib.suppress(UnknownObjectException):
+            repo.get_workflow(self.workflow_name).create_dispatch("main")
