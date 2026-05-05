@@ -7,9 +7,8 @@ license = "MIT"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
-<<<<<<< HEAD
     "package-utils >=0.8.3, <1",
-    "powercli >=0.3.7, <1",
+    "powercli >=0.4.0, <1",
     "pygithub >=2.1.1, <3",
     "python-slugify >=8.0.1, <9",
     "simple-classproperty >=4.0.2, <5",
@@ -27,19 +26,11 @@ dependencies = [
     # formatting binaries, stricter version range
     "mypy >= 1.19.1, < 1.21",
     "ruff >=0.15.6, <0.16"
-=======
-    "package-utils[context] >=0.8.3, <1",
-    "powercli >=0.4.0, <1",
->>>>>>> template
 ]
 
 [project.optional-dependencies]
 dev = [
-<<<<<<< HEAD
     "hypothesis >=6.91.0, <7",
-=======
-    "package-dev-tools >=0.8.1, <1",
->>>>>>> template
     "package-dev-utils >=0.1.6, <1",
 
     # mypy
