@@ -1,6 +1,6 @@
 [project]
 name = "package-dev-tools"
-version = "0.8.1"
+version = "0.8.2"
 description = "CI/CD tools for Python packages"
 authors = [{name = "Quinten Roets", email = "qdr2104@columbia.edu"}]
 license = "MIT"
@@ -24,7 +24,7 @@ dependencies = [
     "pytest >=9.0.2, <10",
 
     # formatting binaries, stricter version range
-    "mypy >= 1.19.1, < 1.21",
+    "mypy >= 2.0, < 2.1",
     "ruff >=0.15.6, <0.16"
 ]
 
