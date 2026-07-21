@@ -3,13 +3,12 @@ name: Build
 on:
   push:
 
-env:
-  TEMPLATE_SYNC_TRIGGER_TOKEN: ${{ secrets.TEMPLATE_SYNC_TRIGGER_TOKEN }}
-
 jobs:
   validate:
     name: Validate
     runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.TEMPLATE_SYNC_TRIGGER_TOKEN }}
     steps:
       - name: Validate
         id: validate
@@ -28,6 +27,8 @@ jobs:
   run-tests:
     name: Run tests
     needs: extract-python-versions
+    env:
+      GITHUB_TOKEN: ${{ secrets.TEMPLATE_SYNC_TRIGGER_TOKEN }}
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]

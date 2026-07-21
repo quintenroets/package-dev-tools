@@ -5,6 +5,7 @@ from functools import cache
 from typing import TYPE_CHECKING, cast
 
 import cli
+from package_utils.context.loaders.secrets_ import SecretLoader
 from simple_classproperty import classproperty
 
 from package_dev_tools.actions.instantiate_new_project.git import GitInterface
@@ -21,8 +22,7 @@ class Commits:
 
 @cache
 def github_token() -> str:
-    key = "TEMPLATE_SYNC_TRIGGER_TOKEN"
-    return os.environ.get(key) or cli.capture_output("pw", "automationtoken")
+    return SecretLoader("github token").load()
 
 
 running_on_windows = os.name == "nt"
