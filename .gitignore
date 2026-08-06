@@ -1,11 +1,6 @@
 uv.lock
 .pre-commit-config.yaml
 config/template-Makefile
-<<<<<<< HEAD
-=======
-uv.lock
-.worktrees/
->>>>>>> template
 
 # IDE config files
 .idea/
