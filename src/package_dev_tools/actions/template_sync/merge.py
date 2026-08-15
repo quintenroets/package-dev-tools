@@ -7,7 +7,7 @@ from superpathlib import Path
 
 from package_dev_tools import models
 from package_dev_tools.actions.instantiate_new_project import ProjectInstantiator
-from package_dev_tools.actions.instantiate_new_project.git import GitInterface
+from package_dev_tools.utils.git import GitInterface
 
 
 @dataclass
@@ -52,7 +52,7 @@ class Merger:  # pragma: nocover
         self.git.capture_output("checkout -B", name, "main")
         self.overwrite_project_files(path, self.template_directory)
         self.git.capture_output("add -A")
-        self.git.commit()
+        self.git.commit("Instantiate new project")
 
     def overwrite_project_files(self, source: Path, destination: Path) -> None:
         self.remove_project_files(destination)
@@ -63,15 +63,10 @@ class Merger:  # pragma: nocover
 
     def generate_project_files(self) -> Iterator[Path]:
         path = models.Path(self.repository_directory)
-        for file in generate_project_files(path):
+        for file in GitInterface(path).generate_project_files():
             yield file.relative_to(path)
 
     @classmethod
     def remove_project_files(cls, directory: Path) -> None:
-        for file in generate_project_files(models.Path(directory)):
+        for file in GitInterface(models.Path(directory)).generate_project_files():
             file.unlink()
-
-
-def generate_project_files(path: models.Path) -> Iterator[models.Path]:
-    instantiator = ProjectInstantiator(path=path, current_project_name="dummy")
-    yield from instantiator.generate_project_files()

@@ -1,54 +1,55 @@
 import sys
+from io import StringIO
 
 import cli
+from coverage import Coverage
+from coverage.results import should_fail_under
 
 from package_dev_tools.models import Path
 from package_dev_tools.utils.badge import Badge, BadgeUpdater
+from package_dev_tools.utils.git import GitInterface
 
 
-def check_coverage(*, verify_all_files_tested: bool = True) -> None:
-    verify_coverage_results()
-    if verify_all_files_tested:
-        verify_all_python_files_tested()
-
-    try:
-        coverage_percentage = cli.capture_output("coverage report -i --format total")
-    except cli.CalledProcessError:
-        cli.capture_output("coverage html -i", check=False)
-        cli.run("coverage report -mi", check=False)
-        raise
-    coverage_percentage_has_changed = update_coverage_shield(coverage_percentage)
-    if coverage_percentage_has_changed:
-        cli.console.print(f"Updated test coverage: {coverage_percentage}%")
-        cli.capture_output("coverage html")
-    exit_code = 1 if coverage_percentage_has_changed else 0
-    sys.exit(exit_code)
+def check_coverage() -> None:
+    coverage = load_coverage()
+    files = [str(path) for path in GitInterface().generate_project_files("*.py")]
+    percentage = coverage.report(files, ignore_errors=True, file=StringIO())
+    verify_fail_under(coverage, files, percentage)
+    has_changed = update_badge(coverage, files, percentage)
+    sys.exit(1 if has_changed else 0)
 
 
-def update_coverage_shield(coverage_percentage: float | str) -> bool:
-    if isinstance(coverage_percentage, str):
-        coverage_percentage = float(coverage_percentage)
-    coverage_percentage_int = round(coverage_percentage)
-    badge = Badge("Coverage", f"coverage-{coverage_percentage_int}%25")
-    return BadgeUpdater(badge).run()
+def load_coverage() -> Coverage:
+    coverage = Coverage()
+    if not Path(coverage.config.data_file).exists():
+        message = "No coverage results found."
+        raise FileNotFoundError(message)
+    coverage.load()
+    config = coverage.config
+    config.report_omit = [*config.run_omit, *(config.report_omit or [])]
+    return coverage
 
 
-def verify_all_python_files_tested() -> None:
-    python_files = set(cli.capture_output_lines("git ls-files '*.py'"))
-    coverage_lines = cli.capture_output_lines("coverage report -i", check=False)
-    covered_files = {line.split()[0] for line in coverage_lines[2:-2]}
-    not_covered_files = python_files - covered_files
-    if not_covered_files:
-        cli.run("coverage html -i", check=False)
-        message_parts = (
-            "The following files are not covered by tests:",
-            *not_covered_files,
-        )
-        message = "\n\t".join(message_parts)
+def verify_fail_under(coverage: Coverage, files: list[str], percentage: float) -> None:
+    config = coverage.config
+    if should_fail_under(percentage, config.fail_under, config.precision):
+        coverage.html_report(files, ignore_errors=True)
+        coverage.report(files, show_missing=True, ignore_errors=True)
+        current = format_percentage(percentage, config.precision)
+        required = format_percentage(config.fail_under, config.precision)
+        message = f"Coverage {current} is below the required {required}"
         raise RuntimeError(message)
 
 
-def verify_coverage_results() -> None:
-    if not Path(".coverage").exists():
-        message = "No coverage results found."
-        raise OSError(message)
+def update_badge(coverage: Coverage, files: list[str], percentage: float) -> bool:
+    badge = Badge("Coverage", f"coverage-{round(percentage)}%25")
+    has_changed = BadgeUpdater(badge).run()
+    if has_changed:
+        formatted_percentage = format_percentage(percentage, coverage.config.precision)
+        cli.console.print(f"Updated test coverage: {formatted_percentage}")
+        coverage.html_report(files, ignore_errors=True)
+    return has_changed
+
+
+def format_percentage(value: float, precision: int) -> str:
+    return f"{value:.{precision}f}%"

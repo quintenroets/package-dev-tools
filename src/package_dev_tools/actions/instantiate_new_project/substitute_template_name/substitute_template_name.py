@@ -2,11 +2,10 @@ import urllib.parse
 from collections.abc import Iterator
 from dataclasses import dataclass, field
 
-import cli
 from slugify import slugify
 
-from package_dev_tools.actions.instantiate_new_project.git import GitInterface
 from package_dev_tools.models import Path
+from package_dev_tools.utils.git import GitInterface
 from package_dev_tools.utils.package import PackageInfo
 
 from .project import Project
@@ -71,7 +70,7 @@ class NameSubstitutor:
 
     def generate_paths_to_substitute(self) -> Iterator[Path]:
         workflows_folder = self.path / ".github" / "workflows"
-        for path in self.generate_project_files():
+        for path in GitInterface(self.path).generate_project_files():
             # Modifying workflow files requires additional permissions.
             # Therefore, we don't do substitute those
             is_workflow = path.is_relative_to(workflows_folder)
@@ -87,9 +86,3 @@ class NameSubstitutor:
             )
             renamed_path = Path(renamed_path_str)
             path.rename(renamed_path)
-
-    def generate_project_files(self) -> Iterator[Path]:
-        command = ("git", "ls-tree", "-r", "HEAD", "--name-only")
-        relative_paths = cli.capture_output_lines(command, cwd=self.path)
-        for path in relative_paths:
-            yield self.path / path

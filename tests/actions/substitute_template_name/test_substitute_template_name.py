@@ -1,11 +1,11 @@
 import cli
 import pytest
 
-from package_dev_tools.actions.instantiate_new_project.git import GitInterface
 from package_dev_tools.actions.instantiate_new_project.substitute_template_name import (
     NameSubstitutor,
 )
 from package_dev_tools.models import Path
+from package_dev_tools.utils.git import GitInterface
 
 
 @pytest.mark.usefixtures("repository_path")

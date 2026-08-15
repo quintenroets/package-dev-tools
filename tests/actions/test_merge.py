@@ -1,6 +1,6 @@
-from package_dev_tools.actions.instantiate_new_project.git import GitInterface
 from package_dev_tools.actions.template_sync.merge import Merger
 from package_dev_tools.models import Path
+from package_dev_tools.utils.git import GitInterface
 
 
 def test_merge_template_changes(
