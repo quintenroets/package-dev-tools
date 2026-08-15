@@ -52,7 +52,7 @@ class Merger:  # pragma: nocover
         self.git.capture_output("checkout -B", name, "main")
         self.overwrite_project_files(path, self.template_directory)
         self.git.capture_output("add -A")
-        self.git.commit("Instantiate new project")
+        self.git.commit("Instantiate new project", allow_empty=True)
 
     def overwrite_project_files(self, source: Path, destination: Path) -> None:
         self.remove_project_files(destination)
