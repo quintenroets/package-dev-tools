@@ -27,7 +27,7 @@ dependencies = [
 
     # formatting binaries, stricter version range
     "mypy >= 2.3, < 2.4",
-    "ruff >=0.15.6, <0.17"
+    "ruff >=0.16.3, <0.17"
 ]
 
 [project.optional-dependencies]
@@ -85,6 +85,7 @@ fix = true
 select = ["ALL"]
 ignore = [
     "ANN401",   # annotated with Any
+    "CPY001",   # missing copyright notice
     "D1",       # missing docstrings
     "D200",     # one-line docstring
     "D203",     # conflicts with D211
