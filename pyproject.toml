@@ -16,7 +16,6 @@ dependencies = [
     "requests >=2.31.0, <3",
     "simple-classproperty >=4.0.2, <5",
     "superpathlib >=2.0.12, <3",
-    "toml >=0.10.2, <1",
 
     # pre-commit binaries
     "autotyping >=23.3.0, <25",
@@ -39,7 +38,6 @@ dev = [
 
     # mypy
     "types-requests >=2.31.0.10, <3",
-    "types-toml >=0.10.8.7, <1",
 ]
 
 [project.urls]

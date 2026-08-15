@@ -1,10 +1,10 @@
+import tomllib
 import typing
 from collections.abc import Iterator
 from dataclasses import dataclass, field
 from functools import cached_property
 from typing import Any, ClassVar
 
-import toml
 from superpathlib import Path
 
 from .python_versions import PythonVersions
@@ -34,7 +34,7 @@ class PackageInfo:
     @cached_property
     def pyproject_info(self) -> dict[str, Any]:
         info_path = self.path / "pyproject.toml"
-        return toml.loads(info_path.text)
+        return tomllib.loads(info_path.text)
 
     @property
     def supported_operating_systems(self) -> Iterator[str]:
