@@ -63,10 +63,9 @@ class Merger:  # pragma: nocover
 
     def generate_project_files(self) -> Iterator[Path]:
         path = models.Path(self.repository_directory)
-        for file in GitInterface(path).generate_project_files():
-            yield file.relative_to(path)
+        return GitInterface(path).generate_relative_files()
 
     @classmethod
     def remove_project_files(cls, directory: Path) -> None:
-        for file in GitInterface(models.Path(directory)).generate_project_files():
+        for file in GitInterface(models.Path(directory)).generate_files():
             file.unlink()

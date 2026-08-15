@@ -70,7 +70,7 @@ class NameSubstitutor:
 
     def generate_paths_to_substitute(self) -> Iterator[Path]:
         workflows_folder = self.path / ".github" / "workflows"
-        for path in GitInterface(self.path).generate_project_files():
+        for path in GitInterface(self.path).generate_files():
             # Modifying workflow files requires additional permissions.
             # Therefore, we don't do substitute those
             is_workflow = path.is_relative_to(workflows_folder)

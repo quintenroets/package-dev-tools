@@ -38,10 +38,13 @@ class GitInterface:
         self.configure()
         self.capture_output("commit --no-verify -m", message)
 
-    def generate_project_files(self, *patterns: str) -> Iterator[Path]:
+    def generate_files(self, *patterns: str) -> Iterator[Path]:
+        return (self.path / path for path in self.generate_relative_files(*patterns))
+
+    def generate_relative_files(self, *patterns: str) -> Iterator[Path]:
         command = "ls-files --cached --others --exclude-standard"
         output = self.capture_output(command, *patterns)
-        return (self.path / relative_path for relative_path in output.splitlines())
+        return (Path(relative_path) for relative_path in output.splitlines())
 
     def capture_output(self, *args: CommandItem, **kwargs: Any) -> str:
         return self.create_runner(*args, **kwargs).capture_output()

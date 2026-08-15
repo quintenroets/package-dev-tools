@@ -12,7 +12,7 @@ from package_dev_tools.utils.git import GitInterface
 
 def check_coverage() -> None:
     coverage = load_coverage()
-    files = [str(path) for path in GitInterface().generate_project_files("*.py")]
+    files = [str(path) for path in GitInterface().generate_relative_files("*.py")]
     percentage = coverage.report(files, ignore_errors=True, file=StringIO())
     verify_fail_under(coverage, files, percentage)
     has_changed = update_badge(coverage, files, percentage)
