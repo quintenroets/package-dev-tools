@@ -34,9 +34,10 @@ class GitInterface:
         self.capture_output("add -A")
         self.capture_output("clean -fd")
 
-    def commit(self, message: str) -> None:
+    def commit(self, message: str, *, allow_empty: bool = False) -> None:
         self.configure()
-        self.capture_output("commit --no-verify -m", message)
+        options = "--no-verify --allow-empty" if allow_empty else "--no-verify"
+        self.capture_output(f"commit {options} -m", message)
 
     def generate_files(self, *patterns: str) -> Iterator[Path]:
         return (self.path / path for path in self.generate_relative_files(*patterns))
