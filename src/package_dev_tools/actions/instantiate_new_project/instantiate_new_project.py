@@ -1,8 +1,9 @@
 from dataclasses import dataclass
 
+from package_dev_tools.utils.git import GitInterface
+
 from .cleanup_readme import ReadmeCleaner
 from .cleanup_workflows import WorkflowsCleaner
-from .git import GitInterface
 from .substitute_template_name import NameSubstitutor
 
 
@@ -25,4 +26,4 @@ class ProjectInstantiator(NameSubstitutor):
         git = GitInterface(self.path)
         git.clean()
         if self.commit:
-            git.commit()
+            git.commit("Instantiate new project")

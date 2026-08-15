@@ -11,10 +11,7 @@ from slugify import slugify
 from superpathlib import Path
 
 from package_dev_tools import models
-from package_dev_tools.actions.instantiate_new_project.git import (
-    GitInterface,
-    resolve_git_binary,
-)
+from package_dev_tools.utils.git import GitInterface, resolve_git_binary
 
 from . import git
 from .merge import Merger
@@ -79,7 +76,7 @@ class TemplateSyncer(git.Client):
         self.apply_ignore_patterns()
         path = models.Path(self.downloaded_repository_directory)
         try:
-            GitInterface(path=path, commit_message=self.commit_message).commit()
+            GitInterface(path=path).commit(self.commit_message)
             is_updated = True
         except cli.CalledProcessError:
             is_updated = False

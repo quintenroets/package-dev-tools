@@ -27,23 +27,9 @@ def downloaded_repository_path() -> Path:
     return environment.locate_processed_repository()
 
 
-@pytest.fixture(scope="session")
-def downloaded_repository_path_with_uncovered_files() -> Path:
-    return environment.locate_processed_repository(with_uncovered_files=True)
-
-
 @pytest.fixture
 def repository_path(downloaded_repository_path: Path) -> Iterator[Path]:
     yield from environment.create_temporary_copy(downloaded_repository_path)
-
-
-@pytest.fixture
-def repository_path_with_uncovered_files(
-    downloaded_repository_path_with_uncovered_files: Path,
-) -> Iterator[Path]:
-    yield from environment.create_temporary_copy(
-        downloaded_repository_path_with_uncovered_files,
-    )
 
 
 @pytest.fixture

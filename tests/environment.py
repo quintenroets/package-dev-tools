@@ -8,8 +8,8 @@ import cli
 from package_utils.context.loaders.secrets_ import SecretLoader
 from simple_classproperty import classproperty
 
-from package_dev_tools.actions.instantiate_new_project.git import GitInterface
 from package_dev_tools.models import Path
+from package_dev_tools.utils.git import GitInterface
 
 if TYPE_CHECKING:
     from cli.commands.run import CommandItem  # pragma: nocover
@@ -66,30 +66,11 @@ def create_bin_path(
     cli.capture_output(bin_path / pip, "install", "-e", ".[dev]", cwd=repository_path)
 
 
-def locate_processed_repository(*, with_uncovered_files: bool = False) -> Path:
-    suffix = "-uncovered" if with_uncovered_files else ""
-    create = (
-        create_uncovered_processed_repository
-        if with_uncovered_files
-        else create_processed_repository
-    )
-    cache_path = cast(
-        "Path",
-        Paths.cache / f"python-package-template-processed{suffix}",
-    )
+def locate_processed_repository() -> Path:
+    cache_path = cast("Path", Paths.cache / "python-package-template-processed")
     if not (cache_path / "pyproject.toml").exists():  # pragma: nocover, cached
-        create(cache_path)
+        create_processed_repository(cache_path)
     return cache_path
-
-
-def create_uncovered_processed_repository(
-    path: Path,
-) -> None:  # pragma: nocover, cached
-    shutil.copytree(locate_processed_repository(), path)
-    (path / "not_covered_file.py").touch()
-    test_path = path / "tests" / "test_not_executed_test.py"
-    test_path.lines = ("def run():", "\tpass")
-    generate_coverage_results(path)
 
 
 def create_processed_repository(path: Path) -> None:  # pragma: nocover, cached

@@ -2,6 +2,7 @@ import os
 import shlex
 import shutil
 import subprocess
+from collections.abc import Iterator
 from dataclasses import dataclass, field
 from functools import cache
 from typing import Any
@@ -28,15 +29,22 @@ class GitInterface:
     path: Path = field(default_factory=Path.cwd)
     git_name: str = "Quinten"
     git_email: str = "quinten.roets@gmail.com"
-    commit_message: str = "Instantiate new project"
 
     def clean(self) -> None:
         self.capture_output("add -A")
         self.capture_output("clean -fd")
 
-    def commit(self) -> None:
+    def commit(self, message: str) -> None:
         self.configure()
-        self.capture_output("commit --no-verify -m", self.commit_message)
+        self.capture_output("commit --no-verify -m", message)
+
+    def generate_files(self, *patterns: str) -> Iterator[Path]:
+        return (self.path / path for path in self.generate_relative_files(*patterns))
+
+    def generate_relative_files(self, *patterns: str) -> Iterator[Path]:
+        command = "ls-files --cached --others --exclude-standard"
+        output = self.capture_output(command, *patterns)
+        return (Path(relative_path) for relative_path in output.splitlines())
 
     def capture_output(self, *args: CommandItem, **kwargs: Any) -> str:
         return self.create_runner(*args, **kwargs).capture_output()
