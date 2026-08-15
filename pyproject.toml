@@ -64,6 +64,7 @@ build-backend = "setuptools.build_meta"
 
 [tool.coverage.run]
 command_line = "-m pytest tests"
+relative_files = true
 
 [tool.coverage.report]
 precision = 4
