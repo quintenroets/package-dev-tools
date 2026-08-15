@@ -10,6 +10,7 @@ class Badge:
     title: str
     content: str
     base_url: ClassVar[str] = "https://img.shields.io/badge"
+    separator: ClassVar[str] = "%20%7c%20"
     color: str = "brightgreen"
 
     @cached_property
