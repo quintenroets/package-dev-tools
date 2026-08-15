@@ -1,25 +1,25 @@
 from package_dev_tools.utils.badge import Badge, BadgeUpdater
 from package_dev_tools.utils.package import PackageInfo
+from package_dev_tools.utils.python_versions import PythonVersions
 
 
 def check_shields() -> None:
-    package_info = PackageInfo()
-    python_version = create_python_version_badge(package_info=package_info)
-    operating_systems = package_info.supported_operating_systems
-    operating_system = "os-" + "%20%7c%20".join(operating_systems)
+    info = PackageInfo()
+    python_versions = describe_python_versions(info.python_versions)
+    operating_systems = Badge.separator.join(info.supported_operating_systems)
     badges = (
-        Badge("Python version", python_version),
-        Badge("Operating system", operating_system),
+        Badge("Python version", f"python-{python_versions}"),
+        Badge("Operating system", f"os-{operating_systems}"),
     )
     for badge in badges:
         BadgeUpdater(badge).run()
 
 
-def create_python_version_badge(package_info: PackageInfo) -> str:
-    minimum_version = package_info.required_python_version
-    if "," in package_info.listed_version:  # pragma: nocover
-        maximum_version = f"3.{package_info.latest_supported_python_minor}"
-        version = minimum_version + "--" + maximum_version
-    else:
-        version = minimum_version + "+"
-    return f"python-{version}"
+def describe_python_versions(versions: PythonVersions) -> str:
+    return (
+        Badge.separator.join(versions.supported)
+        if versions.has_excluded_minors or versions.maximum == versions.required
+        else f"{versions.required}+"
+        if versions.maximum is None
+        else f"{versions.required}--{versions.maximum}"
+    )

@@ -11,11 +11,11 @@ def extract_package_name(info: PackageInfo) -> None:
 
 
 def extract_required_python_version(info: PackageInfo) -> None:
-    cli.console.print(info.required_python_version)
+    cli.console.print(info.python_versions.required)
 
 
 def extract_supported_python_versions(info: PackageInfo) -> None:
-    cli.console.print(json.dumps(list(info.supported_python_versions)))
+    cli.console.print(json.dumps(info.python_versions.supported))
 
 
 package_name = create_entry_point(extract_package_name)
