@@ -1,10 +1,18 @@
 from collections.abc import Iterator
 from unittest.mock import Mock, patch
 
+import coverage.files
 import pytest
 
 from package_dev_tools.models import Path
 from tests import environment
+
+
+@pytest.fixture(autouse=True)
+def restored_relative_directory() -> Iterator[None]:
+    directory = coverage.files.RELATIVE_DIR
+    yield
+    coverage.files.RELATIVE_DIR = directory
 
 
 @pytest.fixture(autouse=True)
