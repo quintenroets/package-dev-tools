@@ -59,7 +59,7 @@ class Merger:  # pragma: nocover
         for relative_file in self.generate_project_files():
             file = source / relative_file
             destination_file = destination / relative_file
-            file.copy_to(destination_file, include_properties=False)
+            destination_file.byte_content = file.byte_content if file.exists() else b""
 
     def generate_project_files(self) -> Iterator[Path]:
         path = models.Path(self.repository_directory)

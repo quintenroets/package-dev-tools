@@ -5,7 +5,7 @@ from functools import cache
 from typing import TYPE_CHECKING, cast
 
 import cli
-from package_utils.context.loaders.secrets_ import SecretLoader
+from package_utils.secrets_ import load_secret
 from simple_classproperty import classproperty
 
 from package_dev_tools.models import Path
@@ -22,7 +22,7 @@ class Commits:
 
 @cache
 def github_token() -> str:
-    return SecretLoader("github token").load()
+    return load_secret("github token")
 
 
 running_on_windows = os.name == "nt"
