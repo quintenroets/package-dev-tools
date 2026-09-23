@@ -12,7 +12,7 @@ from package_dev_tools.models import Path
 from package_dev_tools.utils.git import GitInterface
 
 if TYPE_CHECKING:
-    from cli.commands.run import CommandItem  # pragma: nocover
+    from cli.commands.commands import CommandItem  # pragma: nocover
 
 
 class Commits:

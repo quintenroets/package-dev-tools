@@ -1,27 +1,15 @@
 import os
 import shlex
 import shutil
-import subprocess
 from collections.abc import Iterator
 from dataclasses import dataclass, field
 from functools import cache
 from typing import Any
 
-from cli.commands.run import CommandItem
-from cli.commands.runner import Runner
+import cli
+from cli.commands.commands import CommandItem
 
 from package_dev_tools.models import Path
-
-
-@cache
-def resolve_git_binary() -> str:
-    paths = (
-        path
-        for p in os.get_exec_path()
-        if (path := shutil.which("git", path=str(p)))
-        and not path.startswith(str(Path.home()))
-    )
-    return shlex.quote(next(paths, shutil.which("git") or "git"))
 
 
 @dataclass
@@ -48,20 +36,21 @@ class GitInterface:
         return (Path(relative_path) for relative_path in output.splitlines())
 
     def capture_output(self, *args: CommandItem, **kwargs: Any) -> str:
-        return self.create_runner(*args, **kwargs).capture_output()
-
-    def run(
-        self,
-        *args: CommandItem,
-        check: bool = True,
-    ) -> subprocess.CompletedProcess[str]:  # pragma: nocover
-        return self.create_runner(*args, check=check).run()
-
-    def create_runner(self, *args: CommandItem, **kwargs: Any) -> Runner[str]:
         git_args = f"{resolve_git_binary()} {args[0]}", *args[1:]
-        return Runner[str](git_args, kwargs={"cwd": self.path, **kwargs})
+        return cli.capture_output(*git_args, cwd=self.path, **kwargs)
 
     def configure(self) -> None:
         git_configuration = {"name": self.git_name, "email": self.git_email}
         for attribute, value in git_configuration.items():
             self.capture_output(f"config user.{attribute} {value}")
+
+
+@cache
+def resolve_git_binary() -> str:
+    paths = (
+        path
+        for p in os.get_exec_path()
+        if (path := shutil.which("git", path=str(p)))
+        and not path.startswith(str(Path.home()))
+    )
+    return shlex.quote(next(paths, shutil.which("git") or "git"))
