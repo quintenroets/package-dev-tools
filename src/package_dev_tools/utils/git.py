@@ -7,7 +7,6 @@ from functools import cache
 from typing import Any
 
 import cli
-from cli.commands.commands import CommandItem
 
 from package_dev_tools.models import Path
 
@@ -35,7 +34,7 @@ class GitInterface:
         output = self.capture_output(command, *patterns)
         return (Path(relative_path) for relative_path in output.splitlines())
 
-    def capture_output(self, *args: CommandItem, **kwargs: Any) -> str:
+    def capture_output(self, *args: object, **kwargs: Any) -> str:
         git_args = f"{resolve_git_binary()} {args[0]}", *args[1:]
         return cli.capture_output(*git_args, cwd=self.path, **kwargs)
 

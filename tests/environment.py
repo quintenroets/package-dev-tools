@@ -2,7 +2,7 @@ import os
 import shutil
 from collections.abc import Iterator
 from functools import cache
-from typing import TYPE_CHECKING, cast
+from typing import cast
 
 import cli
 from package_utils.secrets_ import load_secret
@@ -10,9 +10,6 @@ from simple_classproperty import classproperty
 
 from package_dev_tools.models import Path
 from package_dev_tools.utils.git import GitInterface
-
-if TYPE_CHECKING:
-    from cli.commands.commands import CommandItem  # pragma: nocover
 
 
 class Commits:
@@ -91,7 +88,7 @@ def download_repository(
     git_interface = GitInterface()
     git_interface.configure()
 
-    command: tuple[CommandItem, ...] = ("clone", repository_url, path)
+    command: tuple[object, ...] = ("clone", repository_url, path)
     if depth is not None:
         command = (*command, "--depth", depth)
     git_interface.capture_output(*command)
