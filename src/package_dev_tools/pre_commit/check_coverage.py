@@ -5,7 +5,6 @@ import cli
 from coverage import Coverage
 from coverage.results import should_fail_under
 
-from package_dev_tools.models import Path
 from package_dev_tools.utils.badge import Badge, BadgeUpdater
 from package_dev_tools.utils.git import GitInterface
 
@@ -21,10 +20,11 @@ def check_coverage() -> None:
 
 def load_coverage() -> Coverage:
     coverage = Coverage()
-    if not Path(coverage.config.data_file).exists():
+    coverage.load()
+    coverage.combine()
+    if not coverage.get_data().measured_files():
         message = "No coverage results found."
         raise FileNotFoundError(message)
-    coverage.load()
     config = coverage.config
     config.report_omit = [*config.run_omit, *(config.report_omit or [])]
     return coverage
