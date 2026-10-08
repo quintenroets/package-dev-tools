@@ -1,4 +1,5 @@
 import contextlib
+import subprocess
 from collections.abc import Iterator
 from dataclasses import dataclass, field
 from functools import cached_property
@@ -78,7 +79,7 @@ class TemplateSyncer(git.Client):
         try:
             GitInterface(path=path).commit(self.commit_message)
             is_updated = True
-        except cli.CalledProcessError:
+        except subprocess.CalledProcessError:
             is_updated = False
         return is_updated
 
