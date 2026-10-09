@@ -86,6 +86,7 @@ fix = true
 select = ["ALL"]
 ignore = [
     "ANN401",   # annotated with Any
+    "COM812",   # missing trailing comma
     "CPY001",   # missing copyright notice
     "D1",       # missing docstrings
     "D200",     # one-line docstring
