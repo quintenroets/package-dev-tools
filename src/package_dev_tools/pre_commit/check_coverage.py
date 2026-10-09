@@ -5,13 +5,14 @@ import cli
 from coverage import Coverage
 from coverage.results import should_fail_under
 
+from package_dev_tools.models import Path
+from package_dev_tools.utils import git
 from package_dev_tools.utils.badge import Badge, BadgeUpdater
-from package_dev_tools.utils.git import GitInterface
 
 
 def check_coverage() -> None:
     coverage = load_coverage()
-    files = [str(path) for path in GitInterface().generate_relative_files("*.py")]
+    files = [str(path) for path in git.generate_relative_files(Path.cwd(), "*.py")]
     percentage = coverage.report(files, ignore_errors=True, file=StringIO())
     verify_fail_under(coverage, files, percentage)
     has_changed = update_badge(coverage, files, percentage)

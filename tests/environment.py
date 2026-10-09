@@ -9,7 +9,7 @@ from package_utils.secrets_ import load_secret
 from simple_classproperty import classproperty
 
 from package_dev_tools.models import Path
-from package_dev_tools.utils.git import GitInterface
+from package_dev_tools.utils import git
 
 
 class Commits:
@@ -82,13 +82,8 @@ def download_repository(
     if token:
         host = "github.com"
         repository_url = repository_url.replace(host, token + "@" + host)
-    git_interface = GitInterface()
-    git_interface.configure()
-
-    command: tuple[object, ...] = ("clone", repository_url, path)
-    if depth is not None:
-        command = (*command, "--depth", depth)
-    git_interface.capture_output(*command)
+    options = () if depth is None else ("--depth", depth)
+    git.clone(repository_url, path, *options)
 
 
 def locate_cached_checkout(name: str, commit: str) -> Path:
@@ -102,9 +97,7 @@ def download_to_cache(  # pragma: nocover, cached
     path: Path, name: str, commit: str
 ) -> None:
     download_repository(path, name=name, depth=None)
-    git = GitInterface(path)
-    git.configure()
-    git.capture_output("reset --hard", commit)
+    git.capture_output(path, "reset --hard", commit)
 
 
 def create_temporary_copy(source_path: Path) -> Iterator[Path]:
@@ -124,10 +117,9 @@ def create_cached_checkout(name: str, commit: str) -> Iterator[Path]:
 
 def create_worktree(source_path: Path) -> Iterator[Path]:
     path = Path.tempfile(create=False)
-    git = GitInterface(source_path)
-    git.capture_output("worktree add --detach", path)
+    git.capture_output(source_path, "worktree add --detach", path)
     try:
         yield path
     finally:
-        git.capture_output("worktree remove --force", path)
-        git.capture_output("worktree prune")
+        git.capture_output(source_path, "worktree remove --force", path)
+        git.capture_output(source_path, "worktree prune")

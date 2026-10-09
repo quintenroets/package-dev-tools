@@ -1,11 +1,10 @@
-import cli
 import pytest
 
 from package_dev_tools.actions.instantiate_new_project.substitute_template_name import (
     NameSubstitutor,
 )
 from package_dev_tools.models import Path
-from package_dev_tools.utils.git import GitInterface
+from package_dev_tools.utils import git
 
 
 @pytest.mark.usefixtures("repository_path")
@@ -16,13 +15,8 @@ def test_substitute_template_name() -> None:
 def test_byte_content_skipping(repository_path: Path) -> None:
     path = Path("binary_content")
     path.byte_content = b"\xff"
-    GitInterface(repository_path).configure()
-    commands = (
-        ("git add", path),
-        ("git commit --no-verify -m", "add byte file with byte content"),
-    )
-    for command in commands:
-        cli.capture_output(*command)
+    git.capture_output(repository_path, "add", path)
+    git.commit(repository_path, "add byte file with byte content")
     substitute_and_verify()
 
 
