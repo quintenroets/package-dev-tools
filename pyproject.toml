@@ -26,7 +26,7 @@ dependencies = [
     "pytest >=9.0.2, <10",
 
     # formatting binaries, stricter version range
-    "mypy >= 2.3, < 2.4",
+    "mypy >= 2.3, < 2.5",
     "ruff >=0.16.3, <0.17"
 ]
 
