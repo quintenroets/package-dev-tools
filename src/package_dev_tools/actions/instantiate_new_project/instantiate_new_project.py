@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from package_dev_tools.utils.git import GitInterface
+from package_dev_tools.utils import git
 
 from .cleanup_readme import ReadmeCleaner
 from .cleanup_workflows import WorkflowsCleaner
@@ -19,7 +19,7 @@ class ProjectInstantiator(NameSubstitutor):
         for runner in runners:
             runner.run()  # type: ignore[union-attr]
 
-        git = GitInterface(self.path)
-        git.clean()
+        git.capture_output(self.path, "add -A")
+        git.capture_output(self.path, "clean -fd")
         if self.commit:
-            git.commit("Instantiate new project")
+            git.commit(self.path, "Instantiate new project")

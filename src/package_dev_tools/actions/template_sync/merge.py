@@ -1,13 +1,11 @@
 import shutil
-from collections.abc import Iterator
 from dataclasses import dataclass
-from functools import cached_property
 
 from superpathlib import Path
 
 from package_dev_tools import models
 from package_dev_tools.actions.instantiate_new_project import ProjectInstantiator
-from package_dev_tools.utils.git import GitInterface
+from package_dev_tools.utils import git
 
 
 @dataclass
@@ -18,25 +16,18 @@ class Merger:  # pragma: nocover
     template_branch: str = "template"
     show_conflicts: bool = True
 
-    @cached_property
-    def git(self) -> GitInterface:
-        path = models.Path(self.template_directory)
-        git = GitInterface(path)
-        git.configure()
-        return git
-
     def merge_in_template_updates(self) -> None:
         self.branch_template_updates()
         self.create_branch_with(self.repository_directory)
         action = "merge" if self.show_conflicts else "merge -X ours"
-        command = f"{action} {self.template_branch} -m 'merge'"
-        self.git.capture_output(command, check=False)
+        command = f"{action} {self.template_branch} -m merge"
+        git.capture_output(self.template_directory, command, check=False)
         self.overwrite_project_files(self.template_directory, self.repository_directory)
 
     def branch_template_updates(self) -> None:
         with Path.tempfile(create=False) as latest_template_directory:
             shutil.copytree(self.template_directory, latest_template_directory)
-            self.git.capture_output("reset --hard HEAD~1")
+            git.capture_output(self.template_directory, "reset --hard HEAD~1")
             self.instantiate(path=latest_template_directory)
             self.instantiate(path=self.template_directory)
             self.create_branch_with(
@@ -48,23 +39,19 @@ class Merger:  # pragma: nocover
         ProjectInstantiator(project_name=self.repository, path=path_with_methods).run()
 
     def create_branch_with(self, path: Path, name: str = "branch") -> None:
-        self.git.capture_output("checkout -B", name, "main")
+        git.capture_output(self.template_directory, "checkout -B", name, "main")
         self.overwrite_project_files(path, self.template_directory)
-        self.git.capture_output("add -A")
-        self.git.commit("Instantiate new project", allow_empty=True)
+        git.capture_output(self.template_directory, "add -A")
+        git.commit(self.template_directory, "Instantiate new project", allow_empty=True)
 
     def overwrite_project_files(self, source: Path, destination: Path) -> None:
         self.remove_project_files(destination)
-        for relative_file in self.generate_project_files():
+        for relative_file in git.generate_relative_files(self.repository_directory):
             file = source / relative_file
             destination_file = destination / relative_file
             destination_file.byte_content = file.byte_content if file.exists() else b""
 
-    def generate_project_files(self) -> Iterator[Path]:
-        path = models.Path(self.repository_directory)
-        return GitInterface(path).generate_relative_files()
-
     @classmethod
     def remove_project_files(cls, directory: Path) -> None:
-        for file in GitInterface(models.Path(directory)).generate_files():
+        for file in git.generate_files(directory):
             file.unlink()

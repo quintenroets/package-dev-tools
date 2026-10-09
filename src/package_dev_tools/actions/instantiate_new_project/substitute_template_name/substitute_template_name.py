@@ -5,7 +5,7 @@ from dataclasses import dataclass, field
 from slugify import slugify
 
 from package_dev_tools.models import Path
-from package_dev_tools.utils.git import GitInterface
+from package_dev_tools.utils import git
 from package_dev_tools.utils.package import PackageInfo
 
 from .project import Project
@@ -44,7 +44,7 @@ class NameSubstitutor:
         }
 
     def extract_new_project_name(self) -> str:
-        git_url = GitInterface(self.path).capture_output("config remote.origin.url")
+        git_url = git.capture_output(self.path, "config remote.origin.url")
         return urllib.parse.urlparse(git_url).path.split("/")[-1].removesuffix(".git")
 
     def extract_current_project_name(self) -> str:
@@ -70,7 +70,7 @@ class NameSubstitutor:
 
     def generate_paths_to_substitute(self) -> Iterator[Path]:
         workflows_folder = self.path / ".github" / "workflows"
-        for path in GitInterface(self.path).generate_files():
+        for path in git.generate_files(self.path):
             # Modifying workflow files requires additional permissions.
             # Therefore, we don't do substitute those
             is_workflow = path.is_relative_to(workflows_folder)

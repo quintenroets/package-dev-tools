@@ -4,15 +4,13 @@ from collections.abc import Iterator
 from dataclasses import dataclass, field
 from functools import cached_property
 
-import cli
 import github.Auth
 from github.Commit import Commit
 from github.Repository import Repository
 from slugify import slugify
 from superpathlib import Path
 
-from package_dev_tools import models
-from package_dev_tools.utils.git import GitInterface
+from package_dev_tools.utils import git
 
 from .github_client import GitHubClient
 from .merge import Merger
@@ -57,23 +55,15 @@ class TemplateSyncer(GitHubClient):
             if is_updated:
                 self.push_updates()
 
-    def run_git(
-        self, *args: str | Path, input_: str | None = None, check: bool = True
-    ) -> None:
-        cli.capture_output(
-            "git",
-            *args,
-            input=input_,
-            cwd=self.downloaded_repository_directory,
-            check=check,
-        )
+    def run_git(self, command: str, *args: object, check: bool = True) -> None:
+        root = self.downloaded_repository_directory
+        git.capture_output(root, command, *args, check=check)
 
     def commit_updated_files(self) -> bool:
         self.reset_files_not_in_template_commit()
         self.apply_ignore_patterns()
-        path = models.Path(self.downloaded_repository_directory)
         try:
-            GitInterface(path=path).commit(self.commit_message)
+            git.commit(self.downloaded_repository_directory, self.commit_message)
             is_updated = True
         except subprocess.CalledProcessError:
             is_updated = False
@@ -81,8 +71,7 @@ class TemplateSyncer(GitHubClient):
 
     def reset_files_not_in_template_commit(self) -> None:
         self.run_git("reset")
-        files = self.generate_instantiated_files_in_template_commit()
-        for file_ in files:
+        for file_ in self.generate_instantiated_files_in_template_commit():
             self.run_git("add", file_, check=False)
 
     def generate_instantiated_files_in_template_commit(self) -> Iterator[str]:
@@ -105,7 +94,7 @@ class TemplateSyncer(GitHubClient):
                 self.run_git("reset", pattern)
 
     def push_updates(self) -> None:  # pragma: nocover
-        self.run_git("push", "--set-upstream", "origin", self.update_branch)
+        self.run_git("push --set-upstream origin", self.update_branch)
         body = self.create_pull_request_body()
         with contextlib.suppress(
             github.GithubException,  # Pull request already created
@@ -167,12 +156,10 @@ class TemplateSyncer(GitHubClient):
             update_branch_exists = True
         except github.GithubException:
             update_branch_exists = False
-        clone = (
-            ("clone", "-b", self.update_branch) if update_branch_exists else ("clone",)
-        )
-        cli.run("git", clone, self.project_clone_url, path)
+        options = ("-b", self.update_branch) if update_branch_exists else ()
+        git.clone(self.project_clone_url, path, *options)
         if not update_branch_exists:
-            cli.run("git checkout -b", self.update_branch, cwd=path)
+            git.capture_output(path, "checkout -b", self.update_branch)
 
     @property
     def project_clone_url(self) -> str:
@@ -183,4 +170,4 @@ class TemplateSyncer(GitHubClient):
 
     def clone_template_repository(self, path: Path) -> None:  # pragma: nocover
         url = self.template_repository_client.clone_url
-        cli.run("git clone", url, path)
+        git.clone(url, path)

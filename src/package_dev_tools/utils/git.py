@@ -1,5 +1,5 @@
+import os
 from collections.abc import Iterator
-from dataclasses import dataclass, field
 from typing import Any
 
 import cli
@@ -7,34 +7,28 @@ import cli
 from package_dev_tools.models import Path
 
 
-@dataclass
-class GitInterface:
-    path: Path = field(default_factory=Path.cwd)
-    git_name: str = "Quinten"
-    git_email: str = "quinten.roets@gmail.com"
+def clone(url: str, path: os.PathLike[str], *options: object) -> None:
+    cli.capture_output(("git", "clone"), *options, url, path)  # pragma: nocover
 
-    def clean(self) -> None:
-        self.capture_output("add -A")
-        self.capture_output("clean -fd")
 
-    def commit(self, message: str, *, allow_empty: bool = False) -> None:
-        self.configure()
-        options = "--no-verify --allow-empty" if allow_empty else "--no-verify"
-        self.capture_output(f"commit {options} -m", message)
+def commit(root: os.PathLike[str], message: str, *, allow_empty: bool = False) -> None:
+    options = "--no-verify --allow-empty" if allow_empty else "--no-verify"
+    capture_output(root, f"commit {options} -m", message)
 
-    def generate_files(self, *patterns: str) -> Iterator[Path]:
-        return (self.path / path for path in self.generate_relative_files(*patterns))
 
-    def generate_relative_files(self, *patterns: str) -> Iterator[Path]:
-        command = "ls-files --cached --others --exclude-standard"
-        output = self.capture_output(command, *patterns)
-        return (Path(relative_path) for relative_path in output.splitlines())
+def generate_files(root: os.PathLike[str]) -> Iterator[Path]:
+    return (Path(root) / path for path in generate_relative_files(root))
 
-    def capture_output(self, *args: object, **kwargs: Any) -> str:
-        git_args = f"git {args[0]}", *args[1:]
-        return cli.capture_output(*git_args, cwd=self.path, **kwargs)
 
-    def configure(self) -> None:
-        git_configuration = {"name": self.git_name, "email": self.git_email}
-        for attribute, value in git_configuration.items():
-            self.capture_output(f"config user.{attribute} {value}")
+def generate_relative_files(root: os.PathLike[str], *patterns: str) -> Iterator[Path]:
+    command = "ls-files --cached --others --exclude-standard"
+    output = capture_output(root, command, *patterns)
+    return map(Path, output.splitlines())
+
+
+def capture_output(
+    root: os.PathLike[str], command: str, *args: object, **kwargs: Any
+) -> str:
+    email = "quinten.roets@gmail.com"
+    options = "-C", root, "-c", "user.name=Quinten", "-c", f"user.email={email}"
+    return cli.capture_output("git", *options, *command.split(), *args, **kwargs)
