@@ -12,16 +12,15 @@ from slugify import slugify
 from superpathlib import Path
 
 from package_dev_tools import models
-from package_dev_tools.utils.git import GitInterface, resolve_git_binary
+from package_dev_tools.utils.git import GitInterface
 
-from . import git
+from .github_client import GitHubClient
 from .merge import Merger
 
 
 @dataclass
-class TemplateSyncer(git.Client):
+class TemplateSyncer(GitHubClient):
     repository: str
-    git_binary: str = field(default_factory=resolve_git_binary)
     ignore_patterns_path: Path = field(
         default_factory=lambda: Path("config/templatesyncignore"),
     )
@@ -65,7 +64,7 @@ class TemplateSyncer(git.Client):
         check: bool = True,
     ) -> None:
         cli.capture_output(
-            self.git_binary,
+            "git",
             *args,
             input=input_,
             cwd=self.downloaded_repository_directory,
@@ -174,9 +173,9 @@ class TemplateSyncer(git.Client):
         clone = (
             ("clone", "-b", self.update_branch) if update_branch_exists else ("clone",)
         )
-        cli.run(self.git_binary, clone, self.project_clone_url, path)
+        cli.run("git", clone, self.project_clone_url, path)
         if not update_branch_exists:
-            cli.run(f"{self.git_binary} checkout -b", self.update_branch, cwd=path)
+            cli.run("git checkout -b", self.update_branch, cwd=path)
 
     @property
     def project_clone_url(self) -> str:
@@ -187,4 +186,4 @@ class TemplateSyncer(git.Client):
 
     def clone_template_repository(self, path: Path) -> None:  # pragma: nocover
         url = self.template_repository_client.clone_url
-        cli.run(self.git_binary, "clone", url, path)
+        cli.run("git clone", url, path)

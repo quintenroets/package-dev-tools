@@ -5,7 +5,7 @@ from github import Github
 
 
 @dataclass
-class Client:
+class GitHubClient:
     token: str
 
     def __post_init__(self) -> None:

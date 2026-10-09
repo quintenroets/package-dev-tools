@@ -5,11 +5,11 @@ from dataclasses import dataclass
 from github import UnknownObjectException
 from github.Repository import Repository
 
-from . import git
+from .github_client import GitHubClient
 
 
 @dataclass
-class TemplateSyncTriggerer(git.Client):
+class TemplateSyncTriggerer(GitHubClient):
     workflow_name: str = "sync-template.yml"
     max_workers: int = 10
 
