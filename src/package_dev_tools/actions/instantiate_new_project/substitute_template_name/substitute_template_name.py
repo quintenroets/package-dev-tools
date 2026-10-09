@@ -81,8 +81,7 @@ class NameSubstitutor:
     def substitute_name(self, path: Path) -> None:
         if any(name == self.template_project.package_name for name in path.parts):
             renamed_path_str = str(path).replace(
-                self.template_project.package_name,
-                self.new_project.package_name,
+                self.template_project.package_name, self.new_project.package_name
             )
             renamed_path = Path(renamed_path_str)
             path.rename(renamed_path)

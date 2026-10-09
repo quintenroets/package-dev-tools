@@ -13,9 +13,7 @@ untested_file_name = "untested_file.py"
 @pytest.mark.usefixtures("repository_path")
 @pytest.mark.parametrize("track_file", [True, False])
 def test_untested_files_detected(
-    capfd: pytest.CaptureFixture[str],
-    *,
-    track_file: bool,
+    capfd: pytest.CaptureFixture[str], *, track_file: bool
 ) -> None:
     create_untested_file()
     if track_file:
