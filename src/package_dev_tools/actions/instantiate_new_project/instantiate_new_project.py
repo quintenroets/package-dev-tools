@@ -15,11 +15,7 @@ class ProjectInstantiator(NameSubstitutor):
         """
         Instantiate new project from template repository.
         """
-        runners = (
-            super(),
-            ReadmeCleaner(self.path),
-            WorkflowsCleaner(self.path),
-        )
+        runners = (super(), ReadmeCleaner(self.path), WorkflowsCleaner(self.path))
         for runner in runners:
             runner.run()  # type: ignore[union-attr]
 

@@ -43,8 +43,7 @@ def repository_path(downloaded_repository_path: Path) -> Iterator[Path]:
 @pytest.fixture
 def template_directory() -> Iterator[Path]:
     yield from environment.create_cached_checkout(
-        "python-package-template",
-        environment.Commits.template,
+        "python-package-template", environment.Commits.template
     )
 
 

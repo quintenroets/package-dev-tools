@@ -22,7 +22,7 @@ from .merge import Merger
 class TemplateSyncer(GitHubClient):
     repository: str
     ignore_patterns_path: Path = field(
-        default_factory=lambda: Path("config/templatesyncignore"),
+        default_factory=lambda: Path("config/templatesyncignore")
     )
     template_repository: str = "quintenroets/python-package-template"
     default_branch: str = "main"
@@ -58,10 +58,7 @@ class TemplateSyncer(GitHubClient):
                 self.push_updates()
 
     def run_git(
-        self,
-        *args: str | Path,
-        input_: str | None = None,
-        check: bool = True,
+        self, *args: str | Path, input_: str | None = None, check: bool = True
     ) -> None:
         cli.capture_output(
             "git",
@@ -127,7 +124,7 @@ class TemplateSyncer(GitHubClient):
             number = message.split(pull_request_tokens)[-1].split(")")[0]
             name = f"#{number}"
             repository_url = self.template_repository_client.clone_url.removesuffix(
-                ".git",
+                ".git"
             )
             url = f"{repository_url}/pull/{number}"
         else:

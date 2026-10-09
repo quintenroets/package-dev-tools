@@ -54,17 +54,13 @@ class DocstringExpander(cst.CSTTransformer):
         self.next_block_eligible = False
 
     def leave_IndentedBlock(
-        self,
-        _original: cst.IndentedBlock,
-        updated: cst.IndentedBlock,
+        self, _original: cst.IndentedBlock, updated: cst.IndentedBlock
     ) -> cst.IndentedBlock:
         self.stack.pop()
         return updated
 
     def leave_SimpleStatementLine(
-        self,
-        _original: cst.SimpleStatementLine,
-        updated: cst.SimpleStatementLine,
+        self, _original: cst.SimpleStatementLine, updated: cst.SimpleStatementLine
     ) -> cst.BaseStatement:
         was_eligible = self.stack[-1].expect_docstring
         self.stack[-1].expect_docstring = False

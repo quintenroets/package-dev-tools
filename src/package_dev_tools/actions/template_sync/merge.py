@@ -40,8 +40,7 @@ class Merger:  # pragma: nocover
             self.instantiate(path=latest_template_directory)
             self.instantiate(path=self.template_directory)
             self.create_branch_with(
-                latest_template_directory,
-                name=self.template_branch,
+                latest_template_directory, name=self.template_branch
             )
 
     def instantiate(self, path: Path) -> None:

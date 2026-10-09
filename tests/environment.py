@@ -52,8 +52,7 @@ def prepare_bin_path(repository_path: Path) -> Path:  # pragma: nocover, cached
 
 
 def create_bin_path(
-    path: Path,
-    repository_path: Path,
+    path: Path, repository_path: Path
 ) -> None:  # pragma: nocover, cached
     path.create_parent()
     cli.capture_output("python -m venv", path.name, cwd=path.parent)
@@ -76,9 +75,7 @@ def create_processed_repository(path: Path) -> None:  # pragma: nocover, cached
 
 
 def download_repository(
-    path: Path,
-    name: str = "python-package-template",
-    depth: int | None = 1,
+    path: Path, name: str = "python-package-template", depth: int | None = 1
 ) -> None:  # pragma: nocover, cached
     token = github_token()
     repository_url = f"https://github.com/quintenroets/{name}"
@@ -102,9 +99,7 @@ def locate_cached_checkout(name: str, commit: str) -> Path:
 
 
 def download_to_cache(  # pragma: nocover, cached
-    path: Path,
-    name: str,
-    commit: str,
+    path: Path, name: str, commit: str
 ) -> None:
     download_repository(path, name=name, depth=None)
     git = GitInterface(path)
