@@ -27,7 +27,7 @@ dependencies = [
 
     # formatting binaries, stricter version range
     "mypy >= 2.4, < 2.5",
-    "ruff >=0.16.10, <0.17"
+    "ruff >=0.16.10, <0.18"
 ]
 
 [project.optional-dependencies]
